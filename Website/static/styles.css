@@ -1,0 +1,17 @@
+body {
+    background-color: rgb(238, 234, 234);
+}
+
+h1, h2, h3, p {
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#canvas1_container {
+    width: 100%;
+    text-align: center;
+}
+
+#canvas1 {
+    display: inline;
+}

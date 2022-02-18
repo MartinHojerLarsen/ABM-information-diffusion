@@ -4,17 +4,19 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}">
     <title>ABM-information diffusion</title>
 </head>
 <body>
     <h1>ABM on information diffusion</h1>
     <h2>Made by:</h2>
     <h2>Mads Malling Petersen & Martin Højer Larsen</h2>
+    <h2>Running on flask API</h2>
     
     <h3>Canvas til test</h3>
-    <canvas id="canvas1" width="501px" height="381px">
-
+    <div id="canvas1_container">
+        <canvas id="canvas1" height="401" width="401">
+    </div>
     </canvas>
 
     <h3>Canvas til test 2</h3>
@@ -25,6 +27,6 @@
 
 
 </body>
-<script src="canvas1.js"></script>
+<script src="{{ url_for('static',filename='canvas1.js') }}"></script>
 </html>
 
