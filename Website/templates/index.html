@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}">
     <title>ABM-information diffusion</title>
 </head>
@@ -15,17 +16,24 @@
     
     <h3>Canvas til test</h3>
     <div id="canvas1_container">
-        <canvas id="canvas1" height="401" width="401">
-    </div>
+        <canvas id="canvas1" height="401" width="401"></canvas>
+        <br>
+        <button type="button" onclick="render_canvas1()" id="render_button">Create grid</button>
+        </div>
     </canvas>
+    <form action="/">
+        <input type="text" placeholder="name" name="name">
+        <input type="text" placeholder="range" name="range">
+        <input type="number" placeholder="number of agents" name="number of agents">
+        <input type="submit" name="submit">
+    </form>  
+
 
     <h3>Canvas til test 2</h3>
     <canvas>
-
+        
     </canvas>
-
-
-
+    
 </body>
 <script src="{{ url_for('static',filename='canvas1.js') }}"></script>
 </html>
