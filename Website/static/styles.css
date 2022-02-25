@@ -2,9 +2,10 @@ body {
     background-color: rgb(238, 234, 234);
 }
 
-h1, h2, h3, p {
+h1, h2, h3, p, form {
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
+    padding: 5px;
 }
 
 #canvas1_container {
