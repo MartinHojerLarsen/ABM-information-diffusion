@@ -36,8 +36,16 @@ class Model():
             i_rate = rd.randint(-100,100)
             i_factor = rd.randint(-100, 100)
             self.agents.append(InfluencerAgent(agent_id,agent_opinion,random_connection_list,influencer_type,i_rate,i_factor))
+    
+    def timestep():
+        raise Exception('Not yet implemented')
+
+    def update():
+        raise Exception('Not yet implemented')
+
+    def end():
+        raise Exception('Not yet implemented')
 
 # Testing section
 model = Model(30,(80,20))
-
 print('end')
