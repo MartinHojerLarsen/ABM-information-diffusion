@@ -1,33 +1,45 @@
 # This file is used to define isolated functions for our ABM
-import doctest
 import random as rd
 import math
+from Agent import *
 
-def make_connection_list(agent_id,population,influencerList = False):
-    """A function that creates a connection between agents.
+def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network = 5):
+    """
+    A function that takes a list of agents and then make appropiate connections between CommonerAgents and InfluencerAgent.
+    Two InfluencerAgents cannot have a connection to each other
 
     Parameters
     ----------
-    agent_id : integer
-        Takes an Agent id
-    population : integer
-        Define agent population
+    agent_list : List of Agents
+        Takes a list of CommonerAgents and InfluencerAgents
+    amount_of_friends : int, optional
+        Amount of connections/friends between each agent. The default is 3.
+    influencer_network : int, optional
+        Increase the degree of connections between InfluencerAgents and CommonerAgents. The default is 5.
 
     Returns
     -------
-    List of integer
-        Return a list of integers represented as agent ids
+    edge_list : List of tuples of Agents
+        The function return a List containing Tuple of Agent pairs. 
+        To be used with the networkx library.
     """
-
-    # Make a single agent to have at least 1 or 2 connections (could be improved in the future)
-    if influencerList:
-        singular_set = set(rd.sample(range(0, population), rd.randint(math.ceil(population/2),population))) 
-    else:
-        singular_set = set(rd.sample(range(0, population), rd.randint(2,population)))
-    singular_list = list(singular_set)
-    if agent_id in singular_list:
-        singular_list.remove(agent_id)
-    return singular_list
-
-print(make_connection_list(3,10))
-
+    
+    edge_list = []
+    for index,agent in enumerate(agent_list):
+        
+        if isinstance(agent,InfluencerAgent):
+            amount_of_friends = influencer_network
+            amount_of_friends = amount_of_friends*influencer_network
+            
+        for i in range(0,amount_of_friends):
+            random_agent = agent_list[rd.randint(0,len(agent_list)-1)]
+            c1,c2 = (agent,random_agent)
+            
+            if isinstance(c1,InfluencerAgent) == True and isinstance(c2,InfluencerAgent) == True:
+                continue
+            else:    
+                if c1.agent_id is not c2.agent_id:
+                    edge_list.append((c1,c2))
+                
+    edge_list = list(set(edge_list))
+    return edge_list

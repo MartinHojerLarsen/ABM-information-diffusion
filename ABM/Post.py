@@ -28,7 +28,6 @@ class Post():
         def all_connections(self): 
             return self.connections
 
-
 a = Post(0, 12)
 a.add_connection(2)
 

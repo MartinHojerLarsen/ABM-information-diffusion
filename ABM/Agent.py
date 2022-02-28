@@ -1,7 +1,7 @@
 """ File for the Agent class """
 
 class Agent(): 
-    def __init__(self, agent_id, opinion, connections):
+    def __init__(self, agent_id, opinion):
         """
         superclass for Agent
 
@@ -11,8 +11,6 @@ class Agent():
             uniqe identifier for each agent.
         opinion : int
             The opinion of the agent - range from -100 to 100
-        connections : list<int>
-            list of connections, containing ID's of all connected agents.
 
         Returns
         -------
@@ -21,10 +19,9 @@ class Agent():
         """
         self.agent_id = agent_id
         self.opinion = opinion
-        self.agent_connections = connections
         
 class CommonerAgent(Agent): 
-    def __init__(self,agent_id, opinion, connections, i_susceptibility):
+    def __init__(self,agent_id, opinion, i_susceptibility):
         """
         subclass for commoner agent
 
@@ -40,12 +37,12 @@ class CommonerAgent(Agent):
         None.
 
         """
-        super().__init__(agent_id, opinion, connections)
+        super().__init__(agent_id, opinion)
         self.i_susceptibility = i_susceptibility
 
 
 class InfluencerAgent(Agent):
-    def __init__(self,agent_id, opinion, connections, agent_type, i_rate, i_factor):
+    def __init__(self,agent_id, opinion, agent_type, i_rate, i_factor):
         """
         Subclass for influencer agent
 
@@ -63,7 +60,7 @@ class InfluencerAgent(Agent):
         None.
 
         """
-        super().__init__(agent_id, opinion, connections)
+        super().__init__(agent_id, opinion)
         self.agent_type = agent_type
         self.i_rate = i_rate
         self.i_factor = i_factor
