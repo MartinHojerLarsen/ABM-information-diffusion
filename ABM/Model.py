@@ -13,7 +13,7 @@ class Model():
         # Initialize population
         self.population = population
         # Initialize Graph
-        self.graph = nx.Graph()
+        self.graph_environment = nx.Graph()
         
         commoner_dist,influencer_dist = distribution
         if commoner_dist + influencer_dist != 100:
@@ -43,10 +43,10 @@ class Model():
             # =============================================================================
             self.agents.append(InfluencerAgent(agent_id,agent_opinion,influencer_type,i_rate,i_factor))
     
-        # Initialize graph network between agents
-        self.graph.add_nodes_from(self.agents)
-        self.agent_connections = make_agents_connections(self.agents)
-        self.graph.add_edges_from(self.agent_connections)
+        
+        #Initialize graph environment with agent nodes and edges
+        self.graph_environment.add_nodes_from(make_agent_nodes(self.agents))
+        self.graph_environment.add_edges_from(make_agents_connections(self.agents))
     
     def timestep():
         raise Exception('Not yet implemented')
@@ -57,10 +57,11 @@ class Model():
     def end():
         raise Exception('Not yet implemented')
 
+
+
 # =============================================================================
 # Testing environment
 # =============================================================================
-
-model = Model(3000,(75,25))
-nx.draw(model.graph)
+model = Model(30,(75,25))
+draw_graph_environment(model)
 print('[+] Execution done')

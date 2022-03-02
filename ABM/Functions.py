@@ -2,6 +2,24 @@
 import random as rd
 import math
 from Agent import *
+import networkx as nx
+
+def make_agent_nodes(agent_list):
+    """
+    A function to generate agent nodes used for the model environment
+
+    Parameters
+    ----------
+    agent_list : list of agents (commoners,influencers)
+        Specifies a list of agents. More explicit a list of CommonerAgents and InfluencerAgents
+
+    Returns
+    -------
+    agent_nodes : List of tuples with agent ids and agents
+        Ex [(0,{'agent':CommonerAgent})]
+    """
+    agent_nodes = [(x.agent_id,{'agent':x}) for x in agent_list]
+    return agent_nodes
 
 def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network = 5):
     """
@@ -19,8 +37,8 @@ def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network 
 
     Returns
     -------
-    edge_list : List of tuples of Agents
-        The function return a List containing Tuple of Agent pairs. 
+    edge_list : List of tuples of Agent ids
+        The function return a List containing Tuple of Agent ids pairs. 
         To be used with the networkx library.
     """
     
@@ -39,7 +57,39 @@ def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network 
                 continue
             else:    
                 if c1.agent_id is not c2.agent_id:
-                    edge_list.append((c1,c2))
+                    edge_list.append((c1.agent_id,c2.agent_id))
                 
     edge_list = list(set(edge_list))
     return edge_list
+
+def draw_graph_environment(model):
+    """
+    Function to draw the graph with colors and labels
+
+    Parameters
+    ----------
+    model : Class model
+        Takes an ABM model as parameter
+
+    Returns
+    -------
+    nx.draw()
+        Draws the environment with respective colors.
+        Commoners: gray
+        FInfluencer: red
+        RInfluencer: blue
+    """
+    nodes = model.graph_environment._node
+    
+    color_map = []
+    for key,value in nodes.items():
+        # if isinstance(value['agent'],CommonerAgent) == True:
+        #     print('go')
+        if isinstance(value['agent'],CommonerAgent) == True:
+            color_map.append('lightgray')
+        elif isinstance(value['agent'],InfluencerAgent) == True:
+            if value['agent'].agent_type == 0:
+                color_map.append('blue')
+            else:
+                color_map.append('red')
+    return nx.draw(model.graph_environment,node_color=color_map, with_labels=True,node_size=800)
