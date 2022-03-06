@@ -16,12 +16,12 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 # main 
 @app.route("/", methods=["POST", "GET"])
 def index():
-    if request.method == "POST": 
-        a = request.form.get("a")
-        b = request.form.get("b")
-        sumAB = str(int(a) + int(b))
-        print(sumAB)
-        return render_template('index.html', sumAB = sumAB)
+    # if request.method == "POST": 
+    #     a = request.form.get("a")
+    #     b = request.form.get("b")
+    #     sumAB = str(int(a) + int(b))
+    #     print(sumAB)
+    #     return render_template('index.html', sumAB = sumAB)
 
     return render_template('index.html')
 
