@@ -48,13 +48,18 @@ class Model():
         self.graph_environment.add_nodes_from(make_agent_nodes(self.agents))
         self.graph_environment.add_edges_from(make_agents_connections(self.agents))
     
-    def timestep():
+    def timestep(self):
+        nodes_arr = list(model.graph_environment._node.keys())
+        rd.shuffle(nodes_arr)
+        for agent in nodes_arr:
+            agent_network = list(model.graph_environment.neighbors(agent))
+            ## Init agent method on all adjacent edges
+        raise Exception ('In progress')
+        
+    def update(self):
         raise Exception('Not yet implemented')
 
-    def update():
-        raise Exception('Not yet implemented')
-
-    def end():
+    def end(self):
         raise Exception('Not yet implemented')
 
 
@@ -62,6 +67,9 @@ class Model():
 # =============================================================================
 # Testing environment
 # =============================================================================
-model = Model(30,(75,25))
+model = Model(30,(65,35))
 draw_graph_environment(model)
+
+# model.timestep()
+
 print('[+] Execution done')

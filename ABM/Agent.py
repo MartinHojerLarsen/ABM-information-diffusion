@@ -20,6 +20,9 @@ class Agent():
         self.agent_id = agent_id
         self.opinion = opinion
         
+    def influence_agent(self,list_of_neighbors):
+        raise Exception('Not yet implemented')
+        
 class CommonerAgent(Agent): 
     def __init__(self,agent_id, opinion, i_susceptibility):
         """
