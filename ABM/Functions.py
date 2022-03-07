@@ -1,5 +1,7 @@
 # This file is used to define isolated functions for our ABM
 import random as rd
+import matplotlib.pyplot as plt
+from matplotlib import cm
 import math
 from Agent import *
 import networkx as nx
@@ -21,7 +23,7 @@ def make_agent_nodes(agent_list):
     agent_nodes = [(x.agent_id,{'agent':x}) for x in agent_list]
     return agent_nodes
 
-def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network = 5):
+def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network = 6):
     """
     A function that takes a list of agents and then make appropiate connections between CommonerAgents and InfluencerAgent.
     Two InfluencerAgents cannot have a connection to each other
@@ -57,12 +59,16 @@ def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network 
                 continue
             else:    
                 if c1.agent_id is not c2.agent_id:
-                    edge_list.append((c1.agent_id,c2.agent_id))
+                    if isinstance(c1,CommonerAgent) == True and isinstance(c2,CommonerAgent) == True:
+                        homophily_weight = rd.randint(1,3)
+                        edge_list.append((c1.agent_id,c2.agent_id,homophily_weight))
+                    else:
+                        edge_list.append((c1.agent_id,c2.agent_id,0))
                 
     edge_list = list(set(edge_list))
     return edge_list
 
-def draw_graph_environment(model):
+def draw_graph_environment(model,draw_labels = False):
     """
     Function to draw the graph with colors and labels
 
@@ -71,6 +77,9 @@ def draw_graph_environment(model):
     model : Class model
         Takes an ABM model as parameter
 
+    draw_labels: boolean
+        If true then weights on edges will be displayed in the drawing
+    
     Returns
     -------
     nx.draw()
@@ -82,9 +91,8 @@ def draw_graph_environment(model):
     nodes = model.graph_environment._node
     
     color_map = []
+    
     for key,value in nodes.items():
-        # if isinstance(value['agent'],CommonerAgent) == True:
-        #     print('go')
         if isinstance(value['agent'],CommonerAgent) == True:
             color_map.append('lightgray')
         elif isinstance(value['agent'],InfluencerAgent) == True:
@@ -92,4 +100,10 @@ def draw_graph_environment(model):
                 color_map.append('blue')
             else:
                 color_map.append('red')
-    return nx.draw(model.graph_environment,node_color=color_map, with_labels=True,node_size=800)
+    
+    # Extra properties
+    pos = nx.random_layout(model.graph_environment)
+    nx.draw(model.graph_environment,pos,node_color=color_map, with_labels=True,node_size=600)
+    if draw_labels == True:
+        labels = nx.get_edge_attributes(model.graph_environment, 'weight')
+        nx.draw_networkx_edge_labels(model.graph_environment,pos,font_size=12,edge_labels=labels)

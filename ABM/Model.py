@@ -1,9 +1,11 @@
 # Import statements
+import networkx as nx
+import matplotlib.pyplot as plt
+from matplotlib import cm
 from re import I
 from Agent import *
 import random as rd
 from Functions import *
-import networkx as nx
 #from Post import *
 
 class Model():
@@ -38,21 +40,21 @@ class Model():
 
             # OBS!! These might be moved to the post object
             # =============================================================================
-            i_rate = rd.randint(-100,100)
             i_factor = rd.randint(-100, 100)
             # =============================================================================
-            self.agents.append(InfluencerAgent(agent_id,agent_opinion,influencer_type,i_rate,i_factor))
+            self.agents.append(InfluencerAgent(agent_id,agent_opinion,influencer_type,i_factor))
     
         
         #Initialize graph environment with agent nodes and edges
         self.graph_environment.add_nodes_from(make_agent_nodes(self.agents))
-        self.graph_environment.add_edges_from(make_agents_connections(self.agents))
+        self.graph_environment.add_weighted_edges_from(make_agents_connections(self.agents))
     
     def timestep(self):
         nodes_arr = list(model.graph_environment._node.keys())
         rd.shuffle(nodes_arr)
         for agent in nodes_arr:
             agent_network = list(model.graph_environment.neighbors(agent))
+            # print(f"{agent}: {agent_network}")
             ## Init agent method on all adjacent edges
         raise Exception ('In progress')
         
@@ -62,13 +64,11 @@ class Model():
     def end(self):
         raise Exception('Not yet implemented')
 
-
-
 # =============================================================================
 # Testing environment
 # =============================================================================
-model = Model(30,(65,35))
-draw_graph_environment(model)
+model = Model(3,(65,35))
+draw_graph_environment(model,True)
 
 # model.timestep()
 
