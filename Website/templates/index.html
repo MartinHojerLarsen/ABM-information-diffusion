@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}">
+    <!-- <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}"> -->
+    <!-- Til at køre min stationære derhjemme -->
+    <link rel="shortcut icon" href="/static/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
     <title>ABM-information diffusion</title>
 </head>
 <body>
@@ -76,16 +79,20 @@
             <ul>Information diffusion: <a href="" target="blank">insert link</a></ul>
             <ul>Agent based modelling: <a href="" target="blank">insert link</a></ul>
             <ul>Multiscale systems: <a href="" target="blank">insert link</a></ul>
-            
         </div>
     </div>
     
 </body>
-<script src="{{ url_for('static',filename='canvas1.js') }}"></script>
+<!-- <script src="{{ url_for('static',filename='canvas1.js') }}"></script>
 <script src="{{ url_for('static',filename='canvas_sandbox.js') }}"></script>
 <script src="{{ url_for('static',filename='form.js') }}"></script>
 <script src="{{ url_for('static',filename='ajax.js') }}"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+
+<!-- Til at køre min staionære derhjemme -->
+<script src="/static/canvas1.js"></script>
+<script src="/static/canvas_sandbox.js"></script>
+<script src="/static/ajax.js"></script>
 </script>
 </html>
 
