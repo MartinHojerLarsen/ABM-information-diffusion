@@ -32,8 +32,8 @@ class CommonerAgent(Agent):
         ----------
         agent_type : string
             Signifying the type of agent.
-        i_susceptibility : int
-            how susceptible agent is to be influenced by real news - 0 to 100.
+        i_susceptibility : float
+            how susceptible agent is to be influenced by real news - 1 to 2.
 
         Returns
         -------
@@ -53,10 +53,8 @@ class InfluencerAgent(Agent):
         ----------
         agent_type : string
             Signifying the type of agent.
-        i_rate : int
-            negative value - range from 0 to 100.
-        i_factor : int
-            effectiveness of influence - range from 0 to 100.
+        i_factor : float
+            effectiveness of influence - range from 1 to 2.
 
         Returns
         -------

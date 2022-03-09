@@ -7,7 +7,7 @@ from Agent import *
 import networkx as nx
 
 def make_agent_nodes(agent_list):
-    """
+    '''
     A function to generate agent nodes used for the model environment
 
     Parameters
@@ -19,14 +19,18 @@ def make_agent_nodes(agent_list):
     -------
     agent_nodes : List of tuples with agent ids and agents
         Ex [(0,{'agent':CommonerAgent})]
-    """
+    '''
     agent_nodes = [(x.agent_id,{'agent':x}) for x in agent_list]
     return agent_nodes
+    
 
-def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network = 6):
+def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network = 6,homophily_weight_range = 3 ):
     """
     A function that takes a list of agents and then make appropiate connections between CommonerAgents and InfluencerAgent.
     Two InfluencerAgents cannot have a connection to each other
+    
+    Specified amount of friends are not guaranteed, since there is a probability of befriending oneselve or two influencer agenter befriending each other
+    in this case these friendsships are discarded
 
     Parameters
     ----------
@@ -40,7 +44,7 @@ def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network 
     Returns
     -------
     edge_list : List of tuples of Agent ids
-        The function return a List containing Tuple of Agent ids pairs. 
+        The function return a List containing Tuple of Agent id pairs. 
         To be used with the networkx library.
     """
     
@@ -49,8 +53,11 @@ def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network 
         
         if isinstance(agent,InfluencerAgent):
             amount_of_friends = influencer_network
-            amount_of_friends = amount_of_friends*influencer_network
-            
+            if agent.agent_type == 1:   
+                amount_of_friends = round((amount_of_friends*influencer_network)*1.50) # 50% more due to fake news spreading more
+            else:
+                amount_of_friends = round(amount_of_friends*influencer_network) 
+        
         for i in range(0,amount_of_friends):
             random_agent = agent_list[rd.randint(0,len(agent_list)-1)]
             c1,c2 = (agent,random_agent)
@@ -60,7 +67,7 @@ def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network 
             else:    
                 if c1.agent_id is not c2.agent_id:
                     if isinstance(c1,CommonerAgent) == True and isinstance(c2,CommonerAgent) == True:
-                        homophily_weight = rd.randint(1,3)
+                        homophily_weight = rd.randint(1,homophily_weight_range)
                         edge_list.append((c1.agent_id,c2.agent_id,homophily_weight))
                     else:
                         edge_list.append((c1.agent_id,c2.agent_id,0))
@@ -69,7 +76,7 @@ def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network 
     return edge_list
 
 def draw_graph_environment(model,draw_labels = False):
-    """
+    '''
     Function to draw the graph with colors and labels
 
     Parameters
@@ -87,7 +94,7 @@ def draw_graph_environment(model,draw_labels = False):
         Commoners: gray
         FInfluencer: red
         RInfluencer: blue
-    """
+    '''
     nodes = model.graph_environment._node
     
     color_map = []

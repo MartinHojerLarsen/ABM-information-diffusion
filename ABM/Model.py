@@ -27,21 +27,23 @@ class Model():
         for i in range(0,self.commoner_population):
             # create commoner agents
             agent_id = i
-            agent_opinion = rd.randint(-100, 100)
-            i_susceptibility = rd.randint(0, 100)
+            agent_opinion = rd.randint(-50, 50)
+            i_susceptibility = rd.uniform(1, 2)
 
             self.agents.append(CommonerAgent(agent_id,agent_opinion,i_susceptibility))
 
         for i in range(self.commoner_population,self.population):
             # create influencer agents
             agent_id = i
-            agent_opinion = rd.randint(-100, 100)
             influencer_type = rd.randint(0,1) # 0 = Real News, 1 = Fake News
-
-            # OBS!! These might be moved to the post object
-            # =============================================================================
-            i_factor = rd.randint(-100, 100)
-            # =============================================================================
+            if influencer_type == 1:
+                # A higher factor due to theory of misinformation
+                agent_opinion = rd.randint(-100, -85)
+                i_factor = rd.uniform(1, 2)
+            else:
+                agent_opinion = rd.randint(75, 100)
+                i_factor = rd.uniform(1, 1.75)
+                
             self.agents.append(InfluencerAgent(agent_id,agent_opinion,influencer_type,i_factor))
     
         
@@ -50,13 +52,13 @@ class Model():
         self.graph_environment.add_weighted_edges_from(make_agents_connections(self.agents))
     
     def timestep(self):
-        nodes_arr = list(model.graph_environment._node.keys())
+        nodes_arr = list(self.graph_environment._node.keys())
         rd.shuffle(nodes_arr)
-        for agent in nodes_arr:
-            agent_network = list(model.graph_environment.neighbors(agent))
-            # print(f"{agent}: {agent_network}")
-            ## Init agent method on all adjacent edges
-        raise Exception ('In progress')
+        for agent_id in nodes_arr:
+            agent = self.graph_environment._node[agent_id]['agent']
+            agent_network = list(self.graph_environment.neighbors(agent_id))
+            # Execute influencing process from each individual node to its network
+            agent.influence_agent(agent_network)
         
     def update(self):
         raise Exception('Not yet implemented')
@@ -67,9 +69,9 @@ class Model():
 # =============================================================================
 # Testing environment
 # =============================================================================
-model = Model(3,(65,35))
-draw_graph_environment(model,True)
-
-# model.timestep()
+model = Model(7,(70,30))
+draw_graph_environment(model)
+# Timestep still in test phase
+model.timestep()
 
 print('[+] Execution done')
