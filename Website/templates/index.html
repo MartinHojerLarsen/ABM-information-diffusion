@@ -9,25 +9,83 @@
     <title>ABM-information diffusion</title>
 </head>
 <body>
-    <h1>ABM on information diffusion</h1>
-    <h2>Made by:</h2>
-    <h2>Mads Malling Petersen & Martin Højer Larsen</h2>
-    
-    <h3>Canvas til test</h3>
-    <div id="canvas1_container">
-        <canvas id="canvas1" height="401" width="401"></canvas>
+    <div class="header">
+        <h1 id="headline">An Agent Based Model simulation<br> on information diffusion</h1>
+        <p id="madeby">By Mads Malling Petersen & Martin Højer Larsen</p>
     </div>
+    
 
-    <form action="/" method="post" id="form1">
-        <p>Put in how many different agents you want in the simulation.</p>
-        <input type="number" placeholder="Normal people" name="c">
-        <input type="number" placeholder="Real news influencers" name="r">
-        <input type="number" placeholder="Fake news influencers" name="f">
-        <input id="s1" type="submit" name="submit" value="Generate">
-    </form>  
+    <div class="section_light">
+        <p class="text_headline">Lets see how an influencer might influence a normal person like you and me</p>
+        <p>It seems that the influencer is not very good at his job. Keep in mind however, that this was only one try. 
+            <br>In the real world, you're connected to many people.
+        </p>
+        <div id="canvas1_container">
+            <canvas id="canvas1"></canvas>
+        </div>
+    </div>
+    
+
+    <div class="section_dark">
+        <p class="text_headline">Story time!</p>
+        <p>So as you can see, the stronger the bond between people, the more likely they are to believe what they recieve from their peers.</p>
+    </div>
+    
+    
+    <div class="section_light">
+        <p class="text_headline">Sandbox mode!</p>
+        <div id="canvas_sandbox_container">
+            <canvas id="canvas_sandbox"></canvas>
+        </div>
+        <form action="/" method="post" id="form_sandbox">
+            <p>Put in how many different agents you want in the simulation.</p>
+            <input type="number" placeholder="Normal people" name="c" min="0">
+            <input type="number" placeholder="Real news influencers" name="r" min="0">
+            <input type="number" placeholder="Fake news influencers" name="f" min="0">
+            <input id="s_sandbox" type="submit" name="submit" value="Generate">
+        </form>  
+    </div>
+    
+
+    <div class="section_dark">
+        <h3>Ajax testing</h3>
+        <form action="/" method="post" id="ajaxform">
+            <input type="number" placeholder="A" name="numberA" min="0">
+            <input type="number" placeholder="B" name="numberB" min="0">
+            <input type="submit" name="ajaxsubmit" value="Calculate">
+        </form>
+        <p>AJAX test result:</p>
+        <p id="ajaxresult"></p>
+    </div>
+    
+
+    <div class="section_light">
+        <p class="text_headline">LOREM IPSUM ALL THE WAY</p>
+        <p>MORE LOREM IPSUUUUUUUUUUUUUUUUUUUUUUUUUUM.</p>
+        
+    </div>
+    
+    
+    <div class="footer">
+        <div id="madeby">
+            <p>This project was made for a Master Thesis in Software Design.</p>
+            <p>Created by: Mads Malling Petersen & Martin Højer Larsen</p>
+            <p>Thanks to our advisors Claire Glanois, Elias Najarro and Louisa de Felice.</p>
+            <p>The simulation program is based on litterature about information diffusion, agent based models and <br> multiscale systems. If you want to read up on the topics here are listed some relevant articles:
+            </p>
+            <ul>Information diffusion: <a href="" target="blank">insert link</a></ul>
+            <ul>Agent based modelling: <a href="" target="blank">insert link</a></ul>
+            <ul>Multiscale systems: <a href="" target="blank">insert link</a></ul>
+            
+        </div>
+    </div>
     
 </body>
 <script src="{{ url_for('static',filename='canvas1.js') }}"></script>
+<script src="{{ url_for('static',filename='canvas_sandbox.js') }}"></script>
 <script src="{{ url_for('static',filename='form.js') }}"></script>
+<script src="{{ url_for('static',filename='ajax.js') }}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+</script>
 </html>
 

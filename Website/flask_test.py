@@ -25,19 +25,14 @@ def index():
 
     return render_template('index.html')
 
+@app.route("/ajax", methods=["POST",  "GET"])
+def ajax(): 
+    if request.method == "POST": 
+        result = request.get_json()
+        print(result)
 
-#json test
-@app.route("/data")
-def json_test(): 
-    return jsonify(
-        name = "Mads",
-        age = 42
-    )
+    htmlresult = {"Processed data": "True"}
+    return jsonify(htmlresult)
 
-
-# test for sub URL - access on http://127.0.0.1:5000/test
-@app.route("/test")
-def test():
-    return "<p>test</p>"
 
 
