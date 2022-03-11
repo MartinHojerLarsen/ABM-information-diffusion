@@ -24,7 +24,7 @@ def make_agent_nodes(agent_list):
     return agent_nodes
     
 
-def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network = 6,homophily_weight_range = 3 ):
+def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network = 6,homophily_weight_range = 1.3 ):
     """
     A function that takes a list of agents and then make appropiate connections between CommonerAgents and InfluencerAgent.
     Two InfluencerAgents cannot have a connection to each other
@@ -67,7 +67,7 @@ def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network 
             else:    
                 if c1.agent_id is not c2.agent_id:
                     if isinstance(c1,CommonerAgent) == True and isinstance(c2,CommonerAgent) == True:
-                        homophily_weight = rd.randint(1,homophily_weight_range)
+                        homophily_weight = rd.uniform(1,homophily_weight_range)
                         edge_list.append((c1.agent_id,c2.agent_id,homophily_weight))
                     else:
                         edge_list.append((c1.agent_id,c2.agent_id,0))

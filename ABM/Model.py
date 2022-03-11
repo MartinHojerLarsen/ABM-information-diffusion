@@ -46,7 +46,6 @@ class Model():
                 
             self.agents.append(InfluencerAgent(agent_id,agent_opinion,influencer_type,i_factor))
     
-        
         #Initialize graph environment with agent nodes and edges
         self.graph_environment.add_nodes_from(make_agent_nodes(self.agents))
         self.graph_environment.add_weighted_edges_from(make_agents_connections(self.agents))
@@ -58,7 +57,8 @@ class Model():
             agent = self.graph_environment._node[agent_id]['agent']
             agent_network = list(self.graph_environment.neighbors(agent_id))
             # Execute influencing process from each individual node to its network
-            agent.influence_agent(agent_network)
+            if isinstance(agent,InfluencerAgent) == True:
+                agent.influence_agent(self.graph_environment,agent_network)
         
     def update(self):
         raise Exception('Not yet implemented')
@@ -69,7 +69,7 @@ class Model():
 # =============================================================================
 # Testing environment
 # =============================================================================
-model = Model(7,(70,30))
+model = Model(25,(70,30))
 draw_graph_environment(model)
 # Timestep still in test phase
 model.timestep()
