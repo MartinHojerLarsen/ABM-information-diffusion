@@ -6,6 +6,7 @@ from markupsafe import escape
 # $env:FLASK_APP = "flask_test"
 # $env:FLASK_ENV = "development"    - debug on, updates changes to .py files automatically
 # flask run
+# flask run --host=0.0.0.0          - public (so Mads can see)
 # site runs on http://127.0.0.1:5000/ 
 
 app = Flask(__name__)

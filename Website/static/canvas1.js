@@ -1,50 +1,17 @@
-// Canvas sandbox code 
-let canvas = document.getElementById("canvas1");
-let ctx = canvas.getContext("2d");
+import * as canvas_main from "/static/canvas_main.js";
 
-ctx.strokeStyle = "black";
+//*** Canvas1 1 code ***//
+let canvas1 = document.getElementById("canvas1");
+let ctx1 = canvas1.getContext("2d");
 
-// Size
-ctx.canvas.width = window.innerWidth;
-ctx.canvas.height = window.innerHeight;
+// Cackground
+canvas_main.background(canvas1, ctx1);
 
-
-// Border and background
-ctx.moveTo(0,0);
-ctx.beginPath();
-ctx.rect(1, 1, canvas.width-2, canvas.height-2);
-ctx.fillStyle = "white";
-ctx.fillRect(0, 0, canvas.width, canvas.height);
-ctx.closePath();
-ctx.stroke();
-
-// Commoner 
-ctx.beginPath();
-ctx.arc(900, 800, 50, 0, 2*Math.PI);
-ctx.closePath();
-ctx.stroke();
-ctx.fillStyle = "gray";
-ctx.fill();
+// Commoner
+canvas_main.commoner(ctx1, ctx1.canvas.width/2, 200, 60);
 
 // Real news influencer
-ctx.beginPath();
-ctx.rect(300, 300, 50, 50);
-ctx.closePath();
-ctx.stroke();
-ctx.fillStyle = "blue";
-ctx.fill();
-
+canvas_main.r_influencer(ctx1, 200, 500, 100);
 
 // Fake news influencer
-function draw_f_agent(x, y) {
-    ctx.moveTo(x,y);
-    ctx.beginPath();
-    ctx.lineTo(x-25, y-50);
-    ctx.lineTo(x-25, y);
-    ctx.lineTo(x, y);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.fillStyle = "red";
-    ctx.fill();
-};
-draw_f_agent(100,100);
+canvas_main.f_influencer(ctx1, ctx1.canvas.width-300, 475, 50);

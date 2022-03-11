@@ -54,8 +54,15 @@ body, html {
 
 /******** Canvas ********/
 #canvas1_container {
-    width: 600px;
-    height: 600px;
+    width: 45%;
+}
+
+#canvas_legend_container {
+    position: absolute;
+    top: 510px;
+    left: 620px;
+    width: 300px;
+    height: 200px;
 }
 
 

@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}"> -->
-    <!-- Til at køre min stationære derhjemme -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}">
+    <!-- Til at køre min stationære derhjemme 
     <link rel="shortcut icon" href="/static/favicon.ico">
-    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">-->
     <title>ABM-information diffusion</title>
 </head>
 <body>
@@ -26,6 +26,9 @@
         <div id="canvas1_container">
             <canvas id="canvas1"></canvas>
         </div>
+        <div id="canvas_legend_container">
+            <canvas id="canvas_legend"></canvas>
+        </div>
     </div>
     
 
@@ -42,9 +45,9 @@
         </div>
         <form action="/" method="post" id="form_sandbox">
             <p>Put in how many different agents you want in the simulation.</p>
-            <input type="number" placeholder="Normal people" name="c" min="0">
-            <input type="number" placeholder="Real news influencers" name="r" min="0">
-            <input type="number" placeholder="Fake news influencers" name="f" min="0">
+            <input type="number" name="c" min="0" value="0">
+            <input type="number" name="r" min="0" value="0">
+            <input type="number" name="f" min="0" value="0">
             <input id="s_sandbox" type="submit" name="submit" value="Generate">
         </form>  
     </div>
@@ -74,6 +77,7 @@
             <p>This project was made for a Master Thesis in Software Design.</p>
             <p>Created by: Mads Malling Petersen & Martin Højer Larsen</p>
             <p>Thanks to our advisors Claire Glanois, Elias Najarro and Louisa de Felice.</p>
+            <p>***</p>
             <p>The simulation program is based on litterature about information diffusion, agent based models and <br> multiscale systems. If you want to read up on the topics here are listed some relevant articles:
             </p>
             <ul>Information diffusion: <a href="" target="blank">insert link</a></ul>
@@ -83,16 +87,17 @@
     </div>
     
 </body>
-<!-- <script src="{{ url_for('static',filename='canvas1.js') }}"></script>
-<script src="{{ url_for('static',filename='canvas_sandbox.js') }}"></script>
+<script type="module" src="{{ url_for('static',filename='canvas_main.js') }}"></script>
+<script type="module" src="{{ url_for('static',filename='canvas1.js') }}"></script>
+<script type="module" src="{{ url_for('static',filename='canvas_legend.js') }}"></script>
+<script type="module" src="{{ url_for('static',filename='canvas_sandbox.js') }}"></script>
 <script src="{{ url_for('static',filename='form.js') }}"></script>
 <script src="{{ url_for('static',filename='ajax.js') }}"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-<!-- Til at køre min staionære derhjemme -->
+<!-- Til at køre min staionære derhjemme 
 <script src="/static/canvas1.js"></script>
 <script src="/static/canvas_sandbox.js"></script>
-<script src="/static/ajax.js"></script>
-</script>
+<script src="/static/ajax.js"></script>-->
 </html>
 
