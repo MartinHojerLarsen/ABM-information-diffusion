@@ -41,9 +41,9 @@ class CommonerAgent(Agent):
         self.i_susceptibility = i_susceptibility
         
     def influence_agent(self,graph_env,list_of_neighbors,SCALE_DOWN_FACTOR = 60):
-        print(f'#####################')
-        print(f'###Agent Opinion: {self.opinion}###')
-        print(f'#####################')
+        # print(f'#####################')
+        # print(f'###Agent (Commoner) Opinion: {self.opinion}###')
+        # print(f'#####################')
         for agent_id in list_of_neighbors:
             # current node to influence
             target_agent = graph_env._node[agent_id]['agent']
@@ -58,7 +58,7 @@ class CommonerAgent(Agent):
                 similar_mindset = 1.5 if (self.opinion >= 0 and target_agent_opinion >= 0) or (self.opinion < 0 and target_agent_opinion < 0) else 1
                 opinion_difference = self.opinion-target_agent_opinion
                 homophily = graph_env.get_edge_data(self.agent_id,target_agent.agent_id)['weight']
-                print(f'Homophily between agents {homophily}')
+                # print(f'Homophily between agents {homophily}')
                 
                 target_new_opinion = target_agent_opinion+(opinion_difference*target_agent_susceptibility*similar_mindset*homophily)/SCALE_DOWN_FACTOR
                 
@@ -71,12 +71,12 @@ class CommonerAgent(Agent):
                     target_new_opinion
                 
                 # embed new opinion
-                print(f'##target opinion: {target_agent_opinion}')
+                # print(f'##target opinion: {target_agent_opinion}')
                 
-                target_agent_opinion = target_new_opinion
+                target_agent.opinion = target_new_opinion
                 
-                print(f'##target new opinion: {target_agent_opinion}')
-                print('')
+                # print(f'##target new opinion: {target_agent_opinion}')
+                # print('')
 
 
 class InfluencerAgent(Agent):
@@ -101,9 +101,9 @@ class InfluencerAgent(Agent):
         self.i_factor = i_factor
         
     def influence_agent(self,graph_env,list_of_neighbors,SCALE_DOWN_FACTOR = 80):
-        print(f'#####################')
-        print(f'###{self.opinion}###')
-        print(f'#####################')
+        # print(f'#####################')
+        # print(f'###Agent (Influence){self.opinion}###')
+        # print(f'#####################')
         for agent_id in list_of_neighbors:
             # current node to influence
             target_agent = graph_env._node[agent_id]['agent']
@@ -127,9 +127,9 @@ class InfluencerAgent(Agent):
                 target_new_opinion
             
             # embed new opinion
-            print(f'target opinion: {target_agent_opinion}')
-            target_agent_opinion = target_new_opinion
-            print(f'target new opinion: {target_new_opinion}')
-            print('')
+            # print(f'target opinion: {target_agent_opinion}')
+            target_agent.opinion = target_new_opinion
+            # print(f'target new opinion: {target_new_opinion}')
+            # print('')
             
             

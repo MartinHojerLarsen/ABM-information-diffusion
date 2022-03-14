@@ -6,6 +6,9 @@ from re import I
 from Agent import *
 import random as rd
 from Functions import *
+import pandas as pd
+import numpy as np
+import time
 #from Post import *
 
 class Model():
@@ -16,6 +19,10 @@ class Model():
         self.population = population
         # Initialize Graph
         self.graph_environment = nx.Graph()
+        # Initialize Pd.DataFrame
+        self.dataset = pd.DataFrame(columns=['Timestep','Agent Id','Agent Type','Opinion','Influence Susceptibility','Influence Factor','Network'])
+        # Keeping track of timesteps
+        self.timestep_val = 0
         
         commoner_dist,influencer_dist = distribution
         if commoner_dist + influencer_dist != 100:
@@ -46,9 +53,12 @@ class Model():
                 
             self.agents.append(InfluencerAgent(agent_id,agent_opinion,influencer_type,i_factor))
     
-        #Initialize graph environment with agent nodes and edges
+        # Initialize graph environment with agent nodes and edges
         self.graph_environment.add_nodes_from(make_agent_nodes(self.agents))
         self.graph_environment.add_weighted_edges_from(make_agents_connections(self.agents))
+        
+        # Record initial values of all agents before timesteps are executed
+        self.record_data()
     
     def timestep(self):
         nodes_arr = list(self.graph_environment._node.keys())
@@ -57,21 +67,56 @@ class Model():
             agent = self.graph_environment._node[agent_id]['agent']
             agent_network = list(self.graph_environment.neighbors(agent_id))
             # Execute influencing process from each individual node to its network
-            if isinstance(agent,InfluencerAgent) == True:
-                agent.influence_agent(self.graph_environment,agent_network)
+            agent.influence_agent(self.graph_environment,agent_network)
         
-    def update(self):
-        raise Exception('Not yet implemented')
-
+        # Record Data for every timestep
+        self.record_data()
+        
+    def record_data(self):
+        for agent in self.graph_environment._node.values():
+            agent_obj = agent['agent']
+            if isinstance(agent_obj,InfluencerAgent) == True:
+                timestep_df = {'Timestep':f'T{self.timestep_val}',
+                               'Agent Id':agent_obj.agent_id,
+                               'Agent Type':'InfluencerAgent',
+                               'Opinion':agent_obj.opinion,
+                               'Influence Susceptibility':np.nan,
+                               'Influence Factor':agent_obj.i_factor,
+                               'Network':list(self.graph_environment.neighbors(agent_obj.agent_id))}
+                self.dataset = self.dataset.append(timestep_df,ignore_index=True)
+            elif isinstance(agent_obj,CommonerAgent) == True:
+                timestep_df = {'Timestep':f'T{self.timestep_val}',
+                               'Agent Id':agent_obj.agent_id,
+                               'Agent Type':'CommonerAgent',
+                               'Opinion':agent_obj.opinion,
+                               'Influence Susceptibility':agent_obj.i_susceptibility,
+                               'Influence Factor':np.nan,
+                               'Network':list(self.graph_environment.neighbors(agent_obj.agent_id))}
+                self.dataset = self.dataset.append(timestep_df,ignore_index=True)
+        self.timestep_val += 1
+        
     def end(self):
         raise Exception('Not yet implemented')
 
 # =============================================================================
 # Testing environment
 # =============================================================================
-model = Model(25,(70,30))
-draw_graph_environment(model)
-# Timestep still in test phase
-model.timestep()
 
-print('[+] Execution done')
+# Benchmarking
+
+# Performance depended on population and amount of timesteps
+start = time.time()
+
+timesteps = 50
+
+model = Model(20,(75,25))
+draw_graph_environment(model)
+
+for i in range(timesteps):
+    model.timestep()
+
+display_df = model.dataset
+
+done = time.time()
+elapsed = done - start
+print(f'Running Time: {elapsed}')
