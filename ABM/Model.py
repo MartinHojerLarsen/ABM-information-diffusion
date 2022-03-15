@@ -73,6 +73,7 @@ class Model():
         self.record_data()
         
     def record_data(self):
+        rows = []
         for agent in self.graph_environment._node.values():
             agent_obj = agent['agent']
             if isinstance(agent_obj,InfluencerAgent) == True:
@@ -83,7 +84,7 @@ class Model():
                                'Influence Susceptibility':np.nan,
                                'Influence Factor':agent_obj.i_factor,
                                'Network':list(self.graph_environment.neighbors(agent_obj.agent_id))}
-                self.dataset = self.dataset.append(timestep_df,ignore_index=True)
+                rows.append(timestep_df)
             elif isinstance(agent_obj,CommonerAgent) == True:
                 timestep_df = {'Timestep':f'T{self.timestep_val}',
                                'Agent Id':agent_obj.agent_id,
@@ -92,7 +93,8 @@ class Model():
                                'Influence Susceptibility':agent_obj.i_susceptibility,
                                'Influence Factor':np.nan,
                                'Network':list(self.graph_environment.neighbors(agent_obj.agent_id))}
-                self.dataset = self.dataset.append(timestep_df,ignore_index=True)
+                rows.append(timestep_df)
+        self.dataset = self.dataset.append(rows,ignore_index=True)
         self.timestep_val += 1
         
     def end(self):
@@ -107,9 +109,9 @@ class Model():
 # Performance depended on population and amount of timesteps
 start = time.time()
 
-timesteps = 50
+timesteps = 10
 
-model = Model(20,(75,25))
+model = Model(1000,(75,25))
 draw_graph_environment(model)
 
 for i in range(timesteps):
