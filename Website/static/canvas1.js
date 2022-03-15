@@ -8,10 +8,10 @@ let ctx1 = canvas1.getContext("2d");
 canvas_main.background(canvas1, ctx1);
 
 // Commoner
-canvas_main.commoner(ctx1, ctx1.canvas.width/2, 200, 60);
+canvas_main.commoner(ctx1, ctx1.canvas.width/2, 200, 80);
 
 // Real news influencer
-canvas_main.r_influencer(ctx1, 200, 500, 100);
+canvas_main.r_influencer(ctx1, ctx1.canvas.width * 0.25, 600, 140);
 
 // Fake news influencer
-canvas_main.f_influencer(ctx1, ctx1.canvas.width-300, 475, 50);
+canvas_main.f_influencer(ctx1, ctx1.canvas.width*0.75, 575, 80);

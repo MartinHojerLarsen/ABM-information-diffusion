@@ -13,12 +13,12 @@ ctx_legend.canvas.height = window.innerHeight;
 ctx_legend.moveTo(0,0);
 
 // Commoner 
-canvas_main.commoner(ctx_legend, 100, 100, 50);
+canvas_main.commoner(ctx_legend, 100, 100, 100);
 
 
 // Real news influencer
-canvas_main.r_influencer(ctx_legend, 50, 250, 100);
+canvas_main.r_influencer(ctx_legend, 0, 300, 200);
 
 // Fake news influencer
-canvas_main.f_influencer(ctx_legend, 100, 450, 50);
+canvas_main.f_influencer(ctx_legend, 100, 600, 100);
 

@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}">
-    <!-- Til at køre min stationære derhjemme 
+<!--     
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}"> 
+    -->
+    <!-- Til at køre min stationære derhjemme -->
     <link rel="shortcut icon" href="/static/favicon.ico">
-    <link rel="stylesheet" type="text/css" href="/static/styles.css">-->
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
     <title>ABM-information diffusion</title>
 </head>
 <body>
@@ -17,28 +19,33 @@
         <p id="madeby">By Mads Malling Petersen & Martin Højer Larsen</p>
     </div>
     
-
+    
     <div class="section_light">
         <p class="text_headline">Lets see how an influencer might influence a normal person like you and me</p>
-        <p>It seems that the influencer is not very good at his job. Keep in mind however, that this was only one try. 
-            <br>In the real world, you're connected to many people.
-        </p>
+        <p>The gray circle is the average person in a social network. The blue square represents an influencer pushing factually based news. The read triangle on the other hand, is an influencer prone to share fake news.</p>        
+        
         <div id="canvas1_container">
             <canvas id="canvas1"></canvas>
         </div>
-        <div id="canvas_legend_container">
-            <canvas id="canvas_legend"></canvas>
-        </div>
+        
+        <p>It seems that the influencer is not very good at his job. Keep in mind however, that this was only one try and in a very small isolated network.
+            <br>In the real world, you're connected to many people.
+        </p>
+        <p class="text_headline">Try it out below:</p>
+    </div>
+
+    <div class="section_dark">
+        <p>insert canvas here</p>
     </div>
     
 
-    <div class="section_dark">
-        <p class="text_headline">Story time!</p>
+    <div class="section_light">
+        <p class="text_headline">Story time</p>
         <p>So as you can see, the stronger the bond between people, the more likely they are to believe what they recieve from their peers.</p>
     </div>
     
     
-    <div class="section_light">
+    <div class="section_dark">
         <p class="text_headline">Sandbox mode!</p>
         <div id="canvas_sandbox_container">
             <canvas id="canvas_sandbox"></canvas>
@@ -53,8 +60,13 @@
     </div>
     
 
+    <div class="section_light">
+        <p class="text_headline">More writing to add.</p>
+    </div>
+
+    
     <div class="section_dark">
-        <h3>Ajax testing</h3>
+        <h3>Ajax testing (dont mind this)</h3>
         <form action="/" method="post" id="ajaxform">
             <input type="number" placeholder="A" name="numberA" min="0">
             <input type="number" placeholder="B" name="numberB" min="0">
@@ -64,7 +76,7 @@
         <p id="ajaxresult"></p>
     </div>
     
-
+    
     <div class="section_light">
         <p class="text_headline">LOREM IPSUM ALL THE WAY</p>
         <p>MORE LOREM IPSUUUUUUUUUUUUUUUUUUUUUUUUUUM.</p>
@@ -87,17 +99,20 @@
     </div>
     
 </body>
-<script type="module" src="{{ url_for('static',filename='canvas_main.js') }}"></script>
-<script type="module" src="{{ url_for('static',filename='canvas1.js') }}"></script>
-<script type="module" src="{{ url_for('static',filename='canvas_legend.js') }}"></script>
-<script type="module" src="{{ url_for('static',filename='canvas_sandbox.js') }}"></script>
-<script src="{{ url_for('static',filename='form.js') }}"></script>
-<script src="{{ url_for('static',filename='ajax.js') }}"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- 
+    <script type="module" src="{{ url_for('static',filename='canvas_main.js') }}"></script>
+    <script type="module" src="{{ url_for('static',filename='canvas1.js') }}"></script>
+    <script type="module" src="{{ url_for('static',filename='canvas_sandbox.js') }}"></script>
+    <script src="{{ url_for('static',filename='form.js') }}"></script>
+    <script src="{{ url_for('static',filename='ajax.js') }}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+-->
 
-<!-- Til at køre min staionære derhjemme 
-<script src="/static/canvas1.js"></script>
-<script src="/static/canvas_sandbox.js"></script>
-<script src="/static/ajax.js"></script>-->
+<!-- Til at køre min staionære derhjemme -->
+<script type="module" src="/static/canvas_main.js"></script>
+<script src="/static/agent_class.js"></script>
+<script type="module" src="/static/canvas1.js"></script>
+<script type="module" src="/static/canvas_sandbox.js"></script>
+<script type="module" src="/static/ajax.js"></script>
 </html>
 
