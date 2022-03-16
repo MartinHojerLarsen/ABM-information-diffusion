@@ -109,13 +109,23 @@ let sandbox_form = document.getElementById("form_sandbox");
 sandbox_form.addEventListener("submit", function(e) {
     e.preventDefault();
     
+    // Clears canvas - Not sure if needed to clear? maybe when animation comes
     canvas_main.clear_canvas(canvas_sandbox, ctx_sandbox);
     
-    let c = parseInt(sandbox_form.elements["c"].value);
-    let r = parseInt(sandbox_form.elements["r"].value);
-    let f = parseInt(sandbox_form.elements["f"].value);
+    // Number of agents from input field
+    let agents = parseInt(sandbox_form.elements["agents"].value);
     
-    createPositions((c+r+f));
+    // Distribution from sliders (divided by number of agents)
+    let f = agents * (document.getElementById("slider_c_value").innerHTML / 100);
+    let c = agents * (document.getElementById("slider_f_value").innerHTML / 100);
+    let r = agents * (document.getElementById("slider_r_value").innerHTML / 100);
+    // PROBABLY NEEDS TO BE ROUNDED
+    console.log("fake:" + f);
+    console.log("commoners: " + c);
+    console.log("real: " + r);
+
+    // calling initialization and drawing functions
+    createPositions(agents);
     map_agents(c, r, f);
     
     // stops refreshing page

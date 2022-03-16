@@ -10,6 +10,7 @@ class Agent {
         this.y = y;
     }
 
+    // Getters 
     getID() {
         return this.ID;
     }

@@ -26,6 +26,7 @@ def index():
 
     return render_template('index.html')
 
+# AJAX handling
 @app.route("/ajax", methods=["POST",  "GET"])
 def ajax(): 
     if request.method == "POST": 

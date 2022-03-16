@@ -18,9 +18,9 @@ let c = {
     x: ctx1.canvas.width/2,
     y: 200,
     size: 80
-}
+};
 canvas_main.commoner(ctx1, c.x, c.y, c.size);
-// Hover handling - commoner
+// Hover handling - commoner - not really working correctly 
 canvas1.addEventListener("mousemove", function(e) {
     canvas_main.hover(e, c);
 });

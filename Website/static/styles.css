@@ -47,9 +47,18 @@ h1, h2, h3, h4, form {
 }
 
 #sandbox_slider .noUi-handle {
-    background-color: lightgray;
+    background: rgb(85, 85, 85);   
 }
 
+.range_c {
+    background: gray;
+}
+.range_r {
+    background: blue;
+}
+.range_f {
+    background: red;
+}
 
 .section_light {
     width: 800px;

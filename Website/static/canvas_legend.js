@@ -1,5 +1,7 @@
 import * as canvas_main from "/static/canvas_main.js";
 
+// DECPRECATED
+
 //*** Canvas legend ***//  
 let canvas_legend = document.getElementById("canvas_legend");
 let ctx_legend = canvas_legend.getContext("2d");
