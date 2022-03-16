@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!--     
-        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}"> 
-    -->
-    <!-- Til at køre min stationære derhjemme -->
+    
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}"> 
+    <link rel="stylesheet" type="text/css" href="/static/nouislider.min.css"> 
+    
+    <!-- Til at køre min stationære derhjemme 
     <link rel="shortcut icon" href="/static/favicon.ico">
     <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    -->
     <title>ABM-information diffusion</title>
 </head>
 <body>
@@ -23,22 +25,23 @@
     <div class="section_light">
         <p class="text_headline">Lets see how an influencer might influence a normal person like you and me</p>
         <p>The gray circle is the average person in a social network. The blue square represents an influencer pushing factually based news. The read triangle on the other hand, is an influencer prone to share fake news.</p>        
+        <p>Try to press the influencers to see how they influence their (small) network</p>
         
         <div id="canvas1_container">
             <canvas id="canvas1"></canvas>
         </div>
         
-        <p>It seems that the influencer is not very good at his job. Keep in mind however, that this was only one try and in a very small isolated network.
-            <br>In the real world, you're connected to many people.
+        <p>It seems that the influencers are not very good at their job. Keep in mind however, that this was only one try and in a very small and isolated network.
+            <br>In the real world, you're connected to many people - and many influencers.
         </p>
         <p class="text_headline">Try it out below:</p>
     </div>
-
+    
     <div class="section_dark">
         <p>insert canvas here</p>
     </div>
     
-
+    
     <div class="section_light">
         <p class="text_headline">Story time</p>
         <p>So as you can see, the stronger the bond between people, the more likely they are to believe what they recieve from their peers.</p>
@@ -51,19 +54,18 @@
             <canvas id="canvas_sandbox"></canvas>
         </div>
         <form action="/" method="post" id="form_sandbox">
-            <p>Put in how many different agents you want in the simulation.</p>
-            <input type="number" name="c" min="0" value="0">
-            <input type="number" name="r" min="0" value="0">
-            <input type="number" name="f" min="0" value="0">
+            <p>Choose how many agents you want in the simulation <br> and use the slider choose the distribution of the agents.</p>
+            <input type="number" name="c" min="0" max="500" value="0">
+            <div id="sandbox_slider"></div>
             <input id="s_sandbox" type="submit" name="submit" value="Generate">
         </form>  
     </div>
     
-
+    
     <div class="section_light">
         <p class="text_headline">More writing to add.</p>
     </div>
-
+    
     
     <div class="section_dark">
         <h3>Ajax testing (dont mind this)</h3>
@@ -99,20 +101,26 @@
     </div>
     
 </body>
-<!-- 
-    <script type="module" src="{{ url_for('static',filename='canvas_main.js') }}"></script>
-    <script type="module" src="{{ url_for('static',filename='canvas1.js') }}"></script>
-    <script type="module" src="{{ url_for('static',filename='canvas_sandbox.js') }}"></script>
-    <script src="{{ url_for('static',filename='form.js') }}"></script>
-    <script src="{{ url_for('static',filename='ajax.js') }}"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
--->
 
-<!-- Til at køre min staionære derhjemme -->
+<script type="module" src="{{ url_for('static',filename='canvas_main.js') }}"></script>
+<script type="module" src="{{ url_for('static',filename='canvas1.js') }}"></script>
+<script type="module" src="{{ url_for('static',filename='canvas_sandbox.js') }}"></script>
+<script src="{{ url_for('static',filename='agent_class.js') }}"></script>
+<script src="{{ url_for('static',filename='form.js') }}"></script>
+<script src="{{ url_for('static',filename='ajax.js') }}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+<script src="/static/nouislider.min.js"></script> 
+<script src="/static/wNumb.min.js"></script> 
+<script src="{{ url_for('static',filename='sandbox_slider.js') }}"></script>
+
+
+
+<!-- Til at køre min staionære derhjemme 
 <script type="module" src="/static/canvas_main.js"></script>
 <script src="/static/agent_class.js"></script>
 <script type="module" src="/static/canvas1.js"></script>
 <script type="module" src="/static/canvas_sandbox.js"></script>
 <script type="module" src="/static/ajax.js"></script>
+-->
 </html>
 

@@ -41,29 +41,28 @@ function map_agents(c, r, f) {
     // Commoners
     if (c > 0) {
         for (let i = agent_list.length; i < c; i++) {
-            let agent = new Agent(i, 2, canvas_main.randInt(-100, 100), rand_connections(), canvas_main.randInt(10, window.innerWidth -10), canvas_main.randInt(10, window.innerHeight -10))
+            let agent = new Agent(i, 2, canvas_main.randInt(-100, 100), rand_connections(), canvas_main.randInt(20, window.innerWidth -20), canvas_main.randInt(20, window.innerHeight -20))
             agent_list.push(agent);
         }
     }
     // Real news influencers
     if (r > 0) {
         for (let i = agent_list.length; i < (r + c); i++) {
-            let agent = new Agent(i, 1, canvas_main.randInt(0, 100), [], canvas_main.randInt(10, window.innerWidth -10), canvas_main.randInt(10, window.innerHeight -10))
+            let agent = new Agent(i, 1, canvas_main.randInt(0, 100), [], canvas_main.randInt(10, window.innerWidth -30), canvas_main.randInt(10, window.innerHeight -30))
             agent_list.push(agent);
         }
     }
     // Fake news influencers
     if (f > 0) {
         for (let i = agent_list.length; i < (f + r); i++) {
-            let agent = new Agent(i, 0, canvas_main.randInt(-100, 0), [], canvas_main.randInt(10, window.innerWidth -10), canvas_main.randInt(10, window.innerHeight -10))
+            let agent = new Agent(i, 0, canvas_main.randInt(-100, 0), [], canvas_main.randInt(15, window.innerWidth -15), canvas_main.randInt(10, window.innerHeight -30))
             agent_list.push(agent);
         }
     }
     console.log("Agent List:")
     console.log(agent_list);
-    create_agents(agent_list);
     create_edges(agent_list);
-    
+    create_agents(agent_list);
 };
 
 
@@ -83,7 +82,6 @@ function create_agents(agent_list) {
         if (e.getType() == 0) {
             canvas_main.f_influencer(ctx_sandbox, e.getX(), e.getY(), 10, e.getID(), e.getType());
         }
-        
     });
 };
 
@@ -101,7 +99,6 @@ function create_edges(agent_list) {
             canvas_main.line(ctx_sandbox, agent_list[i].getX(), agent_list[i].getY(), x2, y2);
         }
     }
-    console.log("is it running?");
 }
 
 

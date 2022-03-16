@@ -66,17 +66,62 @@ function f_influencer(ctx, x, y, size, ID=0, type=0, opinion=-100, connections) 
 };
 
 // Line (edge) 
-function line(ctx, x1, y1, x2, y2) {
+function line(ctx, x1, y1, x2, y2, size=1) {
     ctx.strokeStyle = "black";
-    ctx.moveTo(x1,y1);
+    ctx.lineWidth = size;
     ctx.beginPath();
+    ctx.moveTo(x1,y1);
     ctx.lineTo(x2, y2);
-    ctx.closePath();
     ctx.stroke();
+    ctx.closePath();
 }
 
 
+// Mouse hover handling
+function hover(e, object) {
+    e.preventDefault(); 
+    e.stopPropagation();
+    
+    // Cursor position
+    let cx = e.offsetX;
+    let cy = e.offsetY;
+    console.log(cx, cy);
+    
+    let isInside = touchingCircle(object, cx, cy); 
+    // console.log(isInside);
+    
+    if (isInside) {
+        document.body.style.cursor = "pointer";
+    } else {
+        document.body.style.cursor = "default";
+    }
+    
+}
+
+
+
 //*** Helper functions ***//
+
+// detect circle
+// if(Math.pow(x-50,2)+Math.pow(y-50,2) < Math.pow(50,2))  
+function touchingCircle(ob, x, y) {
+    return Math.sqrt((x-ob.x) ** 2 + (y - ob.y) ** 2) < ob.size;
+};
+
+// detect square
+function touchingSquare(ob, x, y) {
+    let obX = ob.x;
+    let obY = ob.y;
+    let size = ob.size;
+    
+    // Returning true/false if (x,y) (mouse coords) are inside the object 
+    return (x >= obX-size && x <= obX+size && y >= obY-size && y <= obY+size);
+};
+
+// detect triangle
+function touchinTriangle(ob, x, y) {
+
+};
 
 // Random number for drawing agents - used for positions
 function randInt(min, max) {
@@ -94,7 +139,7 @@ function color_agent(type, opinion) {
         } else {
             return "#ffcccc"
         }
-    // Real news influencers
+        // Real news influencers
     } else if (type == 1) {
         if (opinion > 80) {
             return "blue"
@@ -108,4 +153,4 @@ function color_agent(type, opinion) {
 
 
 // Export
-export {background, commoner, r_influencer, f_influencer, clear_canvas, randInt, line};
+export {background, commoner, r_influencer, f_influencer, clear_canvas, randInt, line, hover};
