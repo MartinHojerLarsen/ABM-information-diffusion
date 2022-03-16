@@ -75,6 +75,9 @@ def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network 
     edge_list = list(set(edge_list))
     return edge_list
 
+
+# Only for testing purpose
+
 def draw_graph_environment(model,draw_labels = False):
     '''
     Function to draw the graph with colors and labels
@@ -110,7 +113,7 @@ def draw_graph_environment(model,draw_labels = False):
     
     # Extra properties
     pos = nx.random_layout(model.graph_environment)
-    nx.draw(model.graph_environment,pos,node_color=color_map, with_labels=True,node_size=600)
+    nx.draw(model.graph_environment,pos,node_color=color_map, with_labels=True,node_size=600,font_family="sans-serif")
     if draw_labels == True:
         labels = nx.get_edge_attributes(model.graph_environment, 'weight')
-        nx.draw_networkx_edge_labels(model.graph_environment,pos,font_size=12,edge_labels=labels)
+        nx.draw_networkx_edge_labels(model.graph_environment,pos,font_size=10,edge_labels=labels)

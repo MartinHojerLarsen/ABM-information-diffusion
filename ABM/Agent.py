@@ -75,7 +75,7 @@ class CommonerAgent(Agent):
                 
                 target_agent.opinion = target_new_opinion
                 
-                # print(f'##target new opinion: {target_agent_opinion}')
+                # print(f'##target new opinion: {target_agent.opinion}')
                 # print('')
 
 
@@ -129,7 +129,7 @@ class InfluencerAgent(Agent):
             # embed new opinion
             # print(f'target opinion: {target_agent_opinion}')
             target_agent.opinion = target_new_opinion
-            # print(f'target new opinion: {target_new_opinion}')
+            # print(f'target new opinion: {target_agent.opinion}')
             # print('')
             
             

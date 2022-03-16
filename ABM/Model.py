@@ -13,23 +13,31 @@ import time
 
 class Model():
     def __init__(self,population, distribution):
+        
         # Initialize Agent list
         self.agents = []
         # Initialize population
         self.population = population
         # Initialize Graph
         self.graph_environment = nx.Graph()
-        # Initialize Pd.DataFrame
-        self.dataset = pd.DataFrame(columns=['Timestep','Agent Id','Agent Type','Opinion','Influence Susceptibility','Influence Factor','Network'])
+        # Initialize Pd.DataFrame for data collection
+        pd.set_option("expand_frame_repr", True)
+        self.dataset_individual_agent = pd.DataFrame(columns=['Timestep','Agent Id','Agent Type','Opinion','Influence Susceptibility','Influence Factor','Network'])
+        self.dataset_global_opinion = pd.DataFrame(columns=['Timestep','Population','Global Opinion','Influencer Opinion Included'])
+        
         # Keeping track of timesteps
         self.timestep_val = 0
         
-        commoner_dist,influencer_dist = distribution
-        if commoner_dist + influencer_dist != 100:
+        commoner_dist,r_influencer_dist, f_influencer_dist = distribution
+        if commoner_dist + r_influencer_dist + f_influencer_dist != 100:
             raise Exception("Population distribution mismatch. Must be equal to 100")
 
         self.commoner_population = round(self.population*(commoner_dist/100)) # Divides population into Commoners and Influencers
-        self.influencer_population = round(self.population*(influencer_dist/100)) # Divides population into Commoners and Influencers
+        self.f_influencer_population = round(self.population*(f_influencer_dist/100)) # Divides population into Commoners and Influencers
+        self.r_influencer_population = round(self.population*(r_influencer_dist/100)) # Divides population into Commoners and Influencers
+
+        # boundary for unique agent ids
+        self.pop_init_boundary = self.commoner_population + self.f_influencer_population
 
         for i in range(0,self.commoner_population):
             # create commoner agents
@@ -39,17 +47,21 @@ class Model():
 
             self.agents.append(CommonerAgent(agent_id,agent_opinion,i_susceptibility))
 
-        for i in range(self.commoner_population,self.population):
-            # create influencer agents
+        for i in range(self.commoner_population,self.pop_init_boundary):
+            # create fake news influencer agents
             agent_id = i
-            influencer_type = rd.randint(0,1) # 0 = Real News, 1 = Fake News
-            if influencer_type == 1:
-                # A higher factor due to theory of misinformation
-                agent_opinion = rd.randint(-100, -85)
-                i_factor = rd.uniform(1, 2)
-            else:
-                agent_opinion = rd.randint(75, 100)
-                i_factor = rd.uniform(1, 1.75)
+            influencer_type = 1 # 0 = Real News, 1 = Fake News
+            agent_opinion = rd.randint(-100, -85)
+            i_factor = rd.uniform(1, 2)
+
+            self.agents.append(InfluencerAgent(agent_id,agent_opinion,influencer_type,i_factor))            
+
+        for i in range(self.pop_init_boundary,self.population):
+            # create real news influencer agents
+            agent_id = i
+            influencer_type = 0 # 0 = Real News, 1 = Fake News
+            agent_opinion = rd.randint(75, 100)
+            i_factor = rd.uniform(1, 1.75)
                 
             self.agents.append(InfluencerAgent(agent_id,agent_opinion,influencer_type,i_factor))
     
@@ -58,7 +70,7 @@ class Model():
         self.graph_environment.add_weighted_edges_from(make_agents_connections(self.agents))
         
         # Record initial values of all agents before timesteps are executed
-        self.record_data()
+        self.record_data_individual_agent()
     
     def timestep(self):
         nodes_arr = list(self.graph_environment._node.keys())
@@ -70,9 +82,9 @@ class Model():
             agent.influence_agent(self.graph_environment,agent_network)
         
         # Record Data for every timestep
-        self.record_data()
+        self.record_data_individual_agent()
         
-    def record_data(self):
+    def record_data_individual_agent(self):
         rows = []
         for agent in self.graph_environment._node.values():
             agent_obj = agent['agent']
@@ -94,30 +106,43 @@ class Model():
                                'Influence Factor':np.nan,
                                'Network':list(self.graph_environment.neighbors(agent_obj.agent_id))}
                 rows.append(timestep_df)
-        self.dataset = self.dataset.append(rows,ignore_index=True)
+        self.dataset_individual_agent = self.dataset_individual_agent.append(rows,ignore_index=True)
         self.timestep_val += 1
         
-    def end(self):
+    def record_data_collectives(self):
         raise Exception('Not yet implemented')
 
+    def record_data_global_opinion(self,include_influencer_agent_op = False):
+        timesteps = self.dataset_individual_agent['Timestep'].unique()
+        g_opinion_dict = []
+        for tp in timesteps:
+            if include_influencer_agent_op:
+                g_opinion = self.dataset_individual_agent[self.dataset_individual_agent['Timestep'] == tp]
+            else:
+                g_opinion = self.dataset_individual_agent[(self.dataset_individual_agent['Timestep'] == tp) & (model.dataset_individual_agent['Agent Type'] == 'CommonerAgent')]
+            # print(g_opinion['Opinion'].mean())
+            g_opinion_average = g_opinion['Opinion'].mean()
+            g_opinion_dict.append({'Timestep':tp,'Population':self.population,'Global Opinion':g_opinion_average,'Influencer Opinion Included':include_influencer_agent_op})
+        self.dataset_global_opinion = self.dataset_global_opinion.append(g_opinion_dict,ignore_index=True)
 # =============================================================================
 # Testing environment
 # =============================================================================
 
 # Benchmarking
-
-# Performance depended on population and amount of timesteps
 start = time.time()
 
-timesteps = 10
+# amount of timesteps
+timesteps = 50
 
-model = Model(1000,(75,25))
+model = Model(50,(33,17,50))
 draw_graph_environment(model)
 
 for i in range(timesteps):
     model.timestep()
 
-display_df = model.dataset
+model.record_data_global_opinion()
+df_individual_opinion = model.dataset_individual_agent
+df_global_opinion = model.dataset_global_opinion
 
 done = time.time()
 elapsed = done - start
