@@ -51,7 +51,7 @@ class Model():
             # create fake news influencer agents
             agent_id = i
             influencer_type = 1 # 0 = Real News, 1 = Fake News
-            agent_opinion = rd.randint(-100, -85)
+            agent_opinion = rd.randint(-100, -85) # A bit higher due to theory of deeper influencing
             i_factor = rd.uniform(1, 2)
 
             self.agents.append(InfluencerAgent(agent_id,agent_opinion,influencer_type,i_factor))            
@@ -165,7 +165,7 @@ class Model():
 start = time.time()
 
 # amount of timesteps
-timesteps = 500
+timesteps = 30
 
 model = Model(75,(50,25,25))
 draw_graph_environment(model)
