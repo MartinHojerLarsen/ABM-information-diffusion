@@ -92,8 +92,9 @@ h1, h2, h3, h4, form {
 }
 
 /******** Canvas ********/
+/* Canvas has fixed values */
 #canvas1_container {
-    width: 100%;
+    width: 800px;
     text-align: center;
 }
 

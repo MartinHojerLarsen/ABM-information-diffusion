@@ -1,5 +1,10 @@
 // *** Main canvas file *** //
 // Containing all draw() functions //
+let commoner_img = document.getElementById('commoner_img');
+let f_influencer_img = document.getElementById('finfluencer_img');
+let r_influencer_img = document.getElementById('rinfluencer_img');
+
+
 
 // Background
 function background(canvas, ctx, color="#eeeaea") {
@@ -28,41 +33,37 @@ function clear_canvas(canvas, ctx, color="#eeeaea") {
     ctx.closePath();
 };
 
-// Commoner 
+
+// Offset image x,y coordinates to center of image
+function drawImageRot(ctx,img,x,y,width,height,deg) {
+    //Convert degrees to radian
+    var rad = deg * Math.PI / 180;
+    //Set the origin to the center of the image
+    ctx.translate(x, y);
+    //Rotate the canvas around the origin
+    ctx.rotate(rad);
+    //draw the image
+    ctx.drawImage(img, width / 2 * (-1), height / 2 * (-1), width, height);
+    //reset the canvas
+    ctx.rotate(rad * ( -1 ) );
+    //
+    ctx.translate((x) * (-1), (y) * (-1));
+  }
+
+// Commoner
 function commoner(ctx, x, y, size, ID=0, type=2, connections) {
-    ctx.strokeStyle = "#4d4d4d";
-    ctx.lineWidth = size/5;
-    ctx.moveTo(0,0);
-    ctx.beginPath();
-    ctx.arc(x, y, size, 0, 2*Math.PI);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.fillStyle = "gray";
-    ctx.fill();
+    //ctx.drawImage(commoner_img,x,y,size,size);
+    drawImageRot(ctx,commoner_img,x,y,size,size)
 };
 
 // Real news influencer
 function r_influencer(ctx, x, y, size, ID=0, type=1, opinion=100, connections) {
-    ctx.strokeStyle = "#0000b3";
-    ctx.beginPath();
-    ctx.rect(x, y, size, size);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.fillStyle = color_agent(type, opinion);
-    ctx.fill();
+    drawImageRot(ctx,r_influencer_img,x,y,size,size)
 };
 
 // Fake news influencer 
 function f_influencer(ctx, x, y, size, ID=0, type=0, opinion=-100, connections) {
-    ctx.strokeStyle = "#b30000";
-    ctx.beginPath();
-    ctx.lineTo(x,y);
-    ctx.lineTo(x-size, y+(size*2));
-    ctx.lineTo(x+size, y+(size*2));
-    ctx.closePath();
-    ctx.stroke();
-    ctx.fillStyle = color_agent(type, opinion);
-    ctx.fill();
+    drawImageRot(ctx,f_influencer_img,x,y,size,size)
 };
 
 // Line (edge) 
@@ -85,7 +86,7 @@ function hover(e, object) {
     // Cursor position
     let cx = e.offsetX;
     let cy = e.offsetY;
-    console.log(cx, cy);
+    //console.log(cx, cy);
     
     let isInside = touchingCircle(object, cx, cy); 
     // console.log(isInside);

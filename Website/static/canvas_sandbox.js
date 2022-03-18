@@ -69,18 +69,19 @@ function map_agents(c, r, f) {
 // Creating agents based on user input 
 // number of: commoners, real, fake agents
 function create_agents(agent_list) {
+    let agent_sandbox_size = 30
     agent_list.forEach(e => {
         // Commoner
         if (e.getType() == 2) {
-            canvas_main.commoner(ctx_sandbox, e.getX(), e.getY(), 10, e.getID(), e.getType());
+            canvas_main.commoner(ctx_sandbox, e.getX(), e.getY(), agent_sandbox_size, e.getID(), e.getType());
         }
         // Real news influencer
         if (e.getType() == 1) {
-            canvas_main.r_influencer(ctx_sandbox, e.getX(), e.getY(), 20, e.getID(), e.getType());
+            canvas_main.r_influencer(ctx_sandbox, e.getX(), e.getY(), agent_sandbox_size, e.getID(), e.getType());
         }
         // Fake news influencer
         if (e.getType() == 0) {
-            canvas_main.f_influencer(ctx_sandbox, e.getX(), e.getY(), 10, e.getID(), e.getType());
+            canvas_main.f_influencer(ctx_sandbox, e.getX(), e.getY(), agent_sandbox_size, e.getID(), e.getType());
         }
     });
 };
