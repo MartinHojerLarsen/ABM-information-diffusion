@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- FLASK -->
-    <!-- <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}">  -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}">  
     <link rel="stylesheet" type="text/css" href="/static/libraries/nouislider.min.css"> 
     
     <!-- Til at køre min stationære derhjemme -->
@@ -58,11 +58,11 @@
         </div>
         <form action="/" method="post" id="form_sandbox">
             <p>Choose how many agents you want in the simulation. </p>
-            <input type="number" name="agents" min="0" max="500" value="0">
+            <input type="number" name="agents" min="0" max="500" value="100">
             <p>and use the slider choose the distribution of the agents.</p>
             <div id="sandbox_slider"></div>
             <input id="s_sandbox" type="submit" name="submit" value="Generate">
-            <p>There are <span id="slider_c_value"></span>% fake news influencers, <span id="slider_f_value">25</span>%  normal people and <span id="slider_r_value">25</span>% real news influencers.</p>
+            <p>There are <span id="slider_f_value"></span>% fake news influencers, <span id="slider_c_value"></span>%  normal people and <span id="slider_r_value"></span>% real news influencers.</p>
         </form>  
     </div>
     
@@ -108,26 +108,26 @@
 </body>
 
 <!-- FLASK -->
-<!-- <script type="module" src="{{ url_for('static',filename='canvas_main.js') }}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+<script src="/static/libraries/nouislider.min.js"></script> 
+<script src="/static/libraries/wNumb.min.js"></script> 
+<script type="module" src="{{ url_for('static',filename='canvas_main.js') }}"></script>
 <script type="module" src="{{ url_for('static',filename='canvas1.js') }}"></script>
 <script type="module" src="{{ url_for('static',filename='canvas_sandbox.js') }}"></script>
 <script src="{{ url_for('static',filename='agent_class.js') }}"></script>
 <script src="{{ url_for('static',filename='form.js') }}"></script>
 <script src="{{ url_for('static',filename='ajax.js') }}"></script>
-<script src="{{ url_for('static',filename='sandbox_slider.js') }}"></script> -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
-<script src="/static/libraries/nouislider.min.js"></script> 
-<script src="/static/libraries/wNumb.min.js"></script> 
+<script src="{{ url_for('static',filename='sandbox_slider.js') }}"></script>
 
 
 
- <!-- Til at køre min staionære derhjemme  -->
+ <!-- Til at køre min staionære derhjemme  
 <script type="module" src="/static/canvas_main.js"></script>
 <script src="/static/agent_class.js"></script>
 <script type="module" src="/static/canvas1.js"></script>
 <script type="module" src="/static/canvas_sandbox.js"></script>
 <script type="module" src="/static/ajax.js"></script>
-<script type="module" src="/static/sandbox_slider.js"></script>
+<script type="module" src="/static/sandbox_slider.js"></script>-->
 
 </html>
 

@@ -7,6 +7,7 @@ let ctx1 = canvas1.getContext("2d");
 // Cackground
 canvas_main.background(canvas1, ctx1);
 
+
 // Edges
 // C -> R
 canvas_main.line(ctx1, ctx1.canvas.width/2, 200, ctx1.canvas.width * 0.23, 700, 4);
@@ -40,5 +41,4 @@ let f = {
     size: 80
 }
 canvas_main.f_influencer(ctx1, f.x, f.y, f.size);
-
 

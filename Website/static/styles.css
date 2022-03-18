@@ -39,27 +39,6 @@ h1, h2, h3, h4, form {
     
 }
 
-#sandbox_slider {
-    width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-}
-
-#sandbox_slider .noUi-handle {
-    background: rgb(85, 85, 85);   
-}
-
-.range_c {
-    background: gray;
-}
-.range_r {
-    background: blue;
-}
-.range_f {
-    background: red;
-}
-
 .section_light {
     width: 800px;
     margin-left: auto;
@@ -90,6 +69,27 @@ h1, h2, h3, h4, form {
     padding-bottom: 20px;
 }
 
+/* Slider styles */
+#sandbox_slider {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+#sandbox_slider .noUi-handle {
+    background: rgb(85, 85, 85);   
+}
+
+.range_c {
+    background: gray;
+}
+.range_r {
+    background: blue;
+}
+.range_f {
+    background: red;
+}
 
 /******** Canvas ********/
 #canvas1_container {

@@ -14,7 +14,8 @@ noUiSlider.create(slider, {
     connect: [true, true, true],
     format: wNumb({
         decimals: 0
-    })
+    }),
+    step: 1
 });
 
 // Range colors
@@ -36,9 +37,9 @@ let textSpans = [
 // When changing sliders, text is changed accordingly
 slider.noUiSlider.on("update", function (values) {
     // Commoners
-    textSpans[0].innerHTML = values[1] - values[0];
+    textSpans[0].innerHTML = values[0];
     // Fake news influencers
-    textSpans[1].innerHTML = values[0];
+    textSpans[1].innerHTML = values[1] - values[0];
     // Real news influencers
     textSpans[2].innerHTML = 100 - values[1];
 });

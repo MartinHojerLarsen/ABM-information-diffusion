@@ -107,7 +107,6 @@ function create_edges(agent_list) {
 let sandbox_form = document.getElementById("form_sandbox");
 
 sandbox_form.addEventListener("submit", function(e) {
-    e.preventDefault();
     
     // Clears canvas - Not sure if needed to clear? maybe when animation comes
     canvas_main.clear_canvas(canvas_sandbox, ctx_sandbox);
