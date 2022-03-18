@@ -60,7 +60,7 @@ class Model():
             # create real news influencer agents
             agent_id = i
             influencer_type = 0 # 0 = Real News, 1 = Fake News
-            agent_opinion = rd.randint(75, 100)
+            agent_opinion = rd.randint(80, 100)
             i_factor = rd.uniform(1, 1.75)
                 
             self.agents.append(InfluencerAgent(agent_id,agent_opinion,influencer_type,i_factor))
@@ -73,6 +73,16 @@ class Model():
         self.record_data_individual_agent()
     
     def timestep(self):
+        """
+        The following method loops overs all agents and initiatize their built in influencing method.
+        Every single agent influence every single friend agent in their network.
+        
+        Returns
+        -------
+        Nothing
+
+        """
+        
         nodes_arr = list(self.graph_environment._node.keys())
         rd.shuffle(nodes_arr)
         for agent_id in nodes_arr:
@@ -85,6 +95,15 @@ class Model():
         self.record_data_individual_agent()
         
     def record_data_individual_agent(self):
+        """
+        This method fetches all data points for every agent during a single timestep.
+
+        Returns
+        -------
+        Nothing
+
+        """
+        
         rows = []
         for agent in self.graph_environment._node.values():
             agent_obj = agent['agent']
@@ -113,6 +132,20 @@ class Model():
         raise Exception('Not yet implemented')
 
     def record_data_global_opinion(self,include_influencer_agent_op = False):
+        """
+        This method gathers the global opinion of all agents during every single timestep
+
+        Parameters
+        ----------
+        include_influencer_agent_op : Boolean, optional
+            Specify whether the opinion of influencer agent should be included in the dataset. The default is False.
+
+        Returns
+        -------
+        Nothing
+
+        """
+        
         timesteps = self.dataset_individual_agent['Timestep'].unique()
         g_opinion_dict = []
         for tp in timesteps:
@@ -132,9 +165,9 @@ class Model():
 start = time.time()
 
 # amount of timesteps
-timesteps = 50
+timesteps = 500
 
-model = Model(50,(33,17,50))
+model = Model(75,(50,25,25))
 draw_graph_environment(model)
 
 for i in range(timesteps):

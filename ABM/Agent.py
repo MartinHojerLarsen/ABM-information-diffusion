@@ -41,6 +41,25 @@ class CommonerAgent(Agent):
         self.i_susceptibility = i_susceptibility
         
     def influence_agent(self,graph_env,list_of_neighbors,SCALE_DOWN_FACTOR = 60):
+        """
+        The following method is going through a network of agent and then influence them by certain factors.
+        These factors are homophily, susceptibility, influence factor and opinion.
+
+        Parameters
+        ----------
+        graph_env : networkx graph
+            Input a network x graph - nx.Graph()
+        list_of_neighbors : List of integers
+            Takes a list of integers represented as unique ids
+        SCALE_DOWN_FACTOR : int, optional
+            Used to scale down the influencing factor, so the agent opinion will not be to high and unreadable. The default is 60.
+
+        Returns
+        -------
+        Nothing
+
+        """
+        
         # print(f'#####################')
         # print(f'###Agent (Commoner) Opinion: {self.opinion}###')
         # print(f'#####################')
@@ -101,6 +120,24 @@ class InfluencerAgent(Agent):
         self.i_factor = i_factor
         
     def influence_agent(self,graph_env,list_of_neighbors,SCALE_DOWN_FACTOR = 80):
+        """
+        The following method is going through a network of agent and then influence them by certain factors.
+        These factors are homophily, susceptibility, influence factor and opinion.
+
+        Parameters
+        ----------
+        graph_env : networkx graph
+            Input a network x graph - nx.Graph()
+        list_of_neighbors : List of integers
+            Takes a list of integers represented as unique ids
+        SCALE_DOWN_FACTOR : int, optional
+            Used to scale down the influencing factor, so the agent opinion will not be to high and unreadable. The default is 60.
+
+        Returns
+        -------
+        Nothing
+
+        """
         # print(f'#####################')
         # print(f'###Agent (Influence){self.opinion}###')
         # print(f'#####################')
