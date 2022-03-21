@@ -19,7 +19,7 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 # main 
 @app.route("/", methods=["POST", "GET"])
 def index():
-    # if request.method == "POST": 
+    # if request.method == "POST":
     #     a = request.form.get("a")
     #     b = request.form.get("b")
     #     sumAB = str(int(a) + int(b))
@@ -38,6 +38,6 @@ def ajax():
     htmlresult = {"Processed data": "True"}
     return jsonify(htmlresult)
 
-if __name__ == 'main':
-    app.run(debug=True)
+if __name__ == '__main__':
+    app.run(port=5000,debug=True)
 

@@ -1,10 +1,6 @@
 // *** Main canvas file *** //
 // Containing all draw() functions //
-let commoner_img = document.getElementById('commoner_img');
-let f_influencer_img = document.getElementById('finfluencer_img');
-let r_influencer_img = document.getElementById('rinfluencer_img');
-
-
+// let commoner_img = document.getElementById('commoner_img');
 
 // Background
 function background(canvas, ctx, color="#eeeaea") {
@@ -33,7 +29,6 @@ function clear_canvas(canvas, ctx, color="#eeeaea") {
     ctx.closePath();
 };
 
-
 // Offset image x,y coordinates to center of image
 function drawImageRot(ctx,img,x,y,width,height,deg) {
     //Convert degrees to radian
@@ -50,22 +45,6 @@ function drawImageRot(ctx,img,x,y,width,height,deg) {
     ctx.translate((x) * (-1), (y) * (-1));
   }
 
-// Commoner
-function commoner(ctx, x, y, size, ID=0, type=2, connections) {
-    //ctx.drawImage(commoner_img,x,y,size,size);
-    drawImageRot(ctx,commoner_img,x,y,size,size)
-};
-
-// Real news influencer
-function r_influencer(ctx, x, y, size, ID=0, type=1, opinion=100, connections) {
-    drawImageRot(ctx,r_influencer_img,x,y,size,size)
-};
-
-// Fake news influencer 
-function f_influencer(ctx, x, y, size, ID=0, type=0, opinion=-100, connections) {
-    drawImageRot(ctx,f_influencer_img,x,y,size,size)
-};
-
 // Line (edge) 
 function line(ctx, x1, y1, x2, y2, size=1) {
     ctx.strokeStyle = "black";
@@ -77,7 +56,6 @@ function line(ctx, x1, y1, x2, y2, size=1) {
     ctx.closePath();
 }
 
-
 // Mouse hover handling
 function hover(e, object) {
     e.preventDefault(); 
@@ -86,7 +64,7 @@ function hover(e, object) {
     // Cursor position
     let cx = e.offsetX;
     let cy = e.offsetY;
-    //console.log(cx, cy);
+    console.log(cx, cy);
     
     let isInside = touchingCircle(object, cx, cy); 
     // console.log(isInside);
@@ -98,8 +76,6 @@ function hover(e, object) {
     }
     
 }
-
-
 
 //*** Helper functions ***//
 
@@ -121,7 +97,7 @@ function touchingSquare(ob, x, y) {
 
 // detect triangle
 function touchinTriangle(ob, x, y) {
-
+    // to be continued
 };
 
 // Random number for drawing agents - used for positions
@@ -154,4 +130,4 @@ function color_agent(type, opinion) {
 
 
 // Export
-export {background, commoner, r_influencer, f_influencer, clear_canvas, randInt, line, hover};
+export {background, clear_canvas, randInt, line, hover,drawImageRot};

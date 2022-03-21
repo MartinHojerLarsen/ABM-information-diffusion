@@ -93,7 +93,7 @@ h1, h2, h3, h4, form {
 
 /******** Canvas ********/
 /* Canvas has fixed values */
-#canvas1_container {
+#canvas_story_1_container {
     width: 800px;
     text-align: center;
 }
