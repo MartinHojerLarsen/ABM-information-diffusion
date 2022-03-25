@@ -5,6 +5,8 @@ from matplotlib import cm
 import math
 from Agent import *
 import networkx as nx
+import scipy.stats as ss
+import numpy as np
 
 def make_agent_nodes(agent_list):
     '''
@@ -24,7 +26,7 @@ def make_agent_nodes(agent_list):
     return agent_nodes
     
 
-def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network = 6,homophily_weight_range = 1.3 ):
+def make_agents_connections(agent_list, commoner_network, influencer_network, f_network_mult_factor, homophily_weight_range):
     """
     A function that takes a list of agents and then make appropiate connections between CommonerAgents and InfluencerAgent.
     Two InfluencerAgents cannot have a connection to each other
@@ -50,15 +52,17 @@ def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network 
     
     edge_list = []
     for index,agent in enumerate(agent_list):
+        # temporary variable for network size
+        temp_network = commoner_network
         
-        if isinstance(agent,InfluencerAgent):
-            amount_of_friends = influencer_network
+        if isinstance(agent,InfluencerAgent) == True:
+            temp_network = influencer_network
             if agent.agent_type == 1:   
-                amount_of_friends = round((amount_of_friends*influencer_network)*1.50) # 50% more due to fake news spreading more
+                temp_network = round((temp_network*influencer_network) * f_network_mult_factor)
             else:
-                amount_of_friends = round(amount_of_friends*influencer_network) 
+                temp_network = round(temp_network*influencer_network) 
         
-        for i in range(0,amount_of_friends):
+        for i in range(0,temp_network):
             random_agent = agent_list[rd.randint(0,len(agent_list)-1)]
             c1,c2 = (agent,random_agent)
             
@@ -74,6 +78,7 @@ def make_agents_connections(agent_list,amount_of_friends = 3,influencer_network 
                 
     edge_list = list(set(edge_list))
     return edge_list
+
 
 
 # Only for testing purpose
@@ -117,3 +122,43 @@ def draw_graph_environment(model,draw_labels = False):
     if draw_labels == True:
         labels = nx.get_edge_attributes(model.graph_environment, 'weight')
         nx.draw_networkx_edge_labels(model.graph_environment,pos,font_size=10,edge_labels=labels)
+
+
+
+
+
+#### DISCUSS NORMAL DISTRIBUTION ####
+
+# Normal distribution with SCIPY (taken from stackoverflow)
+def normalDist(upper, lower, size, std):
+    x = np.arange(lower, upper)
+    xU, xL = x + 0.5, x - 0.5 
+    prob = ss.norm.cdf(xU, scale = std) - ss.norm.cdf(xL, scale = std)
+    prob = prob / prob.sum() # normalize the probabilities so their sum is 1
+    nums = np.random.choice(x, size, p = prob)
+    
+    return nums
+    plt.hist(nums, bins = len(x))
+
+#normalDist(50, -50, 500, 1)
+
+# Normal distribution with Numpy
+def normalDistNP(mean, std, size):
+
+    nd = (np.random.normal(mean, std, size))
+    print(nd)
+    
+    print("Mean:")
+    print(abs(mean - np.mean(nd)))
+    print("Variance:")
+    print(abs(std - np.std(nd, ddof=1)))
+    
+    
+    count, bins, ignored = plt.hist(nd, 30, density=True)
+    plt.plot(bins, 1/(std * np.sqrt(2 * np.pi)) *
+             np.exp(- (bins - mean)**2 / (2 * std**2)),
+             linewidth=2, color='r')
+    
+#normalDistNP(0,25,100)
+
+

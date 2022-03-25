@@ -1,7 +1,7 @@
 """ File for the Agent class """
 
 class Agent(): 
-    def __init__(self, agent_id, opinion):
+    def __init__(self, agent_id, opinion, group_id=-1):
         """
         superclass for Agent
 
@@ -11,17 +11,24 @@ class Agent():
             uniqe identifier for each agent.
         opinion : int
             The opinion of the agent - range from -100 to 100
+        group_id : int
+            unique identifier for current group 
+        group_invites : list<group_id>
+            List of pending group invites 
 
         Returns
         -------
         None.
 
         """
+    
         self.agent_id = agent_id
         self.opinion = opinion
+        self.group_id = group_id
         
+    
 class CommonerAgent(Agent): 
-    def __init__(self,agent_id, opinion, i_susceptibility):
+    def __init__(self,agent_id, opinion, group_id, i_susceptibility):
         """
         subclass for commoner agent
 
@@ -37,7 +44,7 @@ class CommonerAgent(Agent):
         None.
 
         """
-        super().__init__(agent_id, opinion)
+        super().__init__(agent_id, opinion, group_id)
         self.i_susceptibility = i_susceptibility
         
     def influence_agent(self,graph_env,list_of_neighbors,SCALE_DOWN_FACTOR = 60):
@@ -89,17 +96,33 @@ class CommonerAgent(Agent):
                 else:
                     target_new_opinion
                 
-                # embed new opinion
-                # print(f'##target opinion: {target_agent_opinion}')
-                
                 target_agent.opinion = target_new_opinion
                 
-                # print(f'##target new opinion: {target_agent.opinion}')
-                # print('')
+
+    def check_opinion(self, target_group):
+        """
+        Checking opinion of itself and target Group
+
+        Parameters
+        ----------
+        target : Group
+            target Group to compare opinion with.
+
+        Returns
+        -------
+        Boolean
+            Returns true if self.opinion is within Group opinion range
+            False if outside Group opinion range
+
+        """
+        
+        return self.opinion > target_group.opinion_start and self.opinion < target_group.opinion_end
+
+               
 
 
 class InfluencerAgent(Agent):
-    def __init__(self,agent_id, opinion, agent_type, i_factor):
+    def __init__(self,agent_id, opinion, group_id, agent_type, i_factor):
         """
         Subclass for influencer agent
 
@@ -115,7 +138,7 @@ class InfluencerAgent(Agent):
         None.
 
         """
-        super().__init__(agent_id, opinion)
+        super().__init__(agent_id, opinion, group_id)
         self.agent_type = agent_type
         self.i_factor = i_factor
         
@@ -150,10 +173,11 @@ class InfluencerAgent(Agent):
             target_agent_susceptibility = target_agent.i_susceptibility if target_agent.i_susceptibility != 1 else 0 
             # calculate new target opinion
             similar_mindset = 1.5 if (self.opinion >= 0 and target_agent_opinion >= 0) or (self.opinion < 0 and target_agent_opinion) < 0 else 1
-            ifs_factor = self.i_factor*target_agent_susceptibility
-            opinion_difference = self.opinion-target_agent_opinion
+            ifs_factor = self.i_factor * target_agent_susceptibility
+            opinion_difference = self.opinion - target_agent_opinion
             
-            target_new_opinion = target_agent_opinion+(opinion_difference*ifs_factor*similar_mindset)/SCALE_DOWN_FACTOR
+            
+            target_new_opinion = target_agent_opinion + (opinion_difference * ifs_factor * similar_mindset) / SCALE_DOWN_FACTOR
             
             # Make boundaries for degree of opinion
             if target_agent_opinion >= 100:
