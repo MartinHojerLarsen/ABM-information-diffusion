@@ -129,36 +129,24 @@ def draw_graph_environment(model,draw_labels = False):
 
 #### DISCUSS NORMAL DISTRIBUTION ####
 
-# Normal distribution with SCIPY (taken from stackoverflow)
-def normalDist(upper, lower, size, std):
-    x = np.arange(lower, upper)
-    xU, xL = x + 0.5, x - 0.5 
-    prob = ss.norm.cdf(xU, scale = std) - ss.norm.cdf(xL, scale = std)
-    prob = prob / prob.sum() # normalize the probabilities so their sum is 1
-    nums = np.random.choice(x, size, p = prob)
-    
-    return nums
-    plt.hist(nums, bins = len(x))
-
-#normalDist(50, -50, 500, 1)
-
 # Normal distribution with Numpy
 def normalDistNP(mean, std, size):
 
     nd = (np.random.normal(mean, std, size))
-    print(nd)
-    
+    nd = nd[(nd < 50) & (nd > -50)]    
     print("Mean:")
     print(abs(mean - np.mean(nd)))
     print("Variance:")
     print(abs(std - np.std(nd, ddof=1)))
-    
+        
     
     count, bins, ignored = plt.hist(nd, 30, density=True)
     plt.plot(bins, 1/(std * np.sqrt(2 * np.pi)) *
              np.exp(- (bins - mean)**2 / (2 * std**2)),
              linewidth=2, color='r')
+
+    return nd
     
-#normalDistNP(0,25,100)
+elements = normalDistNP(0,25,300)
 
 
