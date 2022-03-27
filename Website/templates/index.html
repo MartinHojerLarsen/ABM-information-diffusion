@@ -10,9 +10,9 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/styles.css') }}">  
     <link rel="stylesheet" type="text/css" href="/static/libraries/nouislider.min.css">
     
-    <!-- Til at køre min stationære derhjemme -->
+    <!-- Til at køre min stationære derhjemme 
     <link rel="shortcut icon" href="/static/img/favicon.ico">
-    <link rel="stylesheet" type="text/css" href="/static/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/styles.css">-->
    
     <title>ABM-information diffusion</title>
 </head>
@@ -105,13 +105,11 @@
         </div>
     </div>
 
+    
 </body>
 
 <!-- FLASK -->
 <script src = "{{ url_for('static', filename='preload_images.js') }}" ></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
-<script src="/static/libraries/nouislider.min.js"></script> 
-<script src="/static/libraries/wNumb.min.js"></script> 
 <script type="module" src="{{ url_for('static',filename='agent_class.js') }}"></script>
 <script type="module" src="{{ url_for('static',filename='canvas_main.js') }}"></script>
 <script type="module" src="{{ url_for('static',filename='canvas_story_1.js') }}"></script>
@@ -119,15 +117,19 @@
 <script src="{{ url_for('static',filename='ajax.js') }}"></script>
 <script src="{{ url_for('static',filename='sandbox_slider.js') }}"></script>
 
-
+<!-- Libraries -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+<script src="/static/libraries/nouislider.min.js"></script> 
+<script src="/static/libraries/wNumb.min.js"></script> 
 
  <!-- Til at køre min staionære derhjemme  
+ <script src="/static/preload_images.js"></script>
 <script type="module" src="/static/canvas_main.js"></script>
-<script src="/static/agent_class.js"></script>
-<script type="module" src="/static/canvas1.js"></script>
+<script type="module" src="/static/agent_class.js"></script>
+<script type="module" src="/static/canvas_story_1.js"></script>
 <script type="module" src="/static/canvas_sandbox.js"></script>
-<script type="module" src="/static/ajax.js"></script>
-<script type="module" src="/static/sandbox_slider.js"></script>-->
+<script src="/static/ajax.js"></script>
+<script src="/static/sandbox_slider.js"></script>-->
 
 </html>
 
