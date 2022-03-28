@@ -1,4 +1,4 @@
-import {background,getCursorPosition,line,insideObj,change_cursor} from "/static/canvas_main.js";
+import {background,getCursorPosition,line,insideObj,change_cursor, bubble} from "/static/canvas_main.js";
 import * as ag from "/static/agent_class.js";
 
 window.addEventListener("load", function () {
@@ -16,6 +16,9 @@ background(canvas1, ctx1,canvaWidth,canvaHeight);
 let commoner = new ag.Commoner(ctx1,1,2, 55, [1,2,3],(ctx1.canvas.width*0.50),(ctx1.canvas.height*0.35),110,0)
 let r_influencer = new ag.R_influencer(ctx1,2,1, 90, [1,2,3],ctx1.canvas.width*0.25,ctx1.canvas.height*0.85,110,0);
 let f_influencer = new ag.F_influencer(ctx1,3,0, -90, [1,2,3],ctx1.canvas.width*0.75,ctx1.canvas.height*0.85,110,0);
+
+let r_influencer_bubble = bubble(ctx1, r_influencer.getX(), r_influencer.getY(), commoner.getX, commoner.getY(), 10);
+let f_influencer_bubble = bubble(ctx1, f_influencer.getX(), f_influencer.getY(), commoner.getX, commoner.getY(), 10);
 
 /*
 *************
@@ -54,8 +57,9 @@ function render() {
     
     tick += 1 // counter
 
-    edgeThickness += 0.05 // edge thickness
-    edgeThickness > 9 == true ? edgeThickness=4:edgeThickness;
+    // Changing edge thickness
+    //edgeThickness += 0.05 // edge thickness
+    //edgeThickness > 9 == true ? edgeThickness=4:edgeThickness;
 
     /****Agent Animations****/
     if(anim_state == states[0]){

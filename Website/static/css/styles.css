@@ -107,3 +107,9 @@ h1, h2, h3, h4, form {
     height:600px;
     text-align: center;
 }
+
+#canvas_animation_container {
+    width: 800px;
+    height:600px;
+    text-align: center;
+}

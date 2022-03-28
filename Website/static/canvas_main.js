@@ -38,7 +38,7 @@ function draw_text(ctx, text, x, y, txt_size = 30) {
     ctx.font = `italic ${txt_size}px Calibri`;
     ctx.strokeStyle = "black";
     ctx.textAlign = "center";
-    ctx.strokeText(text, x, y + 20)
+    ctx.strokeText(text, x, y + 20);  
 }
 
 // Offset image x,y coordinates to center of image
@@ -68,25 +68,14 @@ function line(ctx, x1, y1, x2, y2, size = 1) {
     ctx.closePath();
 }
 
-// Mouse hover handling
-function hover(e, object) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    // Cursor position
-    let cx = e.offsetX;
-    let cy = e.offsetY;
-    console.log(cx, cy);
-
-    let isInside = touchingCircle(object, cx, cy);
-    // console.log(isInside);
-
-    if (isInside) {
-        document.body.style.cursor = "pointer";
-    } else {
-        document.body.style.cursor = "default";
-    }
-
+// Information bubble
+function bubble(ctx, x1, y1, x2, y2, size) {
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.arc(x1, y1, size, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
+    ctx.closePath();
 }
 
 //*** Helper functions ***//
@@ -96,7 +85,7 @@ function randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-// Setting color of agents - corresponding to their opinion
+// Setting color of agents - corresponding to their opinion -- OLD
 function color_agent(type, opinion) {
     // Fake news influencers
     if (type == 0) {
@@ -150,4 +139,4 @@ function change_cursor(objArray,mousePos) {
 
 
 // Export
-export { background, clear_canvas, randInt, line, hover, drawImageRot, draw_text, getCursorPosition, insideObj,change_cursor};
+export { background, clear_canvas, randInt, line, bubble,drawImageRot, draw_text, getCursorPosition, insideObj,change_cursor};
