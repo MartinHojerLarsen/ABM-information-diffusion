@@ -123,30 +123,34 @@ def draw_graph_environment(model,draw_labels = False):
         labels = nx.get_edge_attributes(model.graph_environment, 'weight')
         nx.draw_networkx_edge_labels(model.graph_environment,pos,font_size=10,edge_labels=labels)
 
-
-
-
-
-#### DISCUSS NORMAL DISTRIBUTION ####
-
 # Normal distribution with Numpy
-def normalDistNP(mean, std, size):
+def normalDistNP(size,mean = 0, std = 25):
+    """
+    Parameters
+    ----------
+    size : int
+        insert the population size of the commoners in the model
+    mean : int, optional
+        specify the mean value. The default is 0.
+    std : std, optional
+        specify the standard deviation. The default is 25.
+
+    Returns
+    -------
+    nd : Array of integers
+
+    """
 
     nd = (np.random.normal(mean, std, size))
     nd = nd[(nd < 50) & (nd > -50)]    
-    print("Mean:")
-    print(abs(mean - np.mean(nd)))
-    print("Variance:")
-    print(abs(std - np.std(nd, ddof=1)))
+    # print("Mean:")
+    # print(abs(mean - np.mean(nd)))
+    # print("Variance:")
+    # print(abs(std - np.std(nd, ddof=1)))
         
-    
-    count, bins, ignored = plt.hist(nd, 30, density=True)
-    plt.plot(bins, 1/(std * np.sqrt(2 * np.pi)) *
-             np.exp(- (bins - mean)**2 / (2 * std**2)),
-             linewidth=2, color='r')
+    # count, bins, ignored = plt.hist(nd, 30, density=True)
+    # plt.plot(bins, 1/(std * np.sqrt(2 * np.pi)) *
+    #          np.exp(- (bins - mean)**2 / (2 * std**2)),
+    #          linewidth=2, color='r')
 
     return nd
-    
-elements = normalDistNP(0,25,300)
-
-

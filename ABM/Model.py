@@ -18,10 +18,13 @@ class Model():
         
         # Initialize Agent list
         self.agents = []
+        
         # Initialize population
         self.population = population
+        
         # Initialize Graph
         self.graph_environment = nx.Graph()
+        
         # Initialize Pd.DataFrame for data collection
         pd.set_option("expand_frame_repr", True)
         self.dataset_individual_agent = pd.DataFrame(columns=['Timestep','Agent Id','Agent Type','Opinion','Influence Susceptibility','Influence Factor','Network'])
@@ -29,8 +32,6 @@ class Model():
         
         # Groups dictionary
         self.groups = {}
-        
-        
         
         # Keeping track of timesteps
         self.timestep_val = 0
@@ -50,12 +51,15 @@ class Model():
         # normal distribution of opinions - list 
         #self.commoner_opinion_list = normalDist(50, -50, self.commoner_population, 1)
         
-        
+        # Define commoner susceptibility min and max ranges
         sus_min, sus_max = susceptibility
+        # Generate a list of commoner opinions based on normal distribution theory
+        self.commoner_norm_dist_opinion = list(normalDistNP(self.commoner_population))
+        
         for i in range(0,self.commoner_population):
             # create commoner agents
             agent_id = i
-            agent_opinion = rd.randint(-50, 50)
+            agent_opinion = self.commoner_norm_dist_opinion.pop()
             #agent_opinion = self.commoner_opinion_list[i]
             i_susceptibility = rd.uniform(sus_min, sus_max)
 
@@ -212,8 +216,7 @@ class Model():
 start = time.time()
 
 # amount of timesteps
-timesteps = 1
-
+timesteps = 2
 
 ### Varaibles ###
 population = 10
@@ -231,7 +234,7 @@ susceptibility = (1, 2) # susceptibility - commoner - random value between 1 and
 
 # create model
 model = Model(population, distribution, commoner_network, influencer_network, f_network_mult_factor, homophily_weight_range, f_i_factor, r_i_factor, f_opinion, r_opinion, susceptibility)
-draw_graph_environment(model, True)
+draw_graph_environment(model)
 
 # run sim (run timesteps)
 for i in range(timesteps):
@@ -243,7 +246,7 @@ df_individual_opinion = model.dataset_individual_agent
 df_global_opinion = model.dataset_global_opinion
 
 # To JSON format
-#df_json = df_individual_opinion.to_json()
+# df_json = df_individual_opinion.to_json()
 
 done = time.time()
 elapsed = done - start
