@@ -1,10 +1,12 @@
-from unittest import result
 from flask import Flask, render_template, jsonify, request
 from markupsafe import escape
 
-# Commands to run server: 
-# $env:FLASK_APP = "flask_test"
-# $env:FLASK_ENV = "development"    - debug on, updates changes to .py files automatically
+# Commands to run server:
+#  
+# POWERSHELL: $env:FLASK_APP = "flask_test"
+# CMD: set FLASK_APP = flask_test
+# POWERSHELL: $env:FLASK_ENV = "development"    - debug on, updates changes to .py files automatically
+# CMD: set FLASK_ENV = development    - debug on, updates changes to .py files automatically
 # flask run
 # flask run --host=0.0.0.0          - public (so Mads can see)
 # site runs on http://127.0.0.1:5000/ 
@@ -17,7 +19,7 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 # main 
 @app.route("/", methods=["POST", "GET"])
 def index():
-    # if request.method == "POST": 
+    # if request.method == "POST":
     #     a = request.form.get("a")
     #     b = request.form.get("b")
     #     sumAB = str(int(a) + int(b))
@@ -36,5 +38,6 @@ def ajax():
     htmlresult = {"Processed data": "True"}
     return jsonify(htmlresult)
 
-
+if __name__ == '__main__':
+    app.run(port=5000,debug=True)
 

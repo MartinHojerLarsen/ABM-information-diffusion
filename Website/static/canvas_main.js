@@ -1,15 +1,16 @@
 // *** Main canvas file *** //
 // Containing all draw() functions //
+// let commoner_img = document.getElementById('commoner_img');
 
 // Background
-function background(canvas, ctx, color="#eeeaea") {
-    
+function background(canvas, ctx, width, height, color = "#eeeaea") {
+
     // Size
-    ctx.canvas.width = window.innerWidth;
-    ctx.canvas.height = window.innerHeight;
-    
+    ctx.canvas.width = width;
+    ctx.canvas.height = height;
+
     // Border and background
-    ctx.moveTo(0,0);
+    ctx.moveTo(0, 0);
     ctx.beginPath();
     ctx.rect(2, 2, canvas.width - 3, canvas.height - 3);
     ctx.fillStyle = color;
@@ -18,8 +19,8 @@ function background(canvas, ctx, color="#eeeaea") {
 };
 
 // Clear canvas
-function clear_canvas(canvas, ctx, color="#eeeaea") {
-    ctx.moveTo(0,0);
+function clear_canvas(canvas, ctx, color = "#eeeaea") {
+    ctx.moveTo(0, 0);
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = color;
@@ -28,107 +29,63 @@ function clear_canvas(canvas, ctx, color="#eeeaea") {
     ctx.closePath();
 };
 
-// Commoner 
-function commoner(ctx, x, y, size, ID=0, type=2, connections) {
-    ctx.strokeStyle = "#4d4d4d";
-    ctx.lineWidth = size/5;
-    ctx.moveTo(0,0);
-    ctx.beginPath();
-    ctx.arc(x, y, size, 0, 2*Math.PI);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.fillStyle = "gray";
-    ctx.fill();
-};
+// Draw text on
+function draw_text(ctx, text, x, y, txt_size = 30) {
 
-// Real news influencer
-function r_influencer(ctx, x, y, size, ID=0, type=1, opinion=100, connections) {
-    ctx.strokeStyle = "#0000b3";
-    ctx.beginPath();
-    ctx.rect(x, y, size, size);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.fillStyle = color_agent(type, opinion);
-    ctx.fill();
-};
+    ctx.fillStyle = 'lightblue';
+    ctx.fillRect(x - 125, y - 30, 250, 75)
 
-// Fake news influencer 
-function f_influencer(ctx, x, y, size, ID=0, type=0, opinion=-100, connections) {
-    ctx.strokeStyle = "#b30000";
-    ctx.beginPath();
-    ctx.lineTo(x,y);
-    ctx.lineTo(x-size, y+(size*2));
-    ctx.lineTo(x+size, y+(size*2));
-    ctx.closePath();
-    ctx.stroke();
-    ctx.fillStyle = color_agent(type, opinion);
-    ctx.fill();
-};
+    ctx.font = `italic ${txt_size}px Calibri`;
+    ctx.strokeStyle = "black";
+    ctx.textAlign = "center";
+    ctx.strokeText(text, x, y + 20);  
+}
+
+// Offset image x,y coordinates to center of image
+function drawImageRot(ctx, img, x, y, width, height, deg) {
+    //Convert degrees to radian
+    var rad = deg * Math.PI / 180;
+    //Set the origin to the center of the image
+    ctx.translate(x, y);
+    //Rotate the canvas around the origin
+    ctx.rotate(rad);
+    //draw the image
+    ctx.drawImage(img, width / 2 * (-1), height / 2 * (-1), width, height);
+    //reset the canvas
+    ctx.rotate(rad * (-1));
+    //
+    ctx.translate((x) * (-1), (y) * (-1));
+}
 
 // Line (edge) 
-function line(ctx, x1, y1, x2, y2, size=1) {
+function line(ctx, x1, y1, x2, y2, size = 1) {
     ctx.strokeStyle = "black";
     ctx.lineWidth = size;
     ctx.beginPath();
-    ctx.moveTo(x1,y1);
+    ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.stroke();
     ctx.closePath();
 }
 
-
-// Mouse hover handling
-function hover(e, object) {
-    e.preventDefault(); 
-    e.stopPropagation();
-    
-    // Cursor position
-    let cx = e.offsetX;
-    let cy = e.offsetY;
-    console.log(cx, cy);
-    
-    let isInside = touchingCircle(object, cx, cy); 
-    // console.log(isInside);
-    
-    if (isInside) {
-        document.body.style.cursor = "pointer";
-    } else {
-        document.body.style.cursor = "default";
-    }
-    
+// Information bubble
+function bubble(ctx, x1, y1, x2, y2, size) {
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.arc(x1, y1, size, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
+    ctx.closePath();
 }
 
-
-
 //*** Helper functions ***//
-
-// detect circle
-// if(Math.pow(x-50,2)+Math.pow(y-50,2) < Math.pow(50,2))  
-function touchingCircle(ob, x, y) {
-    return Math.sqrt((x-ob.x) ** 2 + (y - ob.y) ** 2) < ob.size;
-};
-
-// detect square
-function touchingSquare(ob, x, y) {
-    let obX = ob.x;
-    let obY = ob.y;
-    let size = ob.size;
-    
-    // Returning true/false if (x,y) (mouse coords) are inside the object 
-    return (x >= obX-size && x <= obX+size && y >= obY-size && y <= obY+size);
-};
-
-// detect triangle
-function touchinTriangle(ob, x, y) {
-
-};
 
 // Random number for drawing agents - used for positions
 function randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-// Setting color of agents - corresponding to their opinion
+// Setting color of agents - corresponding to their opinion -- OLD
 function color_agent(type, opinion) {
     // Fake news influencers
     if (type == 0) {
@@ -151,6 +108,35 @@ function color_agent(type, opinion) {
     }
 };
 
+function getCursorPosition(canvas, event) {
+    const rect = canvas.getBoundingClientRect()
+    const mouseX = event.clientX - rect.left
+    const mouseY = event.clientY - rect.top
+    return { 'x': mouseX, 'y': mouseY }
+}
+
+function insideObj(obj, mousePos) {
+    if (mousePos.x > obj.getX() - obj.getSize() / 2            // mouse x between x and x + width
+        && mousePos.x < obj.getX() + obj.getSize() / 2
+        && mousePos.y > obj.getY() - obj.getSize() / 2            // mouse y between y and y + height
+        && mousePos.y < obj.getY() + obj.getSize() / 2) {
+        return true
+    }
+    return false
+}
+
+function change_cursor(objArray,mousePos) {
+    let checkList = [];
+    for (let index = 0; index < objArray.length; index++) {
+        checkList[index] = insideObj(objArray[index],mousePos);
+    }
+    if(checkList.includes(true)) {
+        document.body.style.cursor = 'pointer';
+    } else {
+        document.body.style.cursor = 'default';
+    }
+}
+
 
 // Export
-export {background, commoner, r_influencer, f_influencer, clear_canvas, randInt, line, hover};
+export { background, clear_canvas, randInt, line, bubble,drawImageRot, draw_text, getCursorPosition, insideObj,change_cursor};
