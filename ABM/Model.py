@@ -30,8 +30,14 @@ class Model():
         self.dataset_individual_agent = pd.DataFrame(columns=['Timestep','Agent Id','Agent Type','Opinion','Influence Susceptibility','Influence Factor','Network'])
         self.dataset_global_opinion = pd.DataFrame(columns=['Timestep','Population','Global Opinion','Influencer Opinion Included'])
         
-        # Groups dictionary
-        self.groups = {}
+        # Track individual opinion of agents
+        self.individual_agent = [] 
+        
+        # Track global opinion
+        self.global_opinion = []
+        
+        # Groups list of dictionary
+        self.groups = [] # not being used at the moment
         
         # Keeping track of timesteps
         self.timestep_val = 0
@@ -47,9 +53,6 @@ class Model():
 
         # boundary for unique agent ids
         self.pop_init_boundary = self.commoner_population + self.f_influencer_population
-
-        # normal distribution of opinions - list 
-        #self.commoner_opinion_list = normalDist(50, -50, self.commoner_population, 1)
         
         # Define commoner susceptibility min and max ranges
         sus_min, sus_max = susceptibility
@@ -60,7 +63,6 @@ class Model():
             # create commoner agents
             agent_id = i
             agent_opinion = self.commoner_norm_dist_opinion.pop()
-            #agent_opinion = self.commoner_opinion_list[i]
             i_susceptibility = rd.uniform(sus_min, sus_max)
 
             self.agents.append(CommonerAgent(agent_id,agent_opinion,-1,i_susceptibility))
@@ -91,12 +93,12 @@ class Model():
         # Initialize groups - 10 value increments for now
         #   so it will be: g1 = -100 to -90, g2 = -90 to -80 etc. 
         #   opinion values for groups:
-        group_start_value = -100
-        group_end_value = -90
-        for i in range(20):
-            self.groups[i] = Group(i, group_start_value, group_end_value)
-            group_start_value += 10
-            group_end_value += 10
+        # group_start_value = -100
+        # group_end_value = -90
+        # for i in range(20):
+        #     self.groups[i] = Group(i, group_start_value, group_end_value)
+        #     group_start_value += 10
+        #     group_end_value += 10
     
     
         # Initialize graph environment with agent nodes and edges
@@ -106,6 +108,9 @@ class Model():
         
         # Record initial values of all agents before timesteps are executed
         self.record_data_individual_agent()
+        
+        # Record initial global opinion before timesteps are executed
+        self.record_data_global_opinion()
     
     def timestep(self):
         """
@@ -128,19 +133,21 @@ class Model():
             agent.influence_agent(self.graph_environment,agent_network)
         
         
-# =============================================================================
-#         NÅET HERTIL 
-# =============================================================================
+            # =============================================================================
+            #         NÅET HERTIL 
+            # =============================================================================
             # Every 25th timestep - check group_opinion and join group
             # checking global group list - if true join group 
             # if agent.check_opinion(self.groups):
                 # join the group
             # else:
                 #continue
-                
         
         # Record Data for every timestep
         self.record_data_individual_agent()
+        
+        #record data global
+        self.record_data_global_opinion()
         
     def record_data_individual_agent(self):
         """
@@ -152,7 +159,6 @@ class Model():
 
         """
         
-        rows = []
         for agent in self.graph_environment._node.values():
             agent_obj = agent['agent']
             if isinstance(agent_obj,InfluencerAgent) == True:
@@ -163,7 +169,7 @@ class Model():
                                'Influence Susceptibility':np.nan,
                                'Influence Factor':agent_obj.i_factor,
                                'Network':list(self.graph_environment.neighbors(agent_obj.agent_id))}
-                rows.append(timestep_df)
+                self.individual_agent.append(timestep_df)
             elif isinstance(agent_obj,CommonerAgent) == True:
                 timestep_df = {'Timestep':f'T{self.timestep_val}',
                                'Agent Id':agent_obj.agent_id,
@@ -172,8 +178,7 @@ class Model():
                                'Influence Susceptibility':agent_obj.i_susceptibility,
                                'Influence Factor':np.nan,
                                'Network':list(self.graph_environment.neighbors(agent_obj.agent_id))}
-                rows.append(timestep_df)
-        self.dataset_individual_agent = self.dataset_individual_agent.append(rows,ignore_index=True)
+                self.individual_agent.append(timestep_df)
         self.timestep_val += 1
         
     def record_data_collectives(self):
@@ -195,18 +200,24 @@ class Model():
         Nothing
 
         """
-        
-        timesteps = self.dataset_individual_agent['Timestep'].unique()
-        g_opinion_dict = []
-        for tp in timesteps:
-            if include_influencer_agent_op:
-                g_opinion = self.dataset_individual_agent[self.dataset_individual_agent['Timestep'] == tp]
-            else:
-                g_opinion = self.dataset_individual_agent[(self.dataset_individual_agent['Timestep'] == tp) & (model.dataset_individual_agent['Agent Type'] == 'CommonerAgent')]
-            # print(g_opinion['Opinion'].mean())
-            g_opinion_average = g_opinion['Opinion'].mean()
-            g_opinion_dict.append({'Timestep':tp,'Population':self.population,'Global Opinion':g_opinion_average,'Influencer Opinion Included':include_influencer_agent_op})
-        self.dataset_global_opinion = self.dataset_global_opinion.append(g_opinion_dict,ignore_index=True)
+        nodes_arr = list(self.graph_environment._node.keys())
+        temp_global_opinion = 0
+        for agent_id in nodes_arr:
+            agent = self.graph_environment._node[agent_id]['agent']
+            
+            if isinstance(agent,InfluencerAgent) == True and include_influencer_agent_op == False:
+                continue
+            
+            temp_global_opinion += agent.opinion
+            
+        if include_influencer_agent_op:
+            self.global_opinion.append({'Timestep':f'T{self.timestep_val}','Population':self.population,'Global Opinion':temp_global_opinion/self.population,'Influencer Opinion Included':'Yes'})
+        else:
+            self.global_opinion.append({'Timestep':f'T{self.timestep_val}','Population':self.population,'Global Opinion':temp_global_opinion/self.commoner_population,'Influencer Opinion Included':'No'})
+
+    def finalize_model(self):
+        self.dataset_global_opinion = pd.DataFrame(self.global_opinion)
+        self.dataset_individual_agent = pd.DataFrame(self.individual_agent)
 
 # ============================================================================= #
 #                            Testing environment                                #
@@ -216,32 +227,43 @@ class Model():
 start = time.time()
 
 # amount of timesteps
-timesteps = 2
+timesteps = 3
 
 ### Varaibles ###
-population = 10
-distribution = (50, 25, 25) # percentages: commoner, fake, real
-commoner_network = 3
-influencer_network = 2
-f_network_mult_factor = 1.5 # starts at 1 - a multiplication of influencer network - due to fake news spreading more
-homophily_weight_range = 1.3 # homophily between commoners
-f_i_factor = (1.5, 2) # influence factor - fake news influencer
-r_i_factor = (1, 2) # influence factor - real news influencer
-f_opinion = (-100, -80) #  range of opinion - fake news influencer
-r_opinion = (50, 100) # range of opinion - real news influencer
-susceptibility = (1, 2) # susceptibility - commoner - random value between 1 and 2
+
+params = {
+    "population": 4,
+    "distribution":(50, 25, 25), # percentages: commoner, fake, real
+    "commoner_network": 3,
+    "influencer_network": 2,
+    "f_network_mult_factor": 1.5, # starts at 1 - a multiplication of influencer network - due to fake news spreading more
+    "homophily_weight_range": 1.3, # homophily between commoners
+    "f_i_factor": (1.5, 2), # influence factor - fake news influencer
+    "r_i_factor": (1, 2), # influence factor - real news influencer
+    "f_opinion": (-100, -80), #  range of opinion - fake news influencer
+    "r_opinion": (50, 100), # range of opinion - real news influencer
+    "susceptibility": (1, 2) # susceptibility - commoner - random value between 1 and 2
+}
 
 
 # create model
-model = Model(population, distribution, commoner_network, influencer_network, f_network_mult_factor, homophily_weight_range, f_i_factor, r_i_factor, f_opinion, r_opinion, susceptibility)
+
+
+##############
+model = Model(params['population'], params['distribution'], params['commoner_network'], params['influencer_network'], params['f_network_mult_factor'], params['homophily_weight_range'], params['f_i_factor'], params['r_i_factor'], params['f_opinion'], params['r_opinion'], params['susceptibility'])
 draw_graph_environment(model)
 
 # run sim (run timesteps)
 for i in range(timesteps):
     model.timestep()
 
+# Create a pandas dataframe with the final global opinion values
+model.finalize_model()
+
+##############
+
+        
 # record data 
-model.record_data_global_opinion()
 df_individual_opinion = model.dataset_individual_agent
 df_global_opinion = model.dataset_global_opinion
 
@@ -259,8 +281,5 @@ elapsed = done - start
 # c3 = model.graph_environment._node[2]["agent"]
 
 # print(c1.check_homophily(c2, model.graph_environment))
-
-
-#### TEST ####
 
 print(f'Running Time: {elapsed}')

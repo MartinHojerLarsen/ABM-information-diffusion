@@ -5,7 +5,6 @@ from matplotlib import cm
 import math
 from Agent import *
 import networkx as nx
-import scipy.stats as ss
 import numpy as np
 
 def make_agent_nodes(agent_list):
@@ -124,7 +123,7 @@ def draw_graph_environment(model,draw_labels = False):
         nx.draw_networkx_edge_labels(model.graph_environment,pos,font_size=10,edge_labels=labels)
 
 # Normal distribution with Numpy
-def normalDistNP(size,mean = 0, std = 25):
+def normalDistNP(size,mean = 0, std = 15):
     """
     Parameters
     ----------
@@ -143,6 +142,15 @@ def normalDistNP(size,mean = 0, std = 25):
 
     nd = (np.random.normal(mean, std, size))
     nd = nd[(nd < 50) & (nd > -50)]    
+    
+    missing_values = size-len(nd)
+    
+    if missing_values != 0:
+        # add missing values
+        for i in range(0,missing_values):
+            rand_value = np.random.randint(-50,50)
+            np.append(nd,rand_value)
+    
     # print("Mean:")
     # print(abs(mean - np.mean(nd)))
     # print("Variance:")
