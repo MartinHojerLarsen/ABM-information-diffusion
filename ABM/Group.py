@@ -1,10 +1,10 @@
 """ File for Group class """
+from Agent import CommonerAgent
+
 class Group(): 
-    def __init__(self, group_id, opinion_start, opinion_end):
+    def __init__(self, group_id):
 
         self.group_id = group_id
-        self.opinion_start = opinion_start
-        self.opinion_end = opinion_end
         self.size = 0
         self.agent_list = []
         self.avg_opinion = 0
@@ -29,7 +29,7 @@ class Group():
         for agent in self.agent_list:
             opinion_sum += agent.opinion
             
-        average = opinion_sum/len(self.agent_list)
+        average = opinion_sum/len(self.agent_list) if len(self.agent_list) != 0 else 0
         self.avg_opinion = average
 
 
@@ -77,15 +77,21 @@ class Group():
 # =============================================================================
 # TESTING 
 # =============================================================================
+
 # c1 = CommonerAgent(0, -95, -1, 50)
-# c2 = CommonerAgent(1, -88, -1, 60)
+# c2 = CommonerAgent(1, -93, -1, 60)
+# c3 = CommonerAgent(2, -91, -1, 60)
 
-# g = Group(0, -100, -90)
-
-# if c2.check_opinion(g):
-#     g.join_group(c1)
-#     print("joined group")
+# # g = Group(0, -100, -90)
 
 # if c1.check_opinion(g):
 #     g.join_group(c1)
+#     print("joined group")
+
+# if c2.check_opinion(g):
+#     g.join_group(c2)
+#     print("joined group")
+    
+# if c3.check_opinion(g):
+#     g.join_group(c3)
 #     print("joined group")

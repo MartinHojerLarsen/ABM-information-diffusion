@@ -10,11 +10,10 @@ from Functions import *
 import pandas as pd
 import numpy as np
 import time
-#from Post import *
 
 class Model():
     
-    def __init__(self,population, distribution, commoner_network, influencer_network, f_network_mult_factor, homophily_weight_range, f_i_factor, r_i_factor, f_opinion, r_opinion, susceptibility):
+    def __init__(self,population, distribution, commoner_network, influencer_network, f_network_mult_factor, homophily_weight_range, f_i_factor, r_i_factor, f_opinion, r_opinion, susceptibility,group_opinion_limit_val,group_homophily_limit_val):
         
         # Initialize Agent list
         self.agents = []
@@ -27,17 +26,26 @@ class Model():
         
         # Initialize Pd.DataFrame for data collection
         pd.set_option("expand_frame_repr", True)
-        self.dataset_individual_agent = pd.DataFrame(columns=['Timestep','Agent Id','Agent Type','Opinion','Influence Susceptibility','Influence Factor','Network'])
+        self.dataset_individual_agent = pd.DataFrame(columns=['Timestep','Agent Id','Agent Type','Opinion','Influence Susceptibility','Influence Factor','Network','Echo chamber'])
         self.dataset_global_opinion = pd.DataFrame(columns=['Timestep','Population','Global Opinion','Influencer Opinion Included'])
+        self.dataset_groups = pd.DataFrame(columns=['Timestep','Group id','Agents in group','size','average opinion'])
         
         # Track individual opinion of agents
-        self.individual_agent = [] 
+        self.individual_agent = []
+        
+        # Track groups
+        self.groups_dataframes = []
         
         # Track global opinion
         self.global_opinion = []
         
-        # Groups list of dictionary
-        self.groups = [] # not being used at the moment
+        # Track groups
+        self.unique_group_id = 0
+        self.groups = {}
+        
+        # Parameters for make_group() method
+        self.group_opinion_limit_val = group_opinion_limit_val
+        self.group_homophily_limit_val  = group_homophily_limit_val
         
         # Keeping track of timesteps
         self.timestep_val = 0
@@ -59,47 +67,35 @@ class Model():
         # Generate a list of commoner opinions based on normal distribution theory
         self.commoner_norm_dist_opinion = list(normalDistNP(self.commoner_population))
         
+        # create commoner agents        
         for i in range(0,self.commoner_population):
-            # create commoner agents
             agent_id = i
             agent_opinion = self.commoner_norm_dist_opinion.pop()
             i_susceptibility = rd.uniform(sus_min, sus_max)
 
             self.agents.append(CommonerAgent(agent_id,agent_opinion,-1,i_susceptibility))
 
+        # create fake news influencer agents
         f_min_val, f_max_val = f_i_factor
         f_min_op, f_max_op = f_opinion
         for i in range(self.commoner_population,self.pop_init_boundary):
-            # create fake news influencer agents
             agent_id = i
             influencer_type = 1 # 0 = Real News, 1 = Fake News
             agent_opinion = rd.randint(f_min_op, f_max_op)
             i_factor = rd.uniform(f_min_val, f_max_val)
 
             self.agents.append(InfluencerAgent(agent_id,agent_opinion,-1,influencer_type,i_factor))            
-
+        
+        # create real news influencer agents
         r_min_val, r_max_val = r_i_factor
         r_min_op, r_max_op = r_opinion
         for i in range(self.pop_init_boundary,self.population):
-            # create real news influencer agents
             agent_id = i
             influencer_type = 0 # 0 = Real News, 1 = Fake News
             agent_opinion = rd.randint(r_min_op, r_max_op)
             i_factor = rd.uniform(r_min_val, r_max_val)
                 
             self.agents.append(InfluencerAgent(agent_id,agent_opinion,-1,influencer_type,i_factor))
-    
-        
-        # Initialize groups - 10 value increments for now
-        #   so it will be: g1 = -100 to -90, g2 = -90 to -80 etc. 
-        #   opinion values for groups:
-        # group_start_value = -100
-        # group_end_value = -90
-        # for i in range(20):
-        #     self.groups[i] = Group(i, group_start_value, group_end_value)
-        #     group_start_value += 10
-        #     group_end_value += 10
-    
     
         # Initialize graph environment with agent nodes and edges
         self.graph_environment.add_nodes_from(make_agent_nodes(self.agents))
@@ -117,11 +113,17 @@ class Model():
         The following method loops overs all agents and initiatize their built in influencing method.
         Every single agent influence every single friend agent in their network.
         
+        Moreover, echo chambers are initalized and potentially left for every timestep
+        
+        Global opinion is also measured in the following method
+        
         Returns
         -------
         Nothing
 
         """
+        
+        self.timestep_val += 1  
         
         # individual agent - influence 
         nodes_arr = list(self.graph_environment._node.keys())
@@ -131,23 +133,95 @@ class Model():
             agent_network = list(self.graph_environment.neighbors(agent_id))
             # Execute influencing process from each individual node to its network
             agent.influence_agent(self.graph_environment,agent_network)
-        
-        
-            # =============================================================================
-            #         NÅET HERTIL 
-            # =============================================================================
-            # Every 25th timestep - check group_opinion and join group
-            # checking global group list - if true join group 
-            # if agent.check_opinion(self.groups):
-                # join the group
-            # else:
-                #continue
+            
+        # Create groups
+        self.join_groups(nodes_arr)
+        self.potentially_leave_group(nodes_arr)
         
         # Record Data for every timestep
         self.record_data_individual_agent()
         
-        #record data global
+        # Record data groups
+        self.record_data_groups()
+        
+        #record data global opinion
         self.record_data_global_opinion()
+    
+    def join_groups(self,agent_list):
+        """
+        The following method will walk through each agent and potentially create an group/echo chamber
+        if opinion and homophily are close enough.
+
+        Parameters
+        ----------
+        agent_list : list of agent ids
+            takes a list of agent ids as input
+
+        Returns
+        -------
+        None.
+
+        """
+        
+        for agent_id in agent_list:
+            # Retrieve agent object
+            agent = self.graph_environment._node[agent_id]['agent']
+            # Retrieve agent object's friend list of ids
+            agent_network = list(self.graph_environment.neighbors(agent_id))    
+            
+            for agent_friend_id in agent_network:
+                # Retrieve a specific friend in friendlist
+                agent_friend = self.graph_environment._node[agent_friend_id]['agent']
+                
+                if isinstance(agent,CommonerAgent) and isinstance(agent_friend,CommonerAgent) and agent_friend.group_id == -1:
+                    # Calculate whether current agent and a specific friend have almost same opinion
+                    similar_opinion_bool = True if abs(agent.opinion - agent_friend.opinion) < self.group_opinion_limit_val else False
+                    # Check the homophily rate of the friendship
+                    homophily_rate = self.graph_environment.get_edge_data(agent.agent_id,agent_friend.agent_id)['weight']
+                    homophily_bool = True if homophily_rate > self.group_homophily_limit_val else False
+                
+                    if similar_opinion_bool and homophily_bool:
+                        if agent.group_id == -1:
+                            # if current agent not in group. Create one and place them in it
+                            group = Group(self.unique_group_id)
+                            group.join_group(agent)
+                            group.join_group(agent_friend)
+                            self.groups[f'{self.unique_group_id}'] = group
+                            self.unique_group_id += 1
+                        else:
+                            # If current agent is in a group. Put the friend in it as well
+                            group = self.groups[f'{agent.group_id}']
+                            group.join_group(agent_friend)
+                    
+    def potentially_leave_group(self,agent_list):
+        """
+        The following method will walk through each agent and potentially make an agent leave
+        an existing group if the agents opinion no longer reflects the average opinion of the group
+
+        Parameters
+        ----------
+        agent_list : list of agent ids
+            takes a list of agent ids as input
+
+        Returns
+        -------
+        None.
+
+        """
+        
+        for agent_id in agent_list:
+            # Retrieve agent object
+            agent = self.graph_environment._node[agent_id]['agent']
+            
+            if agent.group_id != -1:
+                # Retrieve the group that the current agent are placed onto
+                group = self.groups[f'{agent.group_id}']
+                group_avg_opinion = group.avg_opinion
+                group_opinion_disagreement = True if abs(agent.opinion-group_avg_opinion) > self.group_opinion_limit_val else False
+                
+                if group_opinion_disagreement:
+                    group.leave_group(agent)
+                
         
     def record_data_individual_agent(self):
         """
@@ -168,7 +242,8 @@ class Model():
                                'Opinion':agent_obj.opinion,
                                'Influence Susceptibility':np.nan,
                                'Influence Factor':agent_obj.i_factor,
-                               'Network':list(self.graph_environment.neighbors(agent_obj.agent_id))}
+                               'Network':list(self.graph_environment.neighbors(agent_obj.agent_id)),
+                               'Echo chamber':np.nan}
                 self.individual_agent.append(timestep_df)
             elif isinstance(agent_obj,CommonerAgent) == True:
                 timestep_df = {'Timestep':f'T{self.timestep_val}',
@@ -177,13 +252,20 @@ class Model():
                                'Opinion':agent_obj.opinion,
                                'Influence Susceptibility':agent_obj.i_susceptibility,
                                'Influence Factor':np.nan,
-                               'Network':list(self.graph_environment.neighbors(agent_obj.agent_id))}
+                               'Network':list(self.graph_environment.neighbors(agent_obj.agent_id)),
+                               'Echo chamber':agent_obj.group_id
+                               }
                 self.individual_agent.append(timestep_df)
-        self.timestep_val += 1
         
-    def record_data_collectives(self):
-        raise Exception("not yet implemented")
- 
+    def record_data_groups(self):
+        for group in self.groups.values():
+            self.groups_dataframes.append({
+                'Timestep':f'T{self.timestep_val}',
+                'Group id': group.group_id,
+                'Agents in list': [x.agent_id for x in group.agent_list],
+                'Group size': group.size,
+                'Group average opinion': group.avg_opinion
+                })
         
 
     def record_data_global_opinion(self,include_influencer_agent_op = False):
@@ -216,8 +298,18 @@ class Model():
             self.global_opinion.append({'Timestep':f'T{self.timestep_val}','Population':self.population,'Global Opinion':temp_global_opinion/self.commoner_population,'Influencer Opinion Included':'No'})
 
     def finalize_model(self):
+        """
+        A method to create pandas DataFrame of all the agents in the ABM.
+
+        Returns
+        -------
+        None.
+
+        """
+        
         self.dataset_global_opinion = pd.DataFrame(self.global_opinion)
         self.dataset_individual_agent = pd.DataFrame(self.individual_agent)
+        self.dataset_groups = pd.DataFrame(self.groups_dataframes)
 
 # ============================================================================= #
 #                            Testing environment                                #
@@ -226,45 +318,53 @@ class Model():
 # Benchmarking
 start = time.time()
 
-# amount of timesteps
-timesteps = 3
-
-### Varaibles ###
+### Variables ###
 
 params = {
-    "population": 4,
-    "distribution":(50, 25, 25), # percentages: commoner, fake, real
-    "commoner_network": 3,
-    "influencer_network": 2,
-    "f_network_mult_factor": 1.5, # starts at 1 - a multiplication of influencer network - due to fake news spreading more
-    "homophily_weight_range": 1.3, # homophily between commoners
-    "f_i_factor": (1.5, 2), # influence factor - fake news influencer
+    'timesteps': 25, # declare amount of timesteps
+    "population": 300, # declare the overall population of the ABM
+    "distribution":(75, 12.5, 12.5), # percentages: commoner, fake, real
+    "commoner_network": 3, # how many connections should a typical commoner have
+    "influencer_network": 2, # how many connections should a typical influencer have
+    "f_network_mult_factor": 1, # starts at 1 - a multiplication of influencer network - due to fake news spreading more
+    "homophily_weight_range": 2, # homophily between commoners
+    "f_i_factor": (1, 2), # influence factor - fake news influencer (should be higher for Finfluencer)
     "r_i_factor": (1, 2), # influence factor - real news influencer
-    "f_opinion": (-100, -80), #  range of opinion - fake news influencer
+    "f_opinion": (-100, -50), #  range of opinion - fake news influencer (should be more radical for Finfluencer)
     "r_opinion": (50, 100), # range of opinion - real news influencer
-    "susceptibility": (1, 2) # susceptibility - commoner - random value between 1 and 2
+    "susceptibility": (1, 2), # susceptibility - commoner - random value between 1 and 2
+    'group_opinion_limit_val': 5, # determine the limit for when a opinion should reflect a potential join of an echo chamber
+    'group_homophily_limit_val': 1.90 # determine the homophily between agents that should be in an echo chamber
 }
 
 
 # create model
-
-
 ##############
-model = Model(params['population'], params['distribution'], params['commoner_network'], params['influencer_network'], params['f_network_mult_factor'], params['homophily_weight_range'], params['f_i_factor'], params['r_i_factor'], params['f_opinion'], params['r_opinion'], params['susceptibility'])
+# def execute_ABM():
+model = Model(params['population'], params['distribution'], params['commoner_network'], params['influencer_network'], params['f_network_mult_factor'], params['homophily_weight_range'], params['f_i_factor'], params['r_i_factor'], params['f_opinion'], params['r_opinion'], params['susceptibility'],params['group_opinion_limit_val'],params['group_homophily_limit_val'])
 draw_graph_environment(model)
 
 # run sim (run timesteps)
-for i in range(timesteps):
+for i in range(params['timesteps']):
     model.timestep()
 
 # Create a pandas dataframe with the final global opinion values
 model.finalize_model()
+# execute_ABM()
 
 ##############
+# for group in model.groups.values():
+#     print('######')
+#     for agent in group.agent_list:
+#         print(agent.opinion)
+#     print('average opinion')
+#     print(group.avg_opinion)
 
+##############
         
 # record data 
 df_individual_opinion = model.dataset_individual_agent
+df_groups = model.dataset_groups
 df_global_opinion = model.dataset_global_opinion
 
 # To JSON format
@@ -272,14 +372,4 @@ df_global_opinion = model.dataset_global_opinion
 
 done = time.time()
 elapsed = done - start
-
-#### TEST ####
-# c1 = model.graph_environment._node[0]["agent"]
-
-# c2 = model.graph_environment._node[1]["agent"]
-
-# c3 = model.graph_environment._node[2]["agent"]
-
-# print(c1.check_homophily(c2, model.graph_environment))
-
 print(f'Running Time: {elapsed}')

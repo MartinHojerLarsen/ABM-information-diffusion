@@ -13,8 +13,6 @@ class Agent():
             The opinion of the agent - range from -100 to 100
         group_id : int
             unique identifier for current group 
-        group_invites : list<group_id>
-            List of pending group invites 
 
         Returns
         -------
@@ -97,29 +95,6 @@ class CommonerAgent(Agent):
                     target_new_opinion
                 
                 target_agent.opinion = target_new_opinion
-                
-
-    def check_opinion(self, target_group):
-        """
-        Checking opinion of itself and target Group
-
-        Parameters
-        ----------
-        target : Group
-            target Group to compare opinion with.
-
-        Returns
-        -------
-        Boolean
-            Returns true if self.opinion is within Group opinion range
-            False if outside Group opinion range
-
-        """
-        
-        return self.opinion > target_group.opinion_start and self.opinion < target_group.opinion_end
-
-               
-
 
 class InfluencerAgent(Agent):
     def __init__(self,agent_id, opinion, group_id, agent_type, i_factor):

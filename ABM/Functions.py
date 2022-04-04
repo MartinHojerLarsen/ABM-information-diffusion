@@ -141,24 +141,11 @@ def normalDistNP(size,mean = 0, std = 15):
     """
 
     nd = (np.random.normal(mean, std, size))
-    nd = nd[(nd < 50) & (nd > -50)]    
+    nd = nd[(nd < 50) & (nd > -50)] 
     
-    missing_values = size-len(nd)
+    while len(nd) != size:
+        nd = (np.random.normal(mean, std, size))
+        nd = nd[(nd < 50) & (nd > -50)] 
     
-    if missing_values != 0:
-        # add missing values
-        for i in range(0,missing_values):
-            rand_value = np.random.randint(-50,50)
-            np.append(nd,rand_value)
-    
-    # print("Mean:")
-    # print(abs(mean - np.mean(nd)))
-    # print("Variance:")
-    # print(abs(std - np.std(nd, ddof=1)))
-        
-    # count, bins, ignored = plt.hist(nd, 30, density=True)
-    # plt.plot(bins, 1/(std * np.sqrt(2 * np.pi)) *
-    #          np.exp(- (bins - mean)**2 / (2 * std**2)),
-    #          linewidth=2, color='r')
-
     return nd
+
