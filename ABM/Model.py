@@ -56,8 +56,8 @@ class Model():
             raise Exception("Population distribution mismatch. Must be equal to 100")
 
         self.commoner_population = round(self.population*(commoner_dist/100)) # Divides population into Commoners and Influencers
-        self.f_influencer_population = round(self.population*(f_influencer_dist/100)) # Divides population into Commoners and Influencers
-        self.r_influencer_population = round(self.population*(r_influencer_dist/100)) # Divides population into Commoners and Influencers
+        self.f_influencer_population = round(self.population*(f_influencer_dist/100)) # Divides population into Commoners and f_Influencers
+        self.r_influencer_population = round(self.population*(r_influencer_dist/100)) # Divides population into Commoners and r_Influencers
 
         # boundary for unique agent ids
         self.pop_init_boundary = self.commoner_population + self.f_influencer_population
@@ -138,13 +138,15 @@ class Model():
         self.join_groups(nodes_arr)
         self.potentially_leave_group(nodes_arr)
         
+        # Add echo effect here....
+        
         # Record Data for every timestep
         self.record_data_individual_agent()
         
         # Record data groups
         self.record_data_groups()
         
-        #record data global opinion
+        # Record data global opinion
         self.record_data_global_opinion()
     
     def join_groups(self,agent_list):
@@ -321,9 +323,9 @@ start = time.time()
 ### Variables ###
 
 params = {
-    'timesteps': 25, # declare amount of timesteps
-    "population": 300, # declare the overall population of the ABM
-    "distribution":(75, 12.5, 12.5), # percentages: commoner, fake, real
+    'timesteps': 1000, # declare amount of timesteps
+    "population": 4, # declare the overall population of the ABM
+    "distribution":(50, 25, 25), # percentages: commoner, fake, real
     "commoner_network": 3, # how many connections should a typical commoner have
     "influencer_network": 2, # how many connections should a typical influencer have
     "f_network_mult_factor": 1, # starts at 1 - a multiplication of influencer network - due to fake news spreading more

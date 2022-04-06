@@ -80,7 +80,10 @@ class CommonerAgent(Agent):
                 target_agent_susceptibility = target_agent.i_susceptibility if target_agent.i_susceptibility != 1 else 0 
                 # calculate new target opinion
                 similar_mindset = 1.5 if (self.opinion >= 0 and target_agent_opinion >= 0) or (self.opinion < 0 and target_agent_opinion < 0) else 1
-                opinion_difference = self.opinion-target_agent_opinion # This is up for discussion
+                try:
+                    opinion_difference = 1/abs(self.opinion-target_agent_opinion)
+                except ZeroDivisionError:
+                    opinion_difference = 1
                 homophily = graph_env.get_edge_data(self.agent_id,target_agent.agent_id)['weight']
                 # print(f'Homophily between agents {homophily}')
                 
@@ -149,8 +152,10 @@ class InfluencerAgent(Agent):
             # calculate new target opinion
             similar_mindset = 1.5 if (self.opinion >= 0 and target_agent_opinion >= 0) or (self.opinion < 0 and target_agent_opinion) < 0 else 1
             ifs_factor = self.i_factor * target_agent_susceptibility
-            opinion_difference = self.opinion - target_agent_opinion
-            
+            try:
+                opinion_difference = 1/abs(self.opinion-target_agent_opinion)
+            except ZeroDivisionError:
+                opinion_difference = 1
             
             target_new_opinion = target_agent_opinion + (opinion_difference * ifs_factor * similar_mindset) / SCALE_DOWN_FACTOR
             

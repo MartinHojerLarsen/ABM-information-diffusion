@@ -73,6 +73,9 @@ class Group():
         self.calc_avg_opinion()
         agent.group_id = -1
         
+    def echo_effect():
+        raise Exception('Not implemented yet')
+        
 
 # =============================================================================
 # TESTING 
