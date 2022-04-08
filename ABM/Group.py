@@ -2,13 +2,13 @@
 from Agent import CommonerAgent
 
 class Group(): 
-    def __init__(self, group_id):
-
+    def __init__(self, group_id,echo_chamber_limit_value):
         self.group_id = group_id
         self.size = 0
         self.agent_list = []
         self.avg_opinion = 0
-
+        self.echo_chamber_limit_value = echo_chamber_limit_value
+        
 
     def calc_avg_opinion(self):
         """
@@ -26,13 +26,28 @@ class Group():
     
         """
         opinion_sum = 0
+        num_state = 'zero'
+        
         for agent in self.agent_list:
             opinion_sum += agent.opinion
             
         average = opinion_sum/len(self.agent_list) if len(self.agent_list) != 0 else 0
-        self.avg_opinion = average
-
-
+        
+        
+        # Ensure that echo chambers cannot be in the range of -50 <=> 50.
+        if opinion_sum < 0:
+            num_state = 'n'
+        elif opinion_sum == 0:
+            num_state = 'zero'
+        elif opinion_sum > 0:
+            num_state = 'p'
+        
+        if num_state == 'n' and average > self.echo_chamber_limit_value:
+            self.avg_opinion = self.echo_chamber_limit_value
+        elif num_state == 'p' and average < self.echo_chamber_limit_value:
+            self.avg_opinion = self.echo_chamber_limit_value
+        else:
+            self.avg_opinion = average
 
     def join_group(self, agent):
         """
@@ -73,7 +88,7 @@ class Group():
         self.calc_avg_opinion()
         agent.group_id = -1
         
-    def echo_effect():
+    def polarize_agents():
         raise Exception('Not implemented yet')
         
 
@@ -84,17 +99,3 @@ class Group():
 # c1 = CommonerAgent(0, -95, -1, 50)
 # c2 = CommonerAgent(1, -93, -1, 60)
 # c3 = CommonerAgent(2, -91, -1, 60)
-
-# # g = Group(0, -100, -90)
-
-# if c1.check_opinion(g):
-#     g.join_group(c1)
-#     print("joined group")
-
-# if c2.check_opinion(g):
-#     g.join_group(c2)
-#     print("joined group")
-    
-# if c3.check_opinion(g):
-#     g.join_group(c3)
-#     print("joined group")

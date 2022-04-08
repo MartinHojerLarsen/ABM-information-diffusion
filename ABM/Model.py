@@ -134,9 +134,13 @@ class Model():
             # Execute influencing process from each individual node to its network
             agent.influence_agent(self.graph_environment,agent_network)
             
-        # Create groups
+        # Create/leave groups
         self.join_groups(nodes_arr)
         self.potentially_leave_group(nodes_arr)
+        
+        # Recalculate group average opinions
+        for group in self.groups.values():
+            group.calc_avg_opinion()
         
         # Add echo effect here....
         
@@ -184,12 +188,13 @@ class Model():
                 
                     if similar_opinion_bool and homophily_bool:
                         if agent.group_id == -1:
-                            # if current agent not in group. Create one and place them in it
-                            group = Group(self.unique_group_id)
-                            group.join_group(agent)
-                            group.join_group(agent_friend)
-                            self.groups[f'{self.unique_group_id}'] = group
-                            self.unique_group_id += 1
+                            if agent.opinion < -50 or agent.opinion > 50:
+                                # if current agent not in group. Create one and place them in it
+                                group = Group(self.unique_group_id,agent.opinion)
+                                group.join_group(agent)
+                                group.join_group(agent_friend)
+                                self.groups[f'{self.unique_group_id}'] = group
+                                self.unique_group_id += 1
                         else:
                             # If current agent is in a group. Put the friend in it as well
                             group = self.groups[f'{agent.group_id}']
@@ -324,11 +329,11 @@ start = time.time()
 
 params = {
     'timesteps': 1000, # declare amount of timesteps
-    "population": 4, # declare the overall population of the ABM
+    "population": 200, # declare the overall population of the ABM
     "distribution":(50, 25, 25), # percentages: commoner, fake, real
     "commoner_network": 3, # how many connections should a typical commoner have
     "influencer_network": 2, # how many connections should a typical influencer have
-    "f_network_mult_factor": 1, # starts at 1 - a multiplication of influencer network - due to fake news spreading more
+    "f_network_mult_factor": 1, # starts at 1 - a multiplication of fake news influencer network - due to fake news spreading more
     "homophily_weight_range": 2, # homophily between commoners
     "f_i_factor": (1, 2), # influence factor - fake news influencer (should be higher for Finfluencer)
     "r_i_factor": (1, 2), # influence factor - real news influencer
@@ -336,13 +341,11 @@ params = {
     "r_opinion": (50, 100), # range of opinion - real news influencer
     "susceptibility": (1, 2), # susceptibility - commoner - random value between 1 and 2
     'group_opinion_limit_val': 5, # determine the limit for when a opinion should reflect a potential join of an echo chamber
-    'group_homophily_limit_val': 1.90 # determine the homophily between agents that should be in an echo chamber
+    'group_homophily_limit_val': 1.70 # determine the homophily between agents that should be in an echo chamber
 }
-
 
 # create model
 ##############
-# def execute_ABM():
 model = Model(params['population'], params['distribution'], params['commoner_network'], params['influencer_network'], params['f_network_mult_factor'], params['homophily_weight_range'], params['f_i_factor'], params['r_i_factor'], params['f_opinion'], params['r_opinion'], params['susceptibility'],params['group_opinion_limit_val'],params['group_homophily_limit_val'])
 draw_graph_environment(model)
 
@@ -352,7 +355,6 @@ for i in range(params['timesteps']):
 
 # Create a pandas dataframe with the final global opinion values
 model.finalize_model()
-# execute_ABM()
 
 ##############
 # for group in model.groups.values():
@@ -369,8 +371,7 @@ df_individual_opinion = model.dataset_individual_agent
 df_groups = model.dataset_groups
 df_global_opinion = model.dataset_global_opinion
 
-# To JSON format
-# df_json = df_individual_opinion.to_json()
+groups = model.groups
 
 done = time.time()
 elapsed = done - start

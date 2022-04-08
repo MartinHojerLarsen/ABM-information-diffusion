@@ -65,9 +65,6 @@ class CommonerAgent(Agent):
 
         """
         
-        # print(f'#####################')
-        # print(f'###Agent (Commoner) Opinion: {self.opinion}###')
-        # print(f'#####################')
         for agent_id in list_of_neighbors:
             # current node to influence
             target_agent = graph_env._node[agent_id]['agent']
@@ -98,6 +95,10 @@ class CommonerAgent(Agent):
                     target_new_opinion
                 
                 target_agent.opinion = target_new_opinion
+                
+    def global_opinion_reflection(global_opinion_val):
+        raise Exception('Not yet implemented')
+        
 
 class InfluencerAgent(Agent):
     def __init__(self,agent_id, opinion, group_id, agent_type, i_factor):
@@ -139,9 +140,6 @@ class InfluencerAgent(Agent):
         Nothing
 
         """
-        # print(f'#####################')
-        # print(f'###Agent (Influence){self.opinion}###')
-        # print(f'#####################')
         for agent_id in list_of_neighbors:
             # current node to influence
             target_agent = graph_env._node[agent_id]['agent']
@@ -167,10 +165,6 @@ class InfluencerAgent(Agent):
             else:
                 target_new_opinion
             
-            # embed new opinion
-            # print(f'target opinion: {target_agent_opinion}')
             target_agent.opinion = target_new_opinion
-            # print(f'target new opinion: {target_agent.opinion}')
-            # print('')
             
             
