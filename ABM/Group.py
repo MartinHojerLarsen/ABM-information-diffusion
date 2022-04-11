@@ -33,7 +33,6 @@ class Group():
             
         average = opinion_sum/len(self.agent_list) if len(self.agent_list) != 0 else 0
         
-        
         # Ensure that echo chambers cannot be in the range of -50 <=> 50.
         if opinion_sum < 0:
             num_state = 'n'
@@ -88,14 +87,54 @@ class Group():
         self.calc_avg_opinion()
         agent.group_id = -1
         
-    def polarize_agents():
-        raise Exception('Not implemented yet')
-        
+    def polarize_agents(self):
+        for agent in self.agent_list:
+            opinion_variance = abs(agent.opinion-self.avg_opinion)
+            
+            # state to make proper calculation if agent has a positive or negative opinion
+            state = 'not defined'
+            if agent.opinion < self.avg_opinion:
+                go_state = 'add'
+            elif agent.opinion > self.avg_opinion:
+                go_state = 'subtract'
+            else:
+                go_state = 'equal'
+            
+            # opinion calculation (value is higher the closer the agent opinion is as global opinion)
+            try:
+                opinion_calculation = abs((1/opinion_variance)*agent.opinion)
+            except ZeroDivisionError:
+                opinion_calculation = abs(agent.opinion)
+                
+            if go_state == 'add':
+                new_opinion = agent.opinion + opinion_calculation # polarize towards global opinion
+                # agent opinion cannot exceed global opinion 
+                if new_opinion > self.avg_opinion:
+                    new_opinion = self.avg_opinion
+            elif go_state == 'subtract':
+                new_opinion = agent.opinion - opinion_calculation # polarize towards global opinion
+                # agent opinion cannot exceed global opinion
+                if new_opinion < self.avg_opinion:
+                    new_opinion = self.avg_opinion
+            else:
+                new_opinion = agent.opinion
+                
+            agent.opinion = new_opinion
+            # calculate new average opinion of the group
+            self.calc_avg_opinion()
 
 # =============================================================================
 # TESTING 
 # =============================================================================
 
-# c1 = CommonerAgent(0, -95, -1, 50)
-# c2 = CommonerAgent(1, -93, -1, 60)
-# c3 = CommonerAgent(2, -91, -1, 60)
+c1 = CommonerAgent(0, 80, -1, 50)
+c2 = CommonerAgent(1, 90, -1, 60)
+
+grp = Group(1,70)
+
+grp.join_group(c1)
+grp.join_group(c2)
+
+grp.polarize_agents()
+
+

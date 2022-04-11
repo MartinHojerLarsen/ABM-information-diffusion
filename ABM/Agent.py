@@ -96,9 +96,50 @@ class CommonerAgent(Agent):
                 
                 target_agent.opinion = target_new_opinion
                 
-    def global_opinion_reflection(global_opinion_val):
-        raise Exception('Not yet implemented')
+    def global_opinion_reflection(self,global_opinion_val):
+        # difference in agent opinion and current timesteps global opinion
+        go_variance = abs(self.opinion-global_opinion_val) if (self.opinion-global_opinion_val) != 0 else 1
         
+        # state to make proper calculation if agent has a positive or negative opinion
+        go_state = 'not defined'
+        if self.opinion < global_opinion_val:
+            go_state = 'add'
+        elif self.opinion > global_opinion_val:
+            go_state = 'subtract'
+        else:
+            go_state = 'equal'
+        
+        # opinion calculation (value is higher the closer the agent opinion is as global opinion)
+        opinion_calculation = abs((1/go_variance)*self.opinion)
+
+        if go_state == 'add':
+            if go_variance < 50:
+                new_opinion = self.opinion + opinion_calculation # polarize towards global opinion
+            else:
+                new_opinion = self.opinion - opinion_calculation # polarize away from global opinion
+            
+            # agent opinion cannot exceed global opinion 
+            if new_opinion > global_opinion_val:
+                new_opinion = global_opinion_val
+        elif go_state == 'subtract':
+            if go_variance < 50:
+                new_opinion = self.opinion - opinion_calculation # polarize towards global opinion
+            else:
+                new_opinion = self.opinion + opinion_calculation # polarize away from global opinion
+            
+            # agent opinion cannot exceed global opinion
+            if new_opinion < global_opinion_val:
+                new_opinion = global_opinion_val
+
+        # print(f'agent op: {self.opinion}')
+        # print(f'current global opinion: {global_opinion_val}')
+        # print(f'opinion_calculation: {opinion_calculation}')
+        # print(f'state: {go_state}')
+        # print('')
+        # print(f'new opinion: {new_opinion}')
+        # print('')
+
+        self.opinion = new_opinion
 
 class InfluencerAgent(Agent):
     def __init__(self,agent_id, opinion, group_id, agent_type, i_factor):

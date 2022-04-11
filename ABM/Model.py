@@ -26,7 +26,7 @@ class Model():
         
         # Initialize Pd.DataFrame for data collection
         pd.set_option("expand_frame_repr", True)
-        self.dataset_individual_agent = pd.DataFrame(columns=['Timestep','Agent Id','Agent Type','Opinion','Influence Susceptibility','Influence Factor','Network','Echo chamber'])
+        self.dataset_individual_agent = pd.DataFrame(columns=['Timestep','Agent_id','Agent Type','Opinion','Influence Susceptibility','Influence Factor','Network','Echo chamber'])
         self.dataset_global_opinion = pd.DataFrame(columns=['Timestep','Population','Global Opinion','Influencer Opinion Included'])
         self.dataset_groups = pd.DataFrame(columns=['Timestep','Group id','Agents in group','size','average opinion'])
         
@@ -134,15 +134,19 @@ class Model():
             # Execute influencing process from each individual node to its network
             agent.influence_agent(self.graph_environment,agent_network)
             
+            # Reflect on global opinion at a slower pace
+            if self.timestep_val % 25 == 0 and isinstance(agent,CommonerAgent):
+                former_global_opinion = self.global_opinion[self.timestep_val-1]['Global Opinion']
+                agent.global_opinion_reflection(former_global_opinion)
+            
         # Create/leave groups
         self.join_groups(nodes_arr)
         self.potentially_leave_group(nodes_arr)
         
-        # Recalculate group average opinions
+        # Recalculate group average opinions and polarize towards average group opinion
         for group in self.groups.values():
             group.calc_avg_opinion()
-        
-        # Add echo effect here....
+            group.polarize_agents()
         
         # Record Data for every timestep
         self.record_data_individual_agent()
@@ -228,7 +232,6 @@ class Model():
                 
                 if group_opinion_disagreement:
                     group.leave_group(agent)
-                
         
     def record_data_individual_agent(self):
         """
@@ -244,7 +247,7 @@ class Model():
             agent_obj = agent['agent']
             if isinstance(agent_obj,InfluencerAgent) == True:
                 timestep_df = {'Timestep':f'T{self.timestep_val}',
-                               'Agent Id':agent_obj.agent_id,
+                               'Agent_id':agent_obj.agent_id,
                                'Agent Type':'InfluencerAgent',
                                'Opinion':agent_obj.opinion,
                                'Influence Susceptibility':np.nan,
@@ -254,7 +257,7 @@ class Model():
                 self.individual_agent.append(timestep_df)
             elif isinstance(agent_obj,CommonerAgent) == True:
                 timestep_df = {'Timestep':f'T{self.timestep_val}',
-                               'Agent Id':agent_obj.agent_id,
+                               'Agent_id':agent_obj.agent_id,
                                'Agent Type':'CommonerAgent',
                                'Opinion':agent_obj.opinion,
                                'Influence Susceptibility':agent_obj.i_susceptibility,
@@ -322,57 +325,59 @@ class Model():
 #                            Testing environment                                #
 # ============================================================================= #
 
-# Benchmarking
-start = time.time()
-
-### Variables ###
-
-params = {
-    'timesteps': 1000, # declare amount of timesteps
-    "population": 200, # declare the overall population of the ABM
-    "distribution":(50, 25, 25), # percentages: commoner, fake, real
-    "commoner_network": 3, # how many connections should a typical commoner have
-    "influencer_network": 2, # how many connections should a typical influencer have
-    "f_network_mult_factor": 1, # starts at 1 - a multiplication of fake news influencer network - due to fake news spreading more
-    "homophily_weight_range": 2, # homophily between commoners
-    "f_i_factor": (1, 2), # influence factor - fake news influencer (should be higher for Finfluencer)
-    "r_i_factor": (1, 2), # influence factor - real news influencer
-    "f_opinion": (-100, -50), #  range of opinion - fake news influencer (should be more radical for Finfluencer)
-    "r_opinion": (50, 100), # range of opinion - real news influencer
-    "susceptibility": (1, 2), # susceptibility - commoner - random value between 1 and 2
-    'group_opinion_limit_val': 5, # determine the limit for when a opinion should reflect a potential join of an echo chamber
-    'group_homophily_limit_val': 1.70 # determine the homophily between agents that should be in an echo chamber
-}
-
-# create model
-##############
-model = Model(params['population'], params['distribution'], params['commoner_network'], params['influencer_network'], params['f_network_mult_factor'], params['homophily_weight_range'], params['f_i_factor'], params['r_i_factor'], params['f_opinion'], params['r_opinion'], params['susceptibility'],params['group_opinion_limit_val'],params['group_homophily_limit_val'])
-draw_graph_environment(model)
-
-# run sim (run timesteps)
-for i in range(params['timesteps']):
-    model.timestep()
-
-# Create a pandas dataframe with the final global opinion values
-model.finalize_model()
-
-##############
-# for group in model.groups.values():
-#     print('######')
-#     for agent in group.agent_list:
-#         print(agent.opinion)
-#     print('average opinion')
-#     print(group.avg_opinion)
-
-##############
-        
-# record data 
-df_individual_opinion = model.dataset_individual_agent
-df_groups = model.dataset_groups
-df_global_opinion = model.dataset_global_opinion
-
-groups = model.groups
-
-done = time.time()
-elapsed = done - start
-print(f'Running Time: {elapsed}')
+if __name__ == '__main__':
+    # Benchmarking
+    start = time.time()
+    
+    ### Variables ###
+    
+    params = {
+        'timesteps': 1000, # declare amount of timesteps
+        "population": 100, # declare the overall population of the ABM
+        "distribution":(50, 25, 25), # percentages: commoner, fake, real
+        "commoner_network": 3, # how many connections should a typical commoner have
+        "influencer_network": 2, # how many connections should a typical influencer have
+        "f_network_mult_factor": 1, # starts at 1 - a multiplication of fake news influencer network - due to fake news spreading more
+        "homophily_weight_range": 2, # homophily between commoners
+        "f_i_factor": (1, 2), # influence factor - fake news influencer (should be higher for Finfluencer)
+        "r_i_factor": (1, 2), # influence factor - real news influencer
+        "f_opinion": (-100, -50), #  range of opinion - fake news influencer (should be more radical for Finfluencer)
+        "r_opinion": (50, 100), # range of opinion - real news influencer
+        "susceptibility": (1, 2), # susceptibility - commoner - random value between 1 and 2
+        'group_opinion_limit_val': 20, # determine the limit for when a opinion should reflect a potential join of an echo chamber
+        'group_homophily_limit_val': 1.60 # determine the homophily between agents that should be in an echo chamber
+    }
+    
+    # create model
+    ##############
+    model = Model(params['population'], params['distribution'], params['commoner_network'], params['influencer_network'], params['f_network_mult_factor'], params['homophily_weight_range'], params['f_i_factor'], params['r_i_factor'], params['f_opinion'], params['r_opinion'], params['susceptibility'],params['group_opinion_limit_val'],params['group_homophily_limit_val'])
+    
+    draw_graph_environment(model)
+    
+    # run sim (run timesteps)
+    for i in range(params['timesteps']):
+        model.timestep()
+    
+    # Create a pandas dataframe with the final global opinion values
+    model.finalize_model()
+    
+    ##############
+    # for group in model.groups.values():
+    #     print('######')
+    #     for agent in group.agent_list:
+    #         print(agent.opinion)
+    #     print('average opinion')
+    #     print(group.avg_opinion)
+    
+    ##############
+            
+    # record data 
+    df_individual_opinion = model.dataset_individual_agent
+    df_groups = model.dataset_groups
+    df_global_opinion = model.dataset_global_opinion
+    
+    groups = model.groups
+    
+    done = time.time()
+    elapsed = done - start
+    print(f'Running Time: {elapsed}')
