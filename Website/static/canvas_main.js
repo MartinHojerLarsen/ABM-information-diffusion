@@ -68,16 +68,6 @@ function line(ctx, x1, y1, x2, y2, size = 1) {
     ctx.closePath();
 }
 
-// Information bubble
-function bubble(ctx, x1, y1, x2, y2, size) {
-    ctx.fillStyle = "black";
-    ctx.beginPath();
-    ctx.arc(x1, y1, size, 0, 2 * Math.PI);
-    ctx.fill();
-    ctx.stroke();
-    ctx.closePath();
-}
-
 //*** Helper functions ***//
 
 // Random number for drawing agents - used for positions
@@ -137,6 +127,23 @@ function change_cursor(objArray,mousePos) {
     }
 }
 
+let incrementing = true;
+function animate_rotation(obj, upper, lower) {
+    let tick = obj.getRotation();
+    if (incrementing) {
+        tick += 1;
+    } else if (!incrementing) {
+        tick -= 1;
+    }
+    if (tick > upper) {
+        incrementing = false; 
+    } 
+    if (tick < lower) {
+        incrementing = true;
+    }
+    obj.setRotation(tick);
+}
+
 
 // Export
-export { background, clear_canvas, randInt, line, bubble,drawImageRot, draw_text, getCursorPosition, insideObj,change_cursor};
+export { background, clear_canvas, randInt, line, drawImageRot, draw_text, getCursorPosition, insideObj, change_cursor, animate_rotation};

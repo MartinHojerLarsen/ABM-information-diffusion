@@ -4,28 +4,16 @@ let ctx_animation = canvas_animation.getContext("2d");
 let move = document.getElementById("move_animation");
 
 
-// Information bubble
-function bubble(ctx, x1, y1, x2, y2, size) {
-    ctx.fillStyle = "white";
-    ctx.beginPath();
-    ctx.arc(x1, y1, size, 0, 2 * Math.PI);
-    ctx.fill();
-    ctx.stroke();
-    ctx.closePath();
-}
-bubble(ctx_animation, x, y, x+100, y+100, 10);
-
-
-
-var x = ctx_animation.canvas.width*0.5;
-var y = ctx_animation.canvas.height*0.5;
+var x = 10;
+var y = 10;
 var r = 10;
 var duration = 500; // in ms
 var nextX, nextY;
 var startTime;
 
-var WIDTH = 600;
-var HEIGHT = 400;
+
+var WIDTH = ctx_animation.canvas.width;
+var HEIGHT = ctx_animation.canvas.height;
 
 
 function anim(time) {
@@ -60,6 +48,7 @@ function circle(x, y, r) {
     ctx_animation.beginPath();
     ctx_animation.arc(x, y, r, 0, Math.PI * 2, true);
     ctx_animation.fill();
+    ctx_animation.closePath();
 }
 
 function clear() {

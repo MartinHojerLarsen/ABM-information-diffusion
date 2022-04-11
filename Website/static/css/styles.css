@@ -109,7 +109,7 @@ h1, h2, h3, h4, form {
 }
 
 #canvas_animation_container {
-    width: 800px;
-    height:600px;
+    width: 400px;
+    height:400px;
     text-align: center;
 }

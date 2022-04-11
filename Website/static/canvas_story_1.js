@@ -1,4 +1,4 @@
-import {background,getCursorPosition,line,insideObj,change_cursor, bubble} from "/static/canvas_main.js";
+import {background,getCursorPosition,line,insideObj,change_cursor, animate_rotation} from "/static/canvas_main.js";
 import * as ag from "/static/agent_class.js";
 
 window.addEventListener("load", function () {
@@ -13,12 +13,12 @@ let canvaHeight = document.getElementById('canvas_story_1_container').offsetHeig
 background(canvas1, ctx1,canvaWidth,canvaHeight);
 
 // Create agents
-let commoner = new ag.Commoner(ctx1,1,2, 55, [1,2,3],(ctx1.canvas.width*0.50),(ctx1.canvas.height*0.35),110,0)
+let commoner = new ag.Commoner(ctx1,1,2, 55, [1,2,3],(ctx1.canvas.width*0.50),(ctx1.canvas.height*0.35),110,10)
 let r_influencer = new ag.R_influencer(ctx1,2,1, 90, [1,2,3],ctx1.canvas.width*0.25,ctx1.canvas.height*0.85,110,0);
-let f_influencer = new ag.F_influencer(ctx1,3,0, -90, [1,2,3],ctx1.canvas.width*0.75,ctx1.canvas.height*0.85,110,0);
+let f_influencer = new ag.F_influencer(ctx1,3,0, -90, [1,2,3],ctx1.canvas.width*0.75,ctx1.canvas.height*0.85,110,-10);
 
-let r_influencer_bubble = bubble(ctx1, r_influencer.getX(), r_influencer.getY(), commoner.getX, commoner.getY(), 10);
-let f_influencer_bubble = bubble(ctx1, f_influencer.getX(), f_influencer.getY(), commoner.getX, commoner.getY(), 10);
+//let r_influencer_bubble = bubble(ctx1, r_influencer.getX(), r_influencer.getY(), commoner.getX, commoner.getY(), 10);
+//let f_influencer_bubble = bubble(ctx1, f_influencer.getX(), f_influencer.getY(), commoner.getX, commoner.getY(), 10);
 
 /*
 *************
@@ -34,17 +34,36 @@ let anim_state = states[0]
 
 //on mousemove
 canvas1.addEventListener('mousemove', function(e) {
-    let mouse = getCursorPosition(canvas1, e)
-    change_cursor([commoner,f_influencer,r_influencer],mouse)
+    let mouse = getCursorPosition(canvas1, e);
+    change_cursor([commoner,f_influencer,r_influencer],mouse);
+
 });
 
 
 // on click
 canvas1.addEventListener('click', function(e) {
-    let mouse = getCursorPosition(canvas1, e)
-    insideObj(commoner,mouse) ? commoner.setSpeechBubble(true):commoner.setSpeechBubble(false);
-    insideObj(r_influencer,mouse) ? r_influencer.setSpeechBubble(true):r_influencer.setSpeechBubble(false);
-    insideObj(f_influencer,mouse) ? f_influencer.setSpeechBubble(true):f_influencer.setSpeechBubble(false);
+    let mouse = getCursorPosition(canvas1, e);
+    // Commoner
+    if (insideObj(commoner,mouse) && (commoner.getSpeechBubble() == false)) {
+        commoner.setSpeechBubble(true);
+    } else {
+        commoner.setSpeechBubble(false);
+    }
+    // Real news influencer
+    if (insideObj(r_influencer,mouse) && (r_influencer.getSpeechBubble() == false)) {
+        r_influencer.setSpeechBubble(true);
+    } else {
+        r_influencer.setSpeechBubble(false);
+    }
+    // Fake news influencer
+    if (insideObj(f_influencer,mouse) && (f_influencer.getSpeechBubble() == false)) {
+        f_influencer.setSpeechBubble(true);
+    } else {
+        f_influencer.setSpeechBubble(false);
+    }
+    // insideObj(commoner,mouse) && commoner.getSpeechBubble() ? commoner.setSpeechBubble(true):commoner.setSpeechBubble(false);
+    // insideObj(r_influencer,mouse) ? r_influencer.setSpeechBubble(true):r_influencer.setSpeechBubble(false);
+    // insideObj(f_influencer,mouse) ? f_influencer.setSpeechBubble(true):f_influencer.setSpeechBubble(false);
 });
 
 
@@ -58,18 +77,23 @@ function render() {
     tick += 1 // counter
 
     // Changing edge thickness
-    //edgeThickness += 0.05 // edge thickness
-    //edgeThickness > 9 == true ? edgeThickness=4:edgeThickness;
+    // edgeThickness += 0.05 // edge thickness
+    // edgeThickness > 9 == true ? edgeThickness=4:edgeThickness;
 
+    // Rotation
+    animate_rotation(commoner, 40, -30);
+    animate_rotation(r_influencer, 30, -40);
+    animate_rotation(f_influencer, 30, -40);
+    
     /****Agent Animations****/
     if(anim_state == states[0]){
         // Edges
         line(ctx1, commoner.getX(), commoner.getY(), r_influencer.getX(), r_influencer.getY(), edgeThickness);
         line(ctx1, commoner.getX(), commoner.getY(), f_influencer.getX(), f_influencer.getY(), edgeThickness);
-        commoner.minorHover();
-        r_influencer.minorHover();
-        f_influencer.minorHover();
+        commoner.info_text();
+        r_influencer.info_text();
+        f_influencer.info_text();
     }
 }
-render()
+render();
 });

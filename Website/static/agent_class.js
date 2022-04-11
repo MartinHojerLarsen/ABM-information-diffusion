@@ -57,7 +57,7 @@ class Agent {
   }
   
   getSpeechBubble() {
-    this.speechBubble
+    return this.speechBubble
   }
   
   setSpeechBubble(bool) {
@@ -101,12 +101,8 @@ class Commoner extends Agent {
     );
   };
     
-  minorHover() {
-    this.y += this.dy;
-    if (this.y > this.y_upperB) this.dy -= this.speed;
-    if (this.y < this.y_lowerB) this.dy += this.speed;
-    
-    // OnClick - show text and change face
+  // OnClick - show text and change face
+  info_text() {
     if (this.speechBubble) {
       draw_text(this.ctx, "I am a Commoner", this.x, this.y - 150);
       this.draw(commoner_img_happy);
@@ -147,11 +143,7 @@ class R_influencer extends Agent {
     );
   };
     
-  minorHover() {
-    this.y += this.dy;
-    if (this.y > this.y_upperB) this.dy -= this.speed;
-    if (this.y < this.y_lowerB) this.dy += this.speed;
-    
+  info_text() {
     if (this.speechBubble) {
       draw_text(this.ctx, "I am an Influencer", this.x, this.y - 150);
       this.draw(rinfluencer_img_influencing);
@@ -194,11 +186,7 @@ class F_influencer extends Agent {
       );
   };
     
-  minorHover() {
-    this.y += this.dy;
-    if (this.y > this.y_upperB) this.dy -= this.speed;
-    if (this.y < this.y_lowerB) this.dy += this.speed;
-    
+  info_text() {
     if (this.speechBubble) {
       draw_text(this.ctx, "I am an Influencer", this.x, this.y - 150);
       this.draw(finfluencer_img_influencing);
