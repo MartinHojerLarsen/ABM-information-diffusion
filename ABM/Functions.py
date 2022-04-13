@@ -65,7 +65,7 @@ def make_agents_connections(agent_list, commoner_network, influencer_network, f_
             random_agent = agent_list[rd.randint(0,len(agent_list)-1)]
             c1,c2 = (agent,random_agent)
             
-            if isinstance(c1,InfluencerAgent) == True and isinstance(c2,InfluencerAgent) == True:
+            if isinstance(c1,InfluencerAgent) and isinstance(c2,InfluencerAgent):
                 continue
             else:    
                 if c1.agent_id is not c2.agent_id:

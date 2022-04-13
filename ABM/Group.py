@@ -89,7 +89,7 @@ class Group():
         
     def polarize_agents(self):
         for agent in self.agent_list:
-            opinion_variance = abs(agent.opinion-self.avg_opinion)
+            opinion_variance = abs(agent.opinion-self.avg_opinion) if (agent.opinion-self.avg_opinion) != 0 else 1
             
             # state to make proper calculation if agent has a positive or negative opinion
             state = 'not defined'
@@ -101,10 +101,9 @@ class Group():
                 go_state = 'equal'
             
             # opinion calculation (value is higher the closer the agent opinion is as global opinion)
-            try:
-                opinion_calculation = abs((1/opinion_variance)*agent.opinion)
-            except ZeroDivisionError:
-                opinion_calculation = abs(agent.opinion)
+
+            opinion_calculation = abs((1/opinion_variance)*agent.opinion)
+
                 
             if go_state == 'add':
                 new_opinion = agent.opinion + opinion_calculation # polarize towards global opinion

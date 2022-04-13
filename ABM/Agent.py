@@ -77,14 +77,17 @@ class CommonerAgent(Agent):
                 target_agent_susceptibility = target_agent.i_susceptibility if target_agent.i_susceptibility != 1 else 0 
                 # calculate new target opinion
                 similar_mindset = 1.5 if (self.opinion >= 0 and target_agent_opinion >= 0) or (self.opinion < 0 and target_agent_opinion < 0) else 1
-                try:
-                    opinion_difference = 1/abs(self.opinion-target_agent_opinion)
-                except ZeroDivisionError:
-                    opinion_difference = 1
+                
+                opinion_variance = abs(self.opinion-(target_agent_opinion)) if (self.opinion-target_agent_opinion) != 0 else 1
+                
+                opinion_difference = 1/opinion_variance
                 homophily = graph_env.get_edge_data(self.agent_id,target_agent.agent_id)['weight']
                 # print(f'Homophily between agents {homophily}')
                 
-                target_new_opinion = target_agent_opinion+(opinion_difference*target_agent_susceptibility*similar_mindset*homophily)/SCALE_DOWN_FACTOR
+                if self.opinion >= 0:
+                    target_new_opinion = target_agent_opinion+(opinion_difference*target_agent_susceptibility*similar_mindset*homophily)/SCALE_DOWN_FACTOR
+                else:
+                    target_new_opinion = target_agent_opinion-(opinion_difference*target_agent_susceptibility*similar_mindset*homophily)/SCALE_DOWN_FACTOR
                 
                 # Make boundaries for degree of opinion
                 if target_agent_opinion >= 100:
@@ -131,14 +134,6 @@ class CommonerAgent(Agent):
             if new_opinion < global_opinion_val:
                 new_opinion = global_opinion_val
 
-        # print(f'agent op: {self.opinion}')
-        # print(f'current global opinion: {global_opinion_val}')
-        # print(f'opinion_calculation: {opinion_calculation}')
-        # print(f'state: {go_state}')
-        # print('')
-        # print(f'new opinion: {new_opinion}')
-        # print('')
-
         self.opinion = new_opinion
 
 class InfluencerAgent(Agent):
@@ -174,7 +169,7 @@ class InfluencerAgent(Agent):
         list_of_neighbors : List of integers
             Takes a list of integers represented as unique ids
         SCALE_DOWN_FACTOR : int, optional
-            Used to scale down the influencing factor, so the agent opinion will not be to high and unreadable. The default is 60.
+            Used to scale down the influencing factor, so the agent opinion will not be to high and unreadable. The default is 80.
 
         Returns
         -------
@@ -191,13 +186,15 @@ class InfluencerAgent(Agent):
             # calculate new target opinion
             similar_mindset = 1.5 if (self.opinion >= 0 and target_agent_opinion >= 0) or (self.opinion < 0 and target_agent_opinion) < 0 else 1
             ifs_factor = self.i_factor * target_agent_susceptibility
-            try:
-                opinion_difference = 1/abs(self.opinion-target_agent_opinion)
-            except ZeroDivisionError:
-                opinion_difference = 1
             
-            target_new_opinion = target_agent_opinion + (opinion_difference * ifs_factor * similar_mindset) / SCALE_DOWN_FACTOR
+            opinion_variance = abs(self.opinion-(target_agent_opinion)) if (self.opinion-target_agent_opinion) != 0 else 1
+                
+            opinion_difference = 1/opinion_variance 
             
+            if self.opinion >= 0:
+                target_new_opinion = target_agent_opinion + (opinion_difference * ifs_factor * similar_mindset) / SCALE_DOWN_FACTOR
+            else:
+                target_new_opinion = target_agent_opinion - (opinion_difference * ifs_factor * similar_mindset) / SCALE_DOWN_FACTOR
             # Make boundaries for degree of opinion
             if target_agent_opinion >= 100:
                 target_new_opinion = 100

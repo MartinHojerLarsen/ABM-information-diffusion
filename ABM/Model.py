@@ -333,18 +333,18 @@ if __name__ == '__main__':
     
     params = {
         'timesteps': 1000, # declare amount of timesteps
-        "population": 100, # declare the overall population of the ABM
-        "distribution":(50, 25, 25), # percentages: commoner, fake, real
+        "population": 6, # declare the overall population of the ABM
+        "distribution":(25, 37.5, 37.5), # percentages: commoner, fake, real
         "commoner_network": 3, # how many connections should a typical commoner have
         "influencer_network": 2, # how many connections should a typical influencer have
-        "f_network_mult_factor": 1, # starts at 1 - a multiplication of fake news influencer network - due to fake news spreading more
+        "f_network_mult_factor": 5, # starts at 1 - a multiplication of fake news influencer network - due to fake news spreading more
         "homophily_weight_range": 2, # homophily between commoners
         "f_i_factor": (1, 2), # influence factor - fake news influencer (should be higher for Finfluencer)
         "r_i_factor": (1, 2), # influence factor - real news influencer
-        "f_opinion": (-100, -50), #  range of opinion - fake news influencer (should be more radical for Finfluencer)
+        "f_opinion": (-100, -75), #  range of opinion - fake news influencer (should be more radical for Finfluencer)
         "r_opinion": (50, 100), # range of opinion - real news influencer
         "susceptibility": (1, 2), # susceptibility - commoner - random value between 1 and 2
-        'group_opinion_limit_val': 20, # determine the limit for when a opinion should reflect a potential join of an echo chamber
+        'group_opinion_limit_val': 10, # determine the limit for when a opinion should reflect a potential join of an echo chamber
         'group_homophily_limit_val': 1.60 # determine the homophily between agents that should be in an echo chamber
     }
     
