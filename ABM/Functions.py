@@ -13,21 +13,21 @@ def make_agent_nodes(agent_list):
 
     Parameters
     ----------
-    agent_list : list of agents (commoners,influencers)
-        Specifies a list of agents. More explicit a list of CommonerAgents and InfluencerAgents
+    agent_list : list of agents (users,influencers)
+        Specifies a list of agents. More explicit a list of UserAgents and InfluencerAgents
 
     Returns
     -------
     agent_nodes : List of tuples with agent ids and agents
-        Ex [(0,{'agent':CommonerAgent})]
+        Ex [(0,{'agent':UserAgent})]
     '''
     agent_nodes = [(x.agent_id,{'agent':x}) for x in agent_list]
     return agent_nodes
     
 
-def make_agents_connections(agent_list, commoner_network, influencer_network, f_network_mult_factor, homophily_weight_range):
+def make_agents_connections(agent_list, user_network, influencer_network, f_network_mult_factor, homophily_weight_range):
     """
-    A function that takes a list of agents and then make appropiate connections between CommonerAgents and InfluencerAgent.
+    A function that takes a list of agents and then make appropiate connections between UserAgents and InfluencerAgent.
     Two InfluencerAgents cannot have a connection to each other
     
     Specified amount of friends are not guaranteed, since there is a probability of befriending oneselve or two influencer agenter befriending each other
@@ -36,11 +36,11 @@ def make_agents_connections(agent_list, commoner_network, influencer_network, f_
     Parameters
     ----------
     agent_list : List of Agents
-        Takes a list of CommonerAgents and InfluencerAgents
+        Takes a list of UserAgents and InfluencerAgents
     amount_of_friends : int, optional
         Amount of connections/friends between each agent. The default is 3.
     influencer_network : int, optional
-        Increase the degree of connections between InfluencerAgents and CommonerAgents. The default is 5.
+        Increase the degree of connections between InfluencerAgents and UserAgents. The default is 5.
 
     Returns
     -------
@@ -52,7 +52,7 @@ def make_agents_connections(agent_list, commoner_network, influencer_network, f_
     edge_list = []
     for index,agent in enumerate(agent_list):
         # temporary variable for network size
-        temp_network = commoner_network
+        temp_network = user_network
         
         if isinstance(agent,InfluencerAgent) == True:
             temp_network = influencer_network
@@ -69,7 +69,7 @@ def make_agents_connections(agent_list, commoner_network, influencer_network, f_
                 continue
             else:    
                 if c1.agent_id is not c2.agent_id:
-                    if isinstance(c1,CommonerAgent) == True and isinstance(c2,CommonerAgent) == True:
+                    if isinstance(c1,UserAgent) == True and isinstance(c2,UserAgent) == True:
                         homophily_weight = rd.uniform(1,homophily_weight_range)
                         edge_list.append((c1.agent_id,c2.agent_id,homophily_weight))
                     else:
@@ -98,7 +98,7 @@ def draw_graph_environment(model,draw_labels = False):
     -------
     nx.draw()
         Draws the environment with respective colors.
-        Commoners: gray
+        users: gray
         FInfluencer: red
         RInfluencer: blue
     '''
@@ -107,7 +107,7 @@ def draw_graph_environment(model,draw_labels = False):
     color_map = []
     
     for key,value in nodes.items():
-        if isinstance(value['agent'],CommonerAgent) == True:
+        if isinstance(value['agent'],UserAgent) == True:
             color_map.append('lightgray')
         elif isinstance(value['agent'],InfluencerAgent) == True:
             if value['agent'].agent_type == 0:
@@ -128,7 +128,7 @@ def normalDistNP(size,mean = 0, std = 15):
     Parameters
     ----------
     size : int
-        insert the population size of the commoners in the model
+        insert the population size of the users in the model
     mean : int, optional
         specify the mean value. The default is 0.
     std : std, optional

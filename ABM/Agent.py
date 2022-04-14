@@ -25,10 +25,10 @@ class Agent():
         self.group_id = group_id
         
     
-class CommonerAgent(Agent): 
+class UserAgent(Agent): 
     def __init__(self,agent_id, opinion, group_id, i_susceptibility):
         """
-        subclass for commoner agent
+        subclass for user agent
 
         Parameters
         ----------
@@ -82,7 +82,6 @@ class CommonerAgent(Agent):
                 
                 opinion_difference = 1/opinion_variance
                 homophily = graph_env.get_edge_data(self.agent_id,target_agent.agent_id)['weight']
-                # print(f'Homophily between agents {homophily}')
                 
                 if self.opinion >= 0:
                     target_new_opinion = target_agent_opinion+(opinion_difference*target_agent_susceptibility*similar_mindset*homophily)/SCALE_DOWN_FACTOR
@@ -133,6 +132,8 @@ class CommonerAgent(Agent):
             # agent opinion cannot exceed global opinion
             if new_opinion < global_opinion_val:
                 new_opinion = global_opinion_val
+        elif go_state == 'equal':
+            new_opinion = global_opinion_val
 
         self.opinion = new_opinion
 

@@ -10,6 +10,7 @@ import unittest
 from Functions import *
 from Group import *
 from Model import *
+from Agent import *
 
 # Make various Unit Tests
 
@@ -20,6 +21,7 @@ from Model import *
 class ModelTests(unittest.TestCase):
     
     def setup(self):
+        # Do not change parameters since the UnitTests then will not work
         params = {
             'timesteps': 10, # declare amount of timesteps
             "population": 30, # declare the overall population of the ABM
@@ -40,14 +42,192 @@ class ModelTests(unittest.TestCase):
         model = Model(params['population'], params['distribution'], params['commoner_network'], params['influencer_network'], params['f_network_mult_factor'], params['homophily_weight_range'], params['f_i_factor'], params['r_i_factor'], params['f_opinion'], params['r_opinion'], params['susceptibility'],params['group_opinion_limit_val'],params['group_homophily_limit_val'])
         return model
     
-    def test_model_join_group(self):
-        print('Not yet implemented')
+    def test_model_initialization(self):
+        model = self.setup()
+        
+        # Test amount of agents
+        self.assertEqual(len(model.agents),30)
+        # Test amount of agents in the graph environment
+        self.assertEqual(len(model.graph_environment._node),30)
+        
+        # Test that UserAgents init values are not greater or less than 50 and -50
+        for agent in model.agents:
+            if isinstance(agent,UserAgent):
+                self.assertLess(agent.opinion,50)
+                self.assertGreater(agent.opinion,-50)
+        
+        # Test that InfluencerAgents init values are greater or less than 50 and -50
+        for agent in model.agents: 
+            if isinstance(agent,InfluencerAgent):
+                if agent.agent_type == 1:
+                    self.assertLessEqual(agent.opinion,-50)
+                else:
+                    self.assertGreaterEqual(agent.opinion,50)
+    
+    def test_model_join_group_1(self):
+        model = self.setup()
+        c1 = model.graph_environment._node[0]['agent']
+        c1.opinion = 75 # For testing purpose
+        c1_friends_id = list(model.graph_environment.neighbors(0))
+        c1_friends_agents = []
+        
+        for agent_id in c1_friends_id:
+            agent = model.graph_environment._node[agent_id]['agent']
+            if isinstance(agent,UserAgent):
+                
+                """
+                In this unit test we are testing both opinion and homophily between agents.
+                
+                """
+                
+                #Manipulated opinion for testing. Opinions are the same
+                agent.opinion = c1.opinion
+                #manipualted homophily for testing. Homophily is high
+                model.graph_environment.get_edge_data(c1.agent_id,agent.agent_id)['weight'] = 2.0
+                c1_friends_agents.append(agent)
+        
+        if len(c1_friends_agents) != 0:
+            # Check that first agent is in group
+            model.join_groups([c1.agent_id])
+            
+            # Check that Groups are not empty
+            self.assertNotEqual(len(model.groups),0)
+            
+            # Check that first agent's group number is not -1
+            self.assertNotEqual(c1.group_id,-1)
+        
+    def test_model_join_group_2(self):
+        model = self.setup()
+        c1 = model.graph_environment._node[0]['agent']
+        c1.opinion = 75 # For testing purpose
+        c1_friends_id = list(model.graph_environment.neighbors(0))
+        c1_friends_agents = []
+        
+        for agent_id in c1_friends_id:
+            agent = model.graph_environment._node[agent_id]['agent']
+            if isinstance(agent,UserAgent):
+                
+                """
+                In this unit test we are testing that opinion are from each other and homophily is close between agents.
+                
+                """
+                
+                #Manipulated opinion for testing. Opinions are far from each other
+                agent.opinion = 25
+                #manipualted homophily for testing. Homophily is high
+                model.graph_environment.get_edge_data(c1.agent_id,agent.agent_id)['weight'] = 2.0
+                c1_friends_agents.append(agent)
+        
+        if len(c1_friends_agents) != 0:
+            #Execute model join groups method
+            model.join_groups([c1.agent_id])
+            
+            #Check that first agent is not in a group
+            self.assertEqual(c1.group_id,-1)
+        
+    def test_model_join_group_3(self):
+        model = self.setup()
+        c1 = model.graph_environment._node[0]['agent']
+        c1.opinion = 75 # For testing purpose
+        c1_friends_id = list(model.graph_environment.neighbors(0))
+        c1_friends_agents = []
+        
+        for agent_id in c1_friends_id:
+            agent = model.graph_environment._node[agent_id]['agent']
+            if isinstance(agent,UserAgent):
+                
+                """
+                In this unit test we are testing that opinion close and homophily are far.
+                
+                """
+                
+                #Manipulated opinion for testing. Opinions are far from each other
+                agent.opinion = c1.opinion
+                #manipualted homophily for testing. Homophily is high
+                model.graph_environment.get_edge_data(c1.agent_id,agent.agent_id)['weight'] = 1.1
+                c1_friends_agents.append(agent)
+        
+        if len(c1_friends_agents) != 0:
+            # Execute model join groups method
+            model.join_groups([c1.agent_id])
+            
+            # Check that first agent's group id is -1 (representing as not being in a group)
+            self.assertEqual(c1.group_id,-1)
+        
+    def test_model_join_group_3(self):
+        model = self.setup()
+        c1 = model.graph_environment._node[0]['agent']
+        c1.opinion = 75 # For testing purpose
+        c1_friends_id = list(model.graph_environment.neighbors(0))
+        c1_friends_agents = []
+        
+        for agent_id in c1_friends_id:
+            agent = model.graph_environment._node[agent_id]['agent']
+            if isinstance(agent,UserAgent):
+                
+                """
+                In this unit test we are testing that opinions are far and homophilies are far.
+                
+                """
+                
+                #Manipulated opinion for testing. Opinions are far from each other
+                agent.opinion = 25
+                #manipualted homophily for testing. Homophily is low
+                model.graph_environment.get_edge_data(c1.agent_id,agent.agent_id)['weight'] = 1.1
+                c1_friends_agents.append(agent)
+        
+        if len(c1_friends_agents) != 0:
+            # Execute model join groups method
+            model.join_groups([c1.agent_id])
+            
+            # Check that first agent's group id is -1 (representing as not being in a group)
+            self.assertEqual(c1.group_id,-1)
         
     def test_model_leave_group(self):
-        print('Not yet implemented')
-    
-    def test_model_initialization(self):
-        print('Function to be implemented')
+        # make a group
+        model = self.setup()
+        c1 = model.graph_environment._node[0]['agent']
+        c1.opinion = 75 # For testing purpose
+        c1_friends_id = list(model.graph_environment.neighbors(0))
+        c1_friends_agents = []
+        
+        for agent_id in c1_friends_id:
+            agent = model.graph_environment._node[agent_id]['agent']
+            if isinstance(agent,UserAgent):
+                
+                """
+                In this unit test we are testing both opinion and homophily between agents.
+                
+                """
+                
+                #Manipulated opinion for testing. Opinions are the same
+                agent.opinion = c1.opinion
+                #manipualted homophily for testing. Homophily is high
+                model.graph_environment.get_edge_data(c1.agent_id,agent.agent_id)['weight'] = 2.0
+                c1_friends_agents.append(agent)
+        
+        if len(c1_friends_agents) != 0:
+            model.join_groups([c1.agent_id])
+            
+            self.assertNotEqual(c1.group_id,-1)
+            
+            model.potentially_leave_group([c1.agent_id])
+            
+            self.assertNotEqual(c1.group_id,-1)
+            
+            # Manipualte c1's opinion to something else than the rest of the group
+            c1.opinion = -75
+            
+            model.potentially_leave_group([c1.agent_id])
+            
+            # Make sure that c1 has left the group
+            self.assertEqual(c1.group_id,-1)
+            
+            # Make sure that c1 is not in the group
+            agents_in_group = model.groups['0'].agent_list
+            agents_in_group = list(map(lambda x: x.agent_id,agents_in_group))
+            
+            self.assertFalse(c1.agent_id in agents_in_group)
     
 # =============================================================================
 # Agent tests
@@ -55,6 +235,7 @@ class ModelTests(unittest.TestCase):
 class AgentTests(unittest.TestCase):
     
     def setup(self): 
+        # Do not change parameters since the UnitTests then will not work
         params = {
             'timesteps': 10, # declare amount of timesteps
             "population": 30, # declare the overall population of the ABM
@@ -87,7 +268,7 @@ class AgentTests(unittest.TestCase):
             agent = model.graph_environment._node[agent_id]['agent']
             list_of_neighbors.append(agent)
         
-        filtered_agents = [x for x in list_of_neighbors if isinstance(x,CommonerAgent)]
+        filtered_agents = [x for x in list_of_neighbors if isinstance(x,UserAgent)]
         filtered_agents_id = [x.agent_id for x in filtered_agents]
                 
         if len(filtered_agents) == 0:
@@ -95,6 +276,7 @@ class AgentTests(unittest.TestCase):
         
         agents_old_values = [(x.agent_id,round(x.opinion,5),x.i_susceptibility) for x in filtered_agents]
         
+        # Execute influence method
         c1.influence_agent(model.graph_environment,filtered_agents_id)
         
         agents_new_values = [(x.agent_id,round(x.opinion,5),x.i_susceptibility) for x in filtered_agents]
@@ -120,7 +302,7 @@ class AgentTests(unittest.TestCase):
             agent = model.graph_environment._node[agent_id]['agent']
             list_of_neighbors.append(agent)
         
-        filtered_agents = [x for x in list_of_neighbors if isinstance(x,CommonerAgent)]
+        filtered_agents = [x for x in list_of_neighbors if isinstance(x,UserAgent)]
         filtered_agents_id = [x.agent_id for x in filtered_agents]
                 
         if len(filtered_agents) == 0:
@@ -128,6 +310,7 @@ class AgentTests(unittest.TestCase):
         
         agents_old_values = [(x.agent_id,round(x.opinion,5),x.i_susceptibility) for x in filtered_agents]
         
+        # Execute influence method
         c1.influence_agent(model.graph_environment,filtered_agents_id)
         
         agents_new_values = [(x.agent_id,round(x.opinion,5),x.i_susceptibility) for x in filtered_agents]
@@ -156,6 +339,7 @@ class AgentTests(unittest.TestCase):
         
         agents_old_values = [(x.agent_id,round(x.opinion,5),x.i_susceptibility) for x in list_of_neighbors]
         
+        # Execute influence method
         i1.influence_agent(model.graph_environment,network_ids)
         
         agents_new_values = [(x.agent_id,round(x.opinion,5),x.i_susceptibility) for x in list_of_neighbors]
@@ -183,6 +367,7 @@ class AgentTests(unittest.TestCase):
         
         agents_old_values = [(x.agent_id,round(x.opinion,5),x.i_susceptibility) for x in list_of_neighbors]
         
+        # Execute influence method
         i1.influence_agent(model.graph_environment,network_ids)
         
         agents_new_values = [(x.agent_id,round(x.opinion,5),x.i_susceptibility) for x in list_of_neighbors]
@@ -198,8 +383,8 @@ class AgentTests(unittest.TestCase):
             
     def test_global_opinion_reflection(self):
         fake_global_opinion = 5
-        c1 = CommonerAgent(0,25,-1,1.3)
-        c2 = CommonerAgent(1,-25,-1,1.3)
+        c1 = UserAgent(0,25,-1,1.3)
+        c2 = UserAgent(1,-25,-1,1.3)
         
         c1_opinion_old = c1.opinion
         c2_opinion_old = c2.opinion
@@ -210,6 +395,13 @@ class AgentTests(unittest.TestCase):
         
         self.assertNotEqual(c1.opinion,c1_opinion_old)
         self.assertNotEqual(c2.opinion,c2_opinion_old)
+        self.assertLess(c1.opinion,c1_opinion_old)
+        self.assertGreater(c2.opinion,c2_opinion_old)
+        
+        # Reflect on global opinion again
+        c1.global_opinion_reflection(fake_global_opinion)
+        c2.global_opinion_reflection(fake_global_opinion)
+        
         self.assertLess(c1.opinion,c1_opinion_old)
         self.assertGreater(c2.opinion,c2_opinion_old)
         
@@ -230,8 +422,8 @@ class GroupTests(unittest.TestCase):
                 
     def test_add_to_group(self):
         grp = Group(2,-75)
-        c1 = CommonerAgent(1, 50, -1, 1.2)
-        c2 = CommonerAgent(2, 21, -1, 1.4)
+        c1 = UserAgent(1, 50, -1, 1.2)
+        c2 = UserAgent(2, 21, -1, 1.4)
         
         grp.join_group(c1)
         grp.join_group(c2)
@@ -240,8 +432,8 @@ class GroupTests(unittest.TestCase):
         
     def test_leave_group(self):
         grp = Group(2,-75)
-        c1 = CommonerAgent(1, 50, -1, 1.2)
-        c2 = CommonerAgent(2, 21, -1, 1.4)
+        c1 = UserAgent(1, 50, -1, 1.2)
+        c2 = UserAgent(2, 21, -1, 1.4)
         
         grp.join_group(c1)
         grp.join_group(c2)
@@ -258,9 +450,9 @@ class GroupTests(unittest.TestCase):
         
     def test_calculate_avg_opinion(self):
         grp = Group(2,-75)
-        c1 = CommonerAgent(1, 25, -1, 1.2)
-        c2 = CommonerAgent(2, 75, -1, 1.4)
-        c3 = CommonerAgent(3, -25, -1, 1.4)
+        c1 = UserAgent(1, 25, -1, 1.2)
+        c2 = UserAgent(2, 75, -1, 1.4)
+        c3 = UserAgent(3, -25, -1, 1.4)
         grp.join_group(c1)
         grp.join_group(c2)
         
@@ -279,9 +471,9 @@ class GroupTests(unittest.TestCase):
         # this functionality is basically being mainted by the group class
         
         grp = Group(2,-75) # init value
-        c1 = CommonerAgent(1, -80, -1, 1.2)
-        c2 = CommonerAgent(2, -90, -1, 1.4)
-        c3 = CommonerAgent(2, 17, -1, 1.4)
+        c1 = UserAgent(1, -80, -1, 1.2)
+        c2 = UserAgent(2, -90, -1, 1.4)
+        c3 = UserAgent(2, 17, -1, 1.4)
         grp.join_group(c1)
         grp.join_group(c2)
         
@@ -295,8 +487,8 @@ class GroupTests(unittest.TestCase):
         self.assertEqual(grp.avg_opinion, -75)        
        
     def test_polarize(self):
-       c1 = CommonerAgent(0, 80, -1, 50)
-       c2 = CommonerAgent(1, 90, -1, 60)
+       c1 = UserAgent(0, 80, -1, 50)
+       c2 = UserAgent(1, 90, -1, 60)
         
        grp = Group(1,70)
         
@@ -326,9 +518,9 @@ class FunctionsTests(unittest.TestCase):
         self.assertEqual(sum_arr,900)
         
     def test_make_agent_nodes(self):
-        c1 = CommonerAgent(1, -80, -1, 1.2)
-        c2 = CommonerAgent(2, -90, -1, 1.4)
-        c3 = CommonerAgent(2, 17, -1, 1.4)
+        c1 = UserAgent(1, -80, -1, 1.2)
+        c2 = UserAgent(2, -90, -1, 1.4)
+        c3 = UserAgent(2, 17, -1, 1.4)
         
         agent_list = [c1,c2,c3]
         
@@ -342,9 +534,9 @@ class FunctionsTests(unittest.TestCase):
             self.assertTrue(row[0] == row[1]['agent'].agent_id)
     
     def test_make_agents_connections(self):
-        c1 = CommonerAgent(0, -80, -1, 1.2)
-        c2 = CommonerAgent(1, -90, -1, 1.4)
-        c3 = CommonerAgent(2, 17, -1, 1.4)
+        c1 = UserAgent(0, -80, -1, 1.2)
+        c2 = UserAgent(1, -90, -1, 1.4)
+        c3 = UserAgent(2, 17, -1, 1.4)
         i1 = InfluencerAgent(3, -80, -1, 1, 1.7)
         i2 = InfluencerAgent(4, 80, -1, 0, 1.82)
         
@@ -353,9 +545,9 @@ class FunctionsTests(unittest.TestCase):
         
         for edge in edges:
             a1,a2,w = edge
-            if isinstance(a1, CommonerAgent) and isinstance(a2, CommonerAgent):
+            if isinstance(a1, UserAgent) and isinstance(a2, UserAgent):
                 self.assertNotEqual(w, 0)
-            elif isinstance(a1, InfluencerAgent) and isinstance(a2, CommonerAgent):
+            elif isinstance(a1, InfluencerAgent) and isinstance(a2, UserAgent):
                 self.assertEqual(w, 0)
         
 

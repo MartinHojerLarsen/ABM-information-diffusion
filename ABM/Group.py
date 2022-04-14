@@ -1,5 +1,5 @@
 """ File for Group class """
-from Agent import CommonerAgent
+from Agent import UserAgent
 
 class Group(): 
     def __init__(self, group_id,echo_chamber_limit_value):
@@ -121,19 +121,5 @@ class Group():
             agent.opinion = new_opinion
             # calculate new average opinion of the group
             self.calc_avg_opinion()
-
-# =============================================================================
-# TESTING 
-# =============================================================================
-
-c1 = CommonerAgent(0, 80, -1, 50)
-c2 = CommonerAgent(1, 90, -1, 60)
-
-grp = Group(1,70)
-
-grp.join_group(c1)
-grp.join_group(c2)
-
-grp.polarize_agents()
 
 
