@@ -13,7 +13,7 @@ import time
 
 class Model():
     
-    def __init__(self,population, distribution, user_network, influencer_network, f_network_mult_factor, homophily_weight_range, f_i_factor, r_i_factor, f_opinion, r_opinion, susceptibility,group_opinion_limit_val,group_homophily_limit_val):
+    def __init__(self,population, distribution, user_network, influencer_network, f_network_mult_factor, homophily_weight_range, f_influence_factor, r_influence_factor, f_opinion, r_opinion, susceptibility,group_opinion_limit_val,group_homophily_limit_val):
         
         # Initialize Agent list
         self.agents = []
@@ -76,7 +76,7 @@ class Model():
             self.agents.append(UserAgent(agent_id,agent_opinion,-1,i_susceptibility))
 
         # create fake news influencer agents
-        f_min_val, f_max_val = f_i_factor
+        f_min_val, f_max_val = f_influence_factor
         f_min_op, f_max_op = f_opinion
         for i in range(self.user_population,self.pop_init_boundary):
             agent_id = i
@@ -87,7 +87,7 @@ class Model():
             self.agents.append(InfluencerAgent(agent_id,agent_opinion,-1,influencer_type,i_factor))            
         
         # create real news influencer agents
-        r_min_val, r_max_val = r_i_factor
+        r_min_val, r_max_val = r_influence_factor
         r_min_op, r_max_op = r_opinion
         for i in range(self.pop_init_boundary,self.population):
             agent_id = i
@@ -99,6 +99,7 @@ class Model():
     
         # Initialize graph environment with agent nodes and edges
         self.graph_environment.add_nodes_from(make_agent_nodes(self.agents))
+        
         # "make_agent_connections()" takes model parameter inputs 
         self.graph_environment.add_weighted_edges_from(make_agents_connections(self.agents, user_network, influencer_network, f_network_mult_factor, homophily_weight_range))
         
@@ -332,26 +333,26 @@ if __name__ == '__main__':
     
     ### Parameters ###
     params = {
-        'timesteps': 1000, # declare amount of timesteps
+        'timesteps': 500, # declare amount of timesteps
         "population": 300, # declare the overall population of the ABM
-        "distribution":(25, 37.5, 37.5), # percentages: user, fake, real
+        "population_distribution":(25, 37.5, 37.5), # percentages: user, fake, real
         "user_network": 3, # how many connections should a typical user have
         "influencer_network": 2, # how many connections should a typical influencer have
-        "f_network_mult_factor": 1, # starts at 1 - a multiplication of fake news influencer network - due to fake news spreading more
+        "finfluencer_network_mult_factor": 1, # starts at 1 - a multiplication of fake news influencer network - due to fake news spreading more
         "homophily_weight_range": 2, # homophily between users
-        "f_i_factor": (1, 2), # influence factor - fake news influencer (should be higher for Finfluencer)
-        "r_i_factor": (1, 2), # influence factor - real news influencer
+        "f_influence_factor": (1, 2), # influence factor - fake news influencer (should be higher for Finfluencer)
+        "r_influence_factor": (1, 2), # influence factor - real news influencer
         "f_opinion": (-100, -50), #  range of opinion - fake news influencer (should be more radical for Finfluencer)
         "r_opinion": (50, 100), # range of opinion - real news influencer
-        "susceptibility": (1, 2), # susceptibility - user - random value between 1 and 2
-        'group_opinion_limit_val': 10, # determine the limit for when a opinion should reflect a potential join of an echo chamber
-        'group_homophily_limit_val': 1.3 # determine the homophily between agents that should be in an echo chamber
+        "user_susceptibility": (1, 2), # susceptibility - user - random value between 1 and 2
+        'echo_chamber_entrance_limit': 10, # determine the limit for when a opinion should reflect a potential join of an echo chamber
+        'echo_chamber_homophily_limit': 1.6 # determine the homophily between agents that should be in an echo chamber
     }
     
-    # create model
-    ##############
-    model = Model(params['population'], params['distribution'], params['user_network'], params['influencer_network'], params['f_network_mult_factor'], params['homophily_weight_range'], params['f_i_factor'], params['r_i_factor'], params['f_opinion'], params['r_opinion'], params['susceptibility'],params['group_opinion_limit_val'],params['group_homophily_limit_val'])
+    # Create model
+    model = Model(params['population'], params['population_distribution'], params['user_network'], params['influencer_network'], params['finfluencer_network_mult_factor'], params['homophily_weight_range'], params['f_influence_factor'], params['r_influence_factor'], params['f_opinion'], params['r_opinion'], params['user_susceptibility'],params['echo_chamber_entrance_limit'],params['echo_chamber_homophily_limit'])
     
+    # Used to draw the graph
     draw_graph_environment(model)
     
     # run sim (run timesteps)

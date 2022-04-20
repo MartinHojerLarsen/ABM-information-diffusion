@@ -235,7 +235,7 @@ class ModelTests(unittest.TestCase):
 class AgentTests(unittest.TestCase):
     
     def setup(self): 
-        # Do not change parameters since the UnitTests then will not work
+        # Do not change parameters since the UnitTests will not work then
         params = {
             'timesteps': 10, # declare amount of timesteps
             "population": 30, # declare the overall population of the ABM

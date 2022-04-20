@@ -37,10 +37,12 @@ def make_agents_connections(agent_list, user_network, influencer_network, f_netw
     ----------
     agent_list : List of Agents
         Takes a list of UserAgents and InfluencerAgents
-    amount_of_friends : int, optional
+    user_network : int, optional
         Amount of connections/friends between each agent. The default is 3.
     influencer_network : int, optional
         Increase the degree of connections between InfluencerAgents and UserAgents. The default is 5.
+    homophily_weight_range: int
+        Specify the weight range of the homophily relationsship between UserAgents
 
     Returns
     -------
@@ -51,7 +53,7 @@ def make_agents_connections(agent_list, user_network, influencer_network, f_netw
     
     edge_list = []
     for index,agent in enumerate(agent_list):
-        # temporary variable for network size
+        # Temporary variable for network size
         temp_network = user_network
         
         if isinstance(agent,InfluencerAgent) == True:

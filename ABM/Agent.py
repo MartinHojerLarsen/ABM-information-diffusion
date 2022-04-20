@@ -32,8 +32,6 @@ class UserAgent(Agent):
 
         Parameters
         ----------
-        agent_type : string
-            Signifying the type of agent.
         i_susceptibility : float
             how susceptible agent is to be influenced by real news - 1 to 2.
 
@@ -144,8 +142,8 @@ class InfluencerAgent(Agent):
 
         Parameters
         ----------
-        agent_type : string
-            Signifying the type of agent.
+        agent_type : int
+            Signifying the type of agent. 0 = Real news, 1 = Fake news
         i_factor : float
             effectiveness of influence - range from 1 to 2.
 
