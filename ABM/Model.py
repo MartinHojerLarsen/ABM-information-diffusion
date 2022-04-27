@@ -44,6 +44,7 @@ class Model():
         self.groups = {}
         
         # Parameters for make_group() method
+        # Need these fields??
         self.group_opinion_limit_val = group_opinion_limit_val
         self.group_homophily_limit_val  = group_homophily_limit_val
         
@@ -313,7 +314,7 @@ class Model():
         for agent_id in nodes_arr:
             agent = self.graph_environment._node[agent_id]['agent']
             
-            if isinstance(agent,InfluencerAgent) == True and include_influencer_agent_op == False:
+            if isinstance(agent,InfluencerAgent) and include_influencer_agent_op == False:
                 continue
             
             temp_global_opinion += agent.opinion
@@ -348,11 +349,11 @@ if __name__ == '__main__':
     ### Parameters ###
     params = {
         'timesteps': 1000, # declare amount of timesteps
-        "population": 300, # declare the overall population of the ABM
+        "population": 1000, # declare the overall population of the ABM
         "population_distribution":(80, 10, 10), # percentages: user, fake, real
         "user_network": 3, # how many connections should a typical user have
-        "influencer_network": 2, # how many connections should a typical influencer have
-        "finfluencer_network_mult_factor": 1, # starts at 1 - a multiplication of fake news influencer network - due to fake news spreading more
+        "influencer_network": 5, # how many connections should a typical influencer have
+        "finfluencer_network_mult_factor": 2, # starts at 1 - a multiplication of fake news influencer network - due to fake news spreading more
         "homophily_weight_range": 2, # homophily between users
         "f_influence_factor": (1, 2), # influence factor - fake news influencer (should be higher for Finfluencer)
         "r_influence_factor": (1, 2), # influence factor - real news influencer

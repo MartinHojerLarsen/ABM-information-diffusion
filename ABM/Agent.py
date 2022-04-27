@@ -98,7 +98,7 @@ class UserAgent(Agent):
                 
     def global_opinion_reflection(self,global_opinion_val):
         # difference in agent opinion and current timesteps global opinion
-        go_variance = abs(self.opinion-global_opinion_val) if (self.opinion-global_opinion_val) != 0 else 1
+        go_variance = abs(self.opinion-(global_opinion_val)) if (self.opinion-global_opinion_val) != 0 else 1
         
         # state to make proper calculation if agent has a positive or negative opinion
         go_state = 'not defined'
@@ -113,6 +113,8 @@ class UserAgent(Agent):
         opinion_calculation = abs((1/go_variance)*self.opinion)
 
         if go_state == 'add':
+            # absolute difference is less than 50 - then polarize towards GO (explain in DOCS)
+            # if absolute difference is MORE than 50 - then oppposite effect (away from GO)
             if go_variance < 50:
                 new_opinion = self.opinion + opinion_calculation # polarize towards global opinion
             else:

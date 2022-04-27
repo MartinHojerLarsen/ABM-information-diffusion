@@ -377,7 +377,7 @@ class AgentTests(unittest.TestCase):
             
             self.assertLess(i1_new_varians,i1_old_varians)
             
-    def test_global_opinion_reflection(self):
+    def test_global_opinion_reflection_positive(self):
         fake_global_opinion = 5
         c1 = UserAgent(0,25,-1,1.3)
         c2 = UserAgent(1,-25,-1,1.3)
@@ -401,7 +401,101 @@ class AgentTests(unittest.TestCase):
         self.assertLess(c1.opinion,c1_opinion_old)
         self.assertGreater(c2.opinion,c2_opinion_old)
         
+    def test_global_opinion_reflection_positive2(self):
+        fake_global_opinion = 50
+        c1 = UserAgent(0,25,-1,1.3)
+        c2 = UserAgent(1,-25,-1,1.3)
         
+        c1_opinion_old = c1.opinion
+        c2_opinion_old = c2.opinion
+        
+        # Reflect on global opinion
+        c1.global_opinion_reflection(fake_global_opinion)
+        c2.global_opinion_reflection(fake_global_opinion)
+        
+        self.assertNotEqual(c1.opinion,c1_opinion_old)
+        self.assertNotEqual(c2.opinion,c2_opinion_old)
+        self.assertGreater(c1.opinion,c1_opinion_old)
+        # assertLess because the difference is so high that it has opposite effect
+        self.assertLess(c2.opinion,c2_opinion_old)
+        
+        # Reflect on global opinion again
+        c1.global_opinion_reflection(fake_global_opinion)
+        c2.global_opinion_reflection(fake_global_opinion)
+        
+        self.assertGreater(c1.opinion,c1_opinion_old)
+        self.assertLess(c2.opinion,c2_opinion_old)
+        
+        
+    def test_global_opinion_reflection_negative(self):
+        fake_global_opinion = -5
+        c1 = UserAgent(0,25,-1,1.3)
+        c2 = UserAgent(1,-25,-1,1.3)
+        
+        c1_opinion_old = c1.opinion
+        c2_opinion_old = c2.opinion
+        
+        # Reflect on global opinion
+        c1.global_opinion_reflection(fake_global_opinion)
+        c2.global_opinion_reflection(fake_global_opinion)
+        self.assertNotEqual(c1.opinion,c1_opinion_old)
+        self.assertNotEqual(c2.opinion,c2_opinion_old)
+        self.assertLess(c1.opinion,c1_opinion_old)
+        self.assertGreater(c2.opinion,c2_opinion_old)
+        
+        # Reflect on global opinion again
+        c1.global_opinion_reflection(fake_global_opinion)
+        c2.global_opinion_reflection(fake_global_opinion)
+        
+        self.assertLess(c1.opinion,c1_opinion_old)
+        self.assertGreater(c2.opinion,c2_opinion_old)
+        
+    def test_global_opinion_reflection_negative2(self):
+        fake_global_opinion = -50
+        c1 = UserAgent(0,25,-1,1.3)
+        c2 = UserAgent(1,-25,-1,1.3)
+        
+        c1_opinion_old = c1.opinion
+        c2_opinion_old = c2.opinion
+        
+        # Reflect on global opinion
+        c1.global_opinion_reflection(fake_global_opinion)
+        c2.global_opinion_reflection(fake_global_opinion)
+        self.assertNotEqual(c1.opinion,c1_opinion_old)
+        self.assertNotEqual(c2.opinion,c2_opinion_old)
+        self.assertGreater(c1.opinion,c1_opinion_old)
+        self.assertLess(c2.opinion,c2_opinion_old)
+        
+        # Reflect on global opinion again
+        c1.global_opinion_reflection(fake_global_opinion)
+        c2.global_opinion_reflection(fake_global_opinion)
+        
+        self.assertGreater(c1.opinion,c1_opinion_old)
+        self.assertLess(c2.opinion,c2_opinion_old)
+        
+        
+    def test_global_opinion_reflection_negative3(self):
+        fake_global_opinion = -24
+        c1 = UserAgent(0,25,-1,1.3)
+        c2 = UserAgent(1,-25,-1,1.3)
+        
+        c1_opinion_old = c1.opinion
+        c2_opinion_old = c2.opinion
+        
+        # Reflect on global opinion
+        c1.global_opinion_reflection(fake_global_opinion)
+        c2.global_opinion_reflection(fake_global_opinion)
+        self.assertNotEqual(c1.opinion,c1_opinion_old)
+        self.assertNotEqual(c2.opinion,c2_opinion_old)
+        self.assertLess(c1.opinion,c1_opinion_old)
+        self.assertGreater(c2.opinion,c2_opinion_old)
+        
+        # Reflect on global opinion again
+        c1.global_opinion_reflection(fake_global_opinion)
+        c2.global_opinion_reflection(fake_global_opinion)
+        
+        self.assertLess(c1.opinion,c1_opinion_old)
+        self.assertGreater(c2.opinion,c2_opinion_old)
         
         
 
@@ -482,7 +576,7 @@ class GroupTests(unittest.TestCase):
         # Since average cannot go below initalization value
         self.assertEqual(grp.avg_opinion, -75)        
        
-    def test_polarize(self):
+    def test_polarize_positive(self):
        c1 = UserAgent(0, 80, -1, 50)
        c2 = UserAgent(1, 90, -1, 60)
         
@@ -498,7 +592,27 @@ class GroupTests(unittest.TestCase):
        self.assertEqual(c1.opinion,85)
        self.assertEqual(c2.opinion,87.5)
        
-    # Add more tests
+    def test_polarize_negative(self):
+       c1 = UserAgent(0, -80, -1, 50)
+       c2 = UserAgent(1, -90, -1, 60)
+       
+       grp = Group(1,-70)
+        
+       grp.join_group(c1)
+       grp.join_group(c2)
+        
+       self.assertEqual(grp.avg_opinion,-85)
+        
+       grp.polarize_agents()
+       
+       self.assertEqual(c1.opinion,-85)
+       self.assertEqual(c2.opinion,-87.5)
+
+
+
+# =============================================================================
+# Function tests
+# =============================================================================
 
 class FunctionsTests(unittest.TestCase):
     
