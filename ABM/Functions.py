@@ -81,6 +81,19 @@ def make_agents_connections(agent_list, user_network, influencer_network, f_netw
     return edge_list
 
 
+# extract_agent information
+def eai(df_agents,agent_id,timestep):
+    row = df_agents.query(f"(agent_id == {agent_id}) and (timestep == 'T{timestep}')")
+    row_inner = row.iloc[:,:].values[0]
+    print('******')
+    print(f'Episode: {row_inner[0]}')
+    print(f'Timestep: {row_inner[1]}')
+    print(f'Agent Type: {row_inner[3]}')
+    print(f'Agent id: {row_inner[2]}')
+    print(f'Agent Opinion: {row_inner[4]}')
+    print(f'Agent Susceptibility: {row_inner[5]}')
+    print('******')
+
 
 # Only for testing purpose
 

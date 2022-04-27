@@ -147,8 +147,11 @@ class Model():
         self.potentially_leave_group(nodes_arr)
         
         # Recalculate group average opinions and polarize towards average group opinion
+
         for group in self.groups.values():
-            group.polarize_agents()
+            group.calc_avg_opinion()
+            if self.timestep_val % 10 == 0:
+                group.polarize_agents()
         
         # Record Data for every timestep
         self.record_data_individual_agent()
@@ -351,11 +354,11 @@ if __name__ == '__main__':
     ### Parameters ###
     params = {
         'timesteps': 1000, # declare amount of timesteps
-        "population": 1000, # declare the overall population of the ABM
+        "population": 500, # declare the overall population of the ABM
         "population_distribution":(80, 10, 10), # percentages: user, fake, real
-        "user_network": 3, # how many connections should a typical user have
-        "influencer_network": 5, # how many connections should a typical influencer have
-        "finfluencer_network_mult_factor": 2, # starts at 1 - a multiplication of fake news influencer network - due to fake news spreading more
+        "user_network": 4, # how many connections should a typical user have
+        "influencer_network": 7, # how many connections should a typical influencer have
+        "finfluencer_network_mult_factor": 1, # starts at 1 - a multiplication of fake news influencer network - due to fake news spreading more
         "homophily_weight_range": 2, # homophily between users
         "f_influence_factor": (1, 2), # influence factor - fake news influencer (should be higher for Finfluencer)
         "r_influence_factor": (1, 2), # influence factor - real news influencer
@@ -363,9 +366,8 @@ if __name__ == '__main__':
         "r_opinion": (50, 100), # range of opinion - real news influencer
         "user_susceptibility": (1, 2), # susceptibility - user - random value between 1 and 2
         'echo_chamber_entrance_limit': 10, # determine the limit for when a opinion should reflect a potential join of an echo chamber
-        'echo_chamber_homophily_limit': 1.1 # determine the homophily between agents that should be in an echo chamber
+        'echo_chamber_homophily_limit': 1.5 # determine the homophily between agents that should be in an echo chamber
     }
-    
     
     # Episodes
     df_global_dataframes = []
@@ -399,3 +401,12 @@ if __name__ == '__main__':
     done = time.time()
     elapsed = done - start
     print(f'Running Time: {elapsed}')
+
+    # # Create excel files
+    
+    writer = pd.ExcelWriter('../Data/demo.xlsx', engine='openpyxl')
+    # Convert the dataframe to an XlsxWriter Excel object.
+    df_groups.to_excel(writer, sheet_name='Groups_SC1', index=False)
+    df_groups.to_excel(writer, sheet_name='T2', index=False)
+    # Close the Pandas Excel writer and output the Excel file.
+    writer.save()
