@@ -26,9 +26,9 @@ class Model():
         
         # Initialize Pd.DataFrame for data collection
         pd.set_option("expand_frame_repr", True)
-        self.dataset_individual_agent = pd.DataFrame(columns=['Timestep','Agent_id','Agent Type','Opinion','Influence Susceptibility','Influence Factor','Network','Echo chamber'])
-        self.dataset_global_opinion = pd.DataFrame(columns=['Timestep','Population','Global Opinion','Influencer Opinion Included'])
-        self.dataset_groups = pd.DataFrame(columns=['Timestep','Group id','Agents in group','size','average opinion'])
+        self.dataset_individual_agent = pd.DataFrame()
+        self.dataset_global_opinion = pd.DataFrame()
+        self.dataset_groups = pd.DataFrame()
         
         # Track individual opinion of agents
         self.individual_agent = []
@@ -138,7 +138,7 @@ class Model():
             
             # Reflect on global opinion at a slower pace
             if self.timestep_val % 25 == 0 and isinstance(agent,UserAgent):
-                former_global_opinion = self.global_opinion[self.timestep_val-1]['Global Opinion']
+                former_global_opinion = self.global_opinion[self.timestep_val-1]['global_opinion']
                 agent.global_opinion_reflection(former_global_opinion)
             
         # Create/leave groups
@@ -262,24 +262,24 @@ class Model():
         for agent in self.graph_environment._node.values():
             agent_obj = agent['agent']
             if isinstance(agent_obj,InfluencerAgent) == True:
-                timestep_df = {'Timestep':f'T{self.timestep_val}',
-                               'Agent_id':agent_obj.agent_id,
-                               'Agent Type':'InfluencerAgent',
-                               'Opinion':agent_obj.opinion,
-                               'Influence Susceptibility':np.nan,
-                               'Influence Factor':agent_obj.i_factor,
-                               'Network':list(self.graph_environment.neighbors(agent_obj.agent_id)),
-                               'Echo chamber':np.nan}
+                timestep_df = {'timestep':f'T{self.timestep_val}',
+                               'agent_id':agent_obj.agent_id,
+                               'agent_type':'InfluencerAgent',
+                               'opinion':agent_obj.opinion,
+                               'influence_susceptibility':np.nan,
+                               'influence_factor':agent_obj.i_factor,
+                               'network':list(self.graph_environment.neighbors(agent_obj.agent_id)),
+                               'echo chamber':np.nan}
                 self.individual_agent.append(timestep_df)
             elif isinstance(agent_obj,UserAgent) == True:
-                timestep_df = {'Timestep':f'T{self.timestep_val}',
-                               'Agent_id':agent_obj.agent_id,
-                               'Agent Type':'UserAgent',
-                               'Opinion':agent_obj.opinion,
-                               'Influence Susceptibility':agent_obj.i_susceptibility,
-                               'Influence Factor':np.nan,
-                               'Network':list(self.graph_environment.neighbors(agent_obj.agent_id)),
-                               'Echo chamber':agent_obj.group_id
+                timestep_df = {'timestep':f'T{self.timestep_val}',
+                               'agent_id':agent_obj.agent_id,
+                               'agent_type':'UserAgent',
+                               'opinion':agent_obj.opinion,
+                               'influence_susceptibility':agent_obj.i_susceptibility,
+                               'influence_factor':np.nan,
+                               'network':list(self.graph_environment.neighbors(agent_obj.agent_id)),
+                               'echo_chamber':agent_obj.group_id
                                }
                 self.individual_agent.append(timestep_df)
         
@@ -287,11 +287,12 @@ class Model():
         for group in self.groups.values():
             if group.size != 0:
                 self.groups_dataframes.append({
-                    'Timestep':f'T{self.timestep_val}',
-                    'Group id': group.group_id,
-                    'Agents in list': [x.agent_id for x in group.agent_list],
-                    'Group size': group.size,
-                    'Group average opinion': group.avg_opinion
+                    'timestep':f'T{self.timestep_val}',
+                    'group_id': group.group_id,
+                    'agent_ids': [x.agent_id for x in group.agent_list],
+                    'group_size': group.size,
+                    'group_average_opinion': group.avg_opinion,
+                    'group_limit_value': group.limit_value
                     })
         
 
@@ -320,9 +321,9 @@ class Model():
             temp_global_opinion += agent.opinion
             
         if include_influencer_agent_op:
-            self.global_opinion.append({'Timestep':f'T{self.timestep_val}','Population':self.population,'Global Opinion':temp_global_opinion/self.population,'Influencer Opinion Included':'Yes'})
+            self.global_opinion.append({'timestep':f'T{self.timestep_val}','population':self.population,'global_opinion':temp_global_opinion/self.population,'influencer_opinion_included':'Yes'})
         else:
-            self.global_opinion.append({'Timestep':f'T{self.timestep_val}','Population':self.population,'Global Opinion':temp_global_opinion/self.user_population,'Influencer Opinion Included':'No'})
+            self.global_opinion.append({'timestep':f'T{self.timestep_val}','population':self.population,'global_opinion':temp_global_opinion/self.user_population,'influencer_opinion_included':'No'})
 
     def finalize_model(self):
         """
@@ -348,8 +349,8 @@ if __name__ == '__main__':
     
     ### Parameters ###
     params = {
-        'timesteps': 1000, # declare amount of timesteps
-        "population": 1000, # declare the overall population of the ABM
+        'timesteps': 100, # declare amount of timesteps
+        "population": 100, # declare the overall population of the ABM
         "population_distribution":(80, 10, 10), # percentages: user, fake, real
         "user_network": 3, # how many connections should a typical user have
         "influencer_network": 5, # how many connections should a typical influencer have
