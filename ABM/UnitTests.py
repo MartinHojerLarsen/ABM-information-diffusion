@@ -105,18 +105,16 @@ class ModelTests(unittest.TestCase):
         
         for agent_id in c1_friends_id:
             agent = model.graph_environment._node[agent_id]['agent']
-            if isinstance(agent,UserAgent):
-                
-                """
-                In this unit test we are testing that opinion are from each other and homophily is close between agents.
-                
-                """
-                
-                #Manipulated opinion for testing. Opinions are far from each other
-                agent.opinion = 25
-                #manipualted homophily for testing. Homophily is high
-                model.graph_environment.get_edge_data(c1.agent_id,agent.agent_id)['weight'] = 2.0
-                c1_friends_agents.append(agent)
+            """
+            In this unit test we are testing that opinion are from each other and homophily is close between agents.
+            
+            """
+            
+            #Manipulated opinion for testing. Opinions are far from each other
+            agent.opinion = 25
+            #manipualted homophily for testing. Homophily is high
+            model.graph_environment.get_edge_data(c1.agent_id,agent.agent_id)['weight'] = 2.0
+            c1_friends_agents.append(agent)
         
         if len(c1_friends_agents) != 0:
             #Execute model join groups method
@@ -125,36 +123,35 @@ class ModelTests(unittest.TestCase):
             #Check that first agent is not in a group
             self.assertEqual(c1.group_id,-1)
         
-    def test_model_join_group_3(self):
-        model = self.setup()
-        c1 = model.graph_environment._node[0]['agent']
-        c1.opinion = 75 # For testing purpose
-        c1_friends_id = list(model.graph_environment.neighbors(0))
-        c1_friends_agents = []
+    # def test_model_join_group_3(self):
+    #     model = self.setup()
+    #     c1 = model.graph_environment._node[0]['agent']
+    #     c1.opinion = 75 # For testing purpose
+    #     c1_friends_id = list(model.graph_environment.neighbors(0))
+    #     c1_friends_agents = []
         
-        for agent_id in c1_friends_id:
-            agent = model.graph_environment._node[agent_id]['agent']
-            if isinstance(agent,UserAgent):
+    #     for agent_id in c1_friends_id:
+    #         agent = model.graph_environment._node[agent_id]['agent']
                 
-                """
-                In this unit test we are testing that opinion close and homophily are far.
-                
-                """
-                
-                #Manipulated opinion for testing. Opinions are far from each other
-                agent.opinion = c1.opinion
-                #manipualted homophily for testing. Homophily is high
-                model.graph_environment.get_edge_data(c1.agent_id,agent.agent_id)['weight'] = 1.1
-                c1_friends_agents.append(agent)
-        
-        if len(c1_friends_agents) != 0:
-            # Execute model join groups method
-            model.join_groups([c1.agent_id])
+    #         """
+    #         In this unit test we are testing that opinion close and homophily are far.
             
-            # Check that first agent's group id is -1 (representing as not being in a group)
-            self.assertEqual(c1.group_id,-1)
+    #         """
+            
+    #         #Manipulated opinion for testing. Opinions are close to each other
+    #         agent.opinion = c1.opinion
+    #         #manipualted homophily for testing. Homophily is low
+    #         model.graph_environment.get_edge_data(c1.agent_id,agent.agent_id)['weight'] = 1.1
+    #         c1_friends_agents.append(agent)
         
-    def test_model_join_group_3(self):
+    #     if len(c1_friends_agents) != 0:
+    #         # Execute model join groups method
+    #         model.join_groups([c1.agent_id])
+            
+    #         # Check that first agent's group id is -1 (representing as not being in a group)
+    #         self.assertEqual(c1.group_id,-1)
+        
+    def test_model_join_group_4(self):
         model = self.setup()
         c1 = model.graph_environment._node[0]['agent']
         c1.opinion = 75 # For testing purpose
@@ -163,18 +160,17 @@ class ModelTests(unittest.TestCase):
         
         for agent_id in c1_friends_id:
             agent = model.graph_environment._node[agent_id]['agent']
-            if isinstance(agent,UserAgent):
                 
-                """
-                In this unit test we are testing that opinions are far and homophilies are far.
-                
-                """
-                
-                #Manipulated opinion for testing. Opinions are far from each other
-                agent.opinion = 25
-                #manipualted homophily for testing. Homophily is low
-                model.graph_environment.get_edge_data(c1.agent_id,agent.agent_id)['weight'] = 1.1
-                c1_friends_agents.append(agent)
+            """
+            In this unit test we are testing that opinions are far and homophilies are far.
+            
+            """
+            
+            #Manipulated opinion for testing. Opinions are far from each other
+            agent.opinion = 25
+            #manipualted homophily for testing. Homophily is low
+            model.graph_environment.get_edge_data(c1.agent_id,agent.agent_id)['weight'] = 1.1
+            c1_friends_agents.append(agent)
         
         if len(c1_friends_agents) != 0:
             # Execute model join groups method

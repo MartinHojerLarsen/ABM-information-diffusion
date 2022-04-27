@@ -146,7 +146,6 @@ class Model():
         
         # Recalculate group average opinions and polarize towards average group opinion
         for group in self.groups.values():
-            group.calc_avg_opinion()
             group.polarize_agents()
         
         # Record Data for every timestep
@@ -184,14 +183,29 @@ class Model():
                 # Retrieve a specific friend in friendlist
                 agent_friend = self.graph_environment._node[agent_friend_id]['agent']
                 
-                if isinstance(agent,UserAgent) and isinstance(agent_friend,UserAgent) and agent_friend.group_id == -1:
+                if agent_friend.group_id == -1:
                     # Calculate whether current agent and a specific friend have almost same opinion
                     similar_opinion_bool = True if abs(agent.opinion - agent_friend.opinion) < self.group_opinion_limit_val else False
+                    
                     # Check the homophily rate of the friendship
                     homophily_rate = self.graph_environment.get_edge_data(agent.agent_id,agent_friend.agent_id)['weight']
                     homophily_bool = True if homophily_rate > self.group_homophily_limit_val else False
                 
-                    if similar_opinion_bool and homophily_bool:
+                    if isinstance(agent,UserAgent) and isinstance(agent_friend,UserAgent) and similar_opinion_bool and homophily_bool:
+                        if agent.group_id == -1:
+                            if agent.opinion < -50 or agent.opinion > 50:
+                                # if current agent not in group. Create one and place them in it
+                                group = Group(self.unique_group_id,agent.opinion)
+                                group.join_group(agent)
+                                group.join_group(agent_friend)
+                                self.groups[f'{self.unique_group_id}'] = group
+                                self.unique_group_id += 1
+                        else:
+                            # If current agent is in a group. Put the friend in it as well
+                            group = self.groups[f'{agent.group_id}']
+                            group.join_group(agent_friend)
+                            
+                    elif ((isinstance(agent,InfluencerAgent) and isinstance(agent_friend,UserAgent)) or (isinstance(agent,UserAgent)) and isinstance(agent_friend,InfluencerAgent)) and similar_opinion_bool:
                         if agent.group_id == -1:
                             if agent.opinion < -50 or agent.opinion > 50:
                                 # if current agent not in group. Create one and place them in it
@@ -333,9 +347,9 @@ if __name__ == '__main__':
     
     ### Parameters ###
     params = {
-        'timesteps': 500, # declare amount of timesteps
+        'timesteps': 1000, # declare amount of timesteps
         "population": 300, # declare the overall population of the ABM
-        "population_distribution":(25, 37.5, 37.5), # percentages: user, fake, real
+        "population_distribution":(80, 10, 10), # percentages: user, fake, real
         "user_network": 3, # how many connections should a typical user have
         "influencer_network": 2, # how many connections should a typical influencer have
         "finfluencer_network_mult_factor": 1, # starts at 1 - a multiplication of fake news influencer network - due to fake news spreading more
@@ -346,7 +360,7 @@ if __name__ == '__main__':
         "r_opinion": (50, 100), # range of opinion - real news influencer
         "user_susceptibility": (1, 2), # susceptibility - user - random value between 1 and 2
         'echo_chamber_entrance_limit': 10, # determine the limit for when a opinion should reflect a potential join of an echo chamber
-        'echo_chamber_homophily_limit': 1.6 # determine the homophily between agents that should be in an echo chamber
+        'echo_chamber_homophily_limit': 1.1 # determine the homophily between agents that should be in an echo chamber
     }
     
     # Create model

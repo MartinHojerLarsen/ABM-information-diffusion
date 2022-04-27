@@ -1,5 +1,6 @@
 """ File for Group class """
 from Agent import UserAgent
+from Agent import InfluencerAgent
 
 class Group(): 
     def __init__(self, group_id,echo_chamber_limit_value):
@@ -89,37 +90,39 @@ class Group():
         
     def polarize_agents(self):
         for agent in self.agent_list:
-            opinion_variance = abs(agent.opinion-self.avg_opinion) if (agent.opinion-self.avg_opinion) != 0 else 1
             
-            # state to make proper calculation if agent has a positive or negative opinion
-            state = 'not defined'
-            if agent.opinion < self.avg_opinion:
-                go_state = 'add'
-            elif agent.opinion > self.avg_opinion:
-                go_state = 'subtract'
-            else:
-                go_state = 'equal'
-            
-            # opinion calculation (value is higher the closer the agent opinion is as global opinion)
-
-            opinion_calculation = abs((1/opinion_variance)*agent.opinion)
-
+            if isinstance(agent,UserAgent):
+                opinion_variance = abs(agent.opinion-self.avg_opinion) if (agent.opinion-self.avg_opinion) != 0 else 1
                 
-            if go_state == 'add':
-                new_opinion = agent.opinion + opinion_calculation # polarize towards global opinion
-                # agent opinion cannot exceed global opinion 
-                if new_opinion > self.avg_opinion:
-                    new_opinion = self.avg_opinion
-            elif go_state == 'subtract':
-                new_opinion = agent.opinion - opinion_calculation # polarize towards global opinion
-                # agent opinion cannot exceed global opinion
-                if new_opinion < self.avg_opinion:
-                    new_opinion = self.avg_opinion
-            else:
-                new_opinion = agent.opinion
+                # state to make proper calculation if agent has a positive or negative opinion
+                state = 'not defined'
+                if agent.opinion < self.avg_opinion:
+                    go_state = 'add'
+                elif agent.opinion > self.avg_opinion:
+                    go_state = 'subtract'
+                else:
+                    go_state = 'equal'
                 
-            agent.opinion = new_opinion
-            # calculate new average opinion of the group
-            self.calc_avg_opinion()
+                # opinion calculation (value is higher the closer the agent opinion is as global opinion)
+    
+                opinion_calculation = abs((1/opinion_variance)*agent.opinion)
+    
+                    
+                if go_state == 'add':
+                    new_opinion = agent.opinion + opinion_calculation # polarize towards global opinion
+                    # agent opinion cannot exceed global opinion 
+                    if new_opinion > self.avg_opinion:
+                        new_opinion = self.avg_opinion
+                elif go_state == 'subtract':
+                    new_opinion = agent.opinion - opinion_calculation # polarize towards global opinion
+                    # agent opinion cannot exceed global opinion
+                    if new_opinion < self.avg_opinion:
+                        new_opinion = self.avg_opinion
+                else:
+                    new_opinion = agent.opinion
+                    
+                agent.opinion = new_opinion
+                # calculate new average opinion of the group
+                self.calc_avg_opinion()
 
 
