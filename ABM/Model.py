@@ -10,6 +10,7 @@ from Functions import *
 import pandas as pd
 import numpy as np
 import time
+import openpyxl
 
 class Model():
     
@@ -349,8 +350,8 @@ if __name__ == '__main__':
     
     ### Parameters ###
     params = {
-        'timesteps': 100, # declare amount of timesteps
-        "population": 100, # declare the overall population of the ABM
+        'timesteps': 1000, # declare amount of timesteps
+        "population": 1000, # declare the overall population of the ABM
         "population_distribution":(80, 10, 10), # percentages: user, fake, real
         "user_network": 3, # how many connections should a typical user have
         "influencer_network": 5, # how many connections should a typical influencer have
@@ -365,27 +366,35 @@ if __name__ == '__main__':
         'echo_chamber_homophily_limit': 1.1 # determine the homophily between agents that should be in an echo chamber
     }
     
-    # Create model
-    model = Model(params['population'], params['population_distribution'], params['user_network'], params['influencer_network'], params['finfluencer_network_mult_factor'], params['homophily_weight_range'], params['f_influence_factor'], params['r_influence_factor'], params['f_opinion'], params['r_opinion'], params['user_susceptibility'],params['echo_chamber_entrance_limit'],params['echo_chamber_homophily_limit'])
     
-    # Used to draw the graph
-    draw_graph_environment(model)
+    # Episodes
+    df_global_dataframes = []
+    df_groups_dataframes = []
+    df_individual_agents_datadrames = []
+    for j in range(1): 
+        # Create model
+        model = Model(params['population'], params['population_distribution'], params['user_network'], params['influencer_network'], params['finfluencer_network_mult_factor'], params['homophily_weight_range'], params['f_influence_factor'], params['r_influence_factor'], params['f_opinion'], params['r_opinion'], params['user_susceptibility'],params['echo_chamber_entrance_limit'],params['echo_chamber_homophily_limit'])
+        
+        # run sim (run timesteps)
+        for i in range(params['timesteps']):
+            model.timestep()
+        
+        # Create a pandas dataframe with the final global opinion values
+        model.finalize_model()
+        
+        # Adding episodes to dataframes
+        model.dataset_individual_agent.insert(0, 'Episode', j)
+        model.dataset_groups.insert(0, 'Episode', j)
+        model.dataset_global_opinion.insert(0, 'Episode', j)
+        
+        df_individual_agents_datadrames.append(model.dataset_individual_agent)
+        df_groups_dataframes.append(model.dataset_groups)
+        df_global_dataframes.append(model.dataset_global_opinion)
     
-    # run sim (run timesteps)
-    for i in range(params['timesteps']):
-        model.timestep()
-    
-    # Create a pandas dataframe with the final global opinion values
-    model.finalize_model()
-    
-    ### temp variables ###        
-    # record data 
-    df_individual_opinion = model.dataset_individual_agent
-    df_groups = model.dataset_groups
-    df_global_opinion = model.dataset_global_opinion
-    
-    groups = model.groups
-    ######################
+    # Gather all episodes into one dataframe for micro, meso and makro level.
+    df_global = pd.concat(df_global_dataframes,axis=1)
+    df_groups = pd.concat(df_groups_dataframes,axis=1)
+    df_agents = pd.concat(df_individual_agents_datadrames,axis=1)
     
     done = time.time()
     elapsed = done - start
