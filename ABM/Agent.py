@@ -76,7 +76,9 @@ class UserAgent(Agent):
                 # calculate new target opinion
                 similar_mindset = 1.5 if (self.opinion >= 0 and target_agent_opinion >= 0) or (self.opinion < 0 and target_agent_opinion < 0) else 1
                 
-                opinion_variance = abs(self.opinion-(target_agent_opinion)) if (self.opinion-target_agent_opinion) != 0 else 1
+                opinion_variance = abs(self.opinion-(target_agent_opinion)) 
+                if opinion_variance < 1: 
+                    opinion_variance = 1
                 
                 opinion_difference = 1/opinion_variance
                 homophily = graph_env.get_edge_data(self.agent_id,target_agent.agent_id)['weight']
@@ -98,7 +100,9 @@ class UserAgent(Agent):
                 
     def global_opinion_reflection(self,global_opinion_val):
         # difference in agent opinion and current timesteps global opinion
-        go_variance = abs(self.opinion-(global_opinion_val)) if (self.opinion-global_opinion_val) != 0 else 1
+        go_variance = abs(self.opinion-(global_opinion_val)) 
+        if go_variance < 1:
+            go_variance = 1
         
         # state to make proper calculation if agent has a positive or negative opinion
         go_state = 'not defined'
@@ -188,8 +192,10 @@ class InfluencerAgent(Agent):
             similar_mindset = 1.5 if (self.opinion >= 0 and target_agent_opinion >= 0) or (self.opinion < 0 and target_agent_opinion) < 0 else 1
             ifs_factor = self.i_factor * target_agent_susceptibility
             
-            opinion_variance = abs(self.opinion-(target_agent_opinion)) if (self.opinion-target_agent_opinion) != 0 else 1
-                
+            opinion_variance = abs(self.opinion-(target_agent_opinion)) 
+            if opinion_variance < 1: 
+                opinion_variance = 1    
+            
             opinion_difference = 1/opinion_variance 
             
             if self.opinion >= 0:

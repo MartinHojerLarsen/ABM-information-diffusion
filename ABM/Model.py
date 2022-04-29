@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 import time
 import openpyxl
-#%%
+
 
 class Model():
     
@@ -139,13 +139,13 @@ class Model():
             agent.influence_agent(self.graph_environment,agent_network)
             
             # # Reflect on global opinion at a slower pace
-            # if self.timestep_val % 25 == 0 and isinstance(agent,UserAgent):
-            #     former_global_opinion = self.global_opinion[self.timestep_val-1]['global_opinion']
-            #     agent.global_opinion_reflection(former_global_opinion)
-            
+            if self.timestep_val % 25 == 0 and isinstance(agent,UserAgent):
+                former_global_opinion = self.global_opinion[self.timestep_val-1]['global_opinion']
+                agent.global_opinion_reflection(former_global_opinion)
+        
         # Create/leave groups
-        # self.join_groups(nodes_arr)
-        # self.potentially_leave_group(nodes_arr)
+        self.join_groups(nodes_arr)
+        self.potentially_leave_group(nodes_arr)
         
         # Recalculate group average opinions and polarize towards average group opinion
 
@@ -162,7 +162,7 @@ class Model():
         
         # Record data global opinion
         self.record_data_global_opinion()
-    
+        
     def join_groups(self,agent_list):
         """
         The following method will walk through each agent and potentially create an group/echo chamber
@@ -362,9 +362,9 @@ if __name__ == '__main__':
     
     ### Parameters ###
     params = {
-        'timesteps': 500, # declare amount of timesteps
-        "population": 500, # declare the overall population of the ABM
-        "population_distribution":(100, 0, 0), # percentages: user, fake, real
+        'timesteps': 1000, # declare amount of timesteps
+        "population": 1000, # declare the overall population of the ABM
+        "population_distribution":(80, 10, 10), # percentages: user, fake, real
         "user_network": 3, # how many connections should a typical user have
         "influencer_network": 0, # how many connections should a typical influencer have
         "finfluencer_network_mult_factor": 0, # starts at 1 - a multiplication of fake news influencer network - due to fake news spreading more
@@ -413,10 +413,12 @@ if __name__ == '__main__':
     print(f'Running Time: {elapsed}')
 
     # For debugging
-    a_iso = iso_agent(df_agents, 233)
+    a_iso = iso_agent(df_agents, 729)
     b_head = df_agents.head(30000)
     c_varians = calc_var(df_agents)
     
+    
+
     # =============================================================================
     # Create excel files
     # =============================================================================
