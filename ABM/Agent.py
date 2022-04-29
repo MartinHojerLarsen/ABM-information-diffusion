@@ -72,9 +72,15 @@ class UserAgent(Agent):
                 # current nodes opinion
                 target_agent_opinion = target_agent.opinion
                 # current nodes susceptibility
-                target_agent_susceptibility = target_agent.i_susceptibility if target_agent.i_susceptibility != 1 else 0 
+                target_agent_susceptibility = target_agent.i_susceptibility 
+                if target_agent_susceptibility == 1:
+                    target_agent_susceptibility = 0 
+                
                 # calculate new target opinion
-                similar_mindset = 1.5 if (self.opinion >= 0 and target_agent_opinion >= 0) or (self.opinion < 0 and target_agent_opinion < 0) else 1
+                if (self.opinion >= 0 and target_agent_opinion >= 0) or (self.opinion < 0 and target_agent_opinion < 0):
+                    similar_mindset = 1.5 
+                else: 
+                    similar_mindset = 1
                 
                 opinion_variance = abs(self.opinion-(target_agent_opinion)) 
                 if opinion_variance < 1: 
@@ -186,10 +192,18 @@ class InfluencerAgent(Agent):
             target_agent = graph_env._node[agent_id]['agent']
             # current nodes opinion
             target_agent_opinion = target_agent.opinion
+            
             # current nodes susceptibility
-            target_agent_susceptibility = target_agent.i_susceptibility if target_agent.i_susceptibility != 1 else 0 
+            target_agent_susceptibility = target_agent.i_susceptibility 
+            if target_agent_susceptibility == 1:
+                target_agent_susceptibility = 0 
+            
             # calculate new target opinion
-            similar_mindset = 1.5 if (self.opinion >= 0 and target_agent_opinion >= 0) or (self.opinion < 0 and target_agent_opinion) < 0 else 1
+            if (self.opinion >= 0 and target_agent_opinion >= 0) or (self.opinion < 0 and target_agent_opinion < 0):
+                similar_mindset = 1.5 
+            else: 
+                similar_mindset = 1
+                
             ifs_factor = self.i_factor * target_agent_susceptibility
             
             opinion_variance = abs(self.opinion-(target_agent_opinion)) 

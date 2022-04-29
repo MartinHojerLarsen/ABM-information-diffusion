@@ -32,8 +32,11 @@ class Group():
         for agent in self.agent_list:
             opinion_sum += agent.opinion
             
-        average = opinion_sum/len(self.agent_list) if len(self.agent_list) != 0 else 0
-        
+        if len(self.agent_list) == 0:
+            average = 0
+        else: 
+            average = opinion_sum/len(self.agent_list)
+                
         # Ensure that echo chambers cannot be in the range of -50 <=> 50.
         if opinion_sum < 0:
             num_state = 'n'
