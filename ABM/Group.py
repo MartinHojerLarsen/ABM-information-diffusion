@@ -92,7 +92,9 @@ class Group():
         for agent in self.agent_list:
             
             if isinstance(agent,UserAgent):
-                opinion_variance = abs(agent.opinion-(self.avg_opinion)) if (agent.opinion-self.avg_opinion) != 0 else 1
+                opinion_variance = abs(agent.opinion-(self.avg_opinion)) 
+                if opinion_variance < 1:
+                    opinion_variance = 1
                 
                 # state to make proper calculation if agent has a positive or negative opinion
                 state = 'not defined'
