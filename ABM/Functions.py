@@ -6,6 +6,7 @@ import math
 from Agent import *
 import networkx as nx
 import numpy as np
+import pandas as pd
 
 def make_agent_nodes(agent_list):
     '''
@@ -69,6 +70,8 @@ def make_agents_connections(agent_list, user_network, influencer_network, f_netw
             
             if isinstance(c1,InfluencerAgent) and isinstance(c2,InfluencerAgent):
                 continue
+            elif isinstance(c1,UserAgent) and isinstance(c2,InfluencerAgent) and influencer_network == 0:
+                continue
             else:    
                 if c1.agent_id is not c2.agent_id:
                     if isinstance(c1,UserAgent) == True and isinstance(c2,UserAgent) == True:
@@ -94,6 +97,23 @@ def eai(df_agents,agent_id,timestep):
     print(f'Agent Susceptibility: {row_inner[5]}')
     print('******')
 
+# Isolate Pandas Dataframe
+def iso_agent(df,aid):
+    row = df.query(f'agent_id == {aid}')
+    return row
+
+# calculate agent opinion varians
+def calc_var(dfi):
+    user_agents = dfi.query('agent_type == "UserAgent"')
+    user_agent_ids = user_agents['agent_id'].unique()
+    
+    varians = []
+    for agent_id in user_agent_ids:
+        sub_frame = dfi.query(f'agent_id == {agent_id}')
+        varians.append({'Id':agent_id,'varians':sub_frame['opinion'].var()})
+    
+    df = pd.DataFrame(varians)
+    return df
 
 # Only for testing purpose
 
