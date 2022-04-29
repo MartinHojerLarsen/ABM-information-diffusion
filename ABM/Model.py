@@ -367,7 +367,7 @@ if __name__ == '__main__':
         "population_distribution":(80, 10, 10), # percentages: user, fake, real
         "user_network": 4, # how many connections should a typical user have
         "influencer_network": 7, # how many connections should a typical influencer have
-        "finfluencer_network_mult_factor": 2, # starts at 1 - a multiplication of fake news influencer network - due to fake news spreading more
+        "finfluencer_network_mult_factor": 1, # starts at 1 - a multiplication of fake news influencer network - due to fake news spreading more
         "homophily_weight_range": 2, # homophily between users
         "f_influence_factor": (1, 2), # influence factor - fake news influencer (should be higher for Finfluencer)
         "r_influence_factor": (1, 2), # influence factor - real news influencer
@@ -383,7 +383,7 @@ if __name__ == '__main__':
     df_groups_dataframes = []
     df_individual_agents_dataframes = []
     
-    for j in range(1): 
+    for j in range(10):
         # Create model
         model = Model(params['population'], params['population_distribution'], params['user_network'], params['influencer_network'], params['finfluencer_network_mult_factor'], params['homophily_weight_range'], params['f_influence_factor'], params['r_influence_factor'], params['f_opinion'], params['r_opinion'], params['user_susceptibility'],params['echo_chamber_entrance_limit'],params['echo_chamber_homophily_limit'])
         
@@ -422,9 +422,11 @@ if __name__ == '__main__':
     # =============================================================================
     # Create excel files
     # =============================================================================
-    # writer = pd.ExcelWriter('../Data/demo.xlsx', engine='openpyxl')
-    # Convert the dataframe to an XlsxWriter Excel object.
-    # df_groups.to_excel(writer, sheet_name='Groups_SC1', index=False)
-    # df_groups.to_excel(writer, sheet_name='T2', index=False)
-    # Close the Pandas Excel writer and output the Excel file.
-    # writer.save()
+    writer = pd.ExcelWriter('../Data/echo_chambers.xlsx', engine='openpyxl')
+    # # Convert the dataframe to an XlsxWriter Excel object.
+    df_global.to_excel(writer, sheet_name='global_sc1', index=False)
+    df_groups.to_excel(writer, sheet_name='group_sc1', index=False)
+    df_agents.to_excel(writer, sheet_name='agents_sc1', index=False)
+    # # Close the Pandas Excel writer and output the Excel file.
+    writer.save()
+    writer.close()
