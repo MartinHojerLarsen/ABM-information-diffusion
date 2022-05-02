@@ -269,29 +269,32 @@ class Model():
             
             #network
             network = list(self.graph_environment.neighbors(agent_obj.agent_id))
+            
             network_influencers = [x for x in network if isinstance(self.graph_environment._node[x]['agent'],InfluencerAgent)]
             network_users = [x for x in network if isinstance(self.graph_environment._node[x]['agent'],UserAgent)]
             
             if isinstance(agent_obj,InfluencerAgent):
-                timestep_df = {'timestep':f'T{self.timestep_val}',
+                timestep_df = {'timestep':self.timestep_val,
                                'agent_id':agent_obj.agent_id,
-                               'agent_type':'InfluencerAgent',
+                               'agent_type':'I',
                                'opinion':agent_obj.opinion,
                                'influence_susceptibility':np.nan,
                                'influence_factor':agent_obj.i_factor,
-                               'network_influencersAgents':network_influencers,
-                               'network_userAgents':network_users,
+                               'network_influencersAgents':len(network_influencers),
+                               'network_userAgents':len(network_users),
+                               'network_total':len(network_influencers) + len(network_users),
                                'echo_chamber':agent_obj.group_id}
                 self.individual_agent.append(timestep_df)
             elif isinstance(agent_obj,UserAgent):
-                timestep_df = {'timestep':f'T{self.timestep_val}',
+                timestep_df = {'timestep':self.timestep_val,
                                'agent_id':agent_obj.agent_id,
-                               'agent_type':'UserAgent',
+                               'agent_type':'U',
                                'opinion':agent_obj.opinion,
                                'influence_susceptibility':agent_obj.i_susceptibility,
                                'influence_factor':np.nan,
-                               'network_influencersAgents':network_influencers,
-                               'network_userAgents':network_users,
+                               'network_influencersAgents':len(network_influencers),
+                               'network_userAgents':len(network_users),
+                               'network_total':len(network_influencers) + len(network_users),
                                'echo_chamber':agent_obj.group_id
                                }
                 self.individual_agent.append(timestep_df)
@@ -300,7 +303,7 @@ class Model():
         for group in self.groups.values():
             if group.size != 0:
                 self.groups_dataframes.append({
-                    'timestep':f'T{self.timestep_val}',
+                    'timestep':self.timestep_val,
                     'group_id': group.group_id,
                     'agent_ids': [x.agent_id for x in group.agent_list],
                     'group_size': group.size,
@@ -334,9 +337,9 @@ class Model():
             temp_global_opinion += agent.opinion
             
         if include_influencer_agent_op:
-            self.global_opinion.append({'timestep':f'T{self.timestep_val}','population':self.population,'global_opinion':temp_global_opinion/self.population,'influencer_opinion_included':'Yes'})
+            self.global_opinion.append({'timestep':self.timestep_val,'population':self.population,'global_opinion':temp_global_opinion/self.population,'influencer_opinion_included':'Yes'})
         else:
-            self.global_opinion.append({'timestep':f'T{self.timestep_val}','population':self.population,'global_opinion':temp_global_opinion/self.user_population,'influencer_opinion_included':'No'})
+            self.global_opinion.append({'timestep':self.timestep_val,'population':self.population,'global_opinion':temp_global_opinion/self.user_population,'influencer_opinion_included':'No'})
 
     def finalize_model(self):
         """
@@ -363,7 +366,7 @@ if __name__ == '__main__':
     ### Parameters ###
     params = {
         'timesteps': 1000, # declare amount of timesteps
-        "population": 1000, # declare the overall population of the ABM
+        "population": 500, # declare the overall population of the ABM
         "population_distribution":(80, 10, 10), # percentages: user, fake, real
         "user_network": 4, # how many connections should a typical user have
         "influencer_network": 7, # how many connections should a typical influencer have
@@ -383,7 +386,7 @@ if __name__ == '__main__':
     df_groups_dataframes = []
     df_individual_agents_dataframes = []
     
-    for j in range(10):
+    for j in range(1):
         # Create model
         model = Model(params['population'], params['population_distribution'], params['user_network'], params['influencer_network'], params['finfluencer_network_mult_factor'], params['homophily_weight_range'], params['f_influence_factor'], params['r_influence_factor'], params['f_opinion'], params['r_opinion'], params['user_susceptibility'],params['echo_chamber_entrance_limit'],params['echo_chamber_homophily_limit'])
         
@@ -394,10 +397,10 @@ if __name__ == '__main__':
         # Create a pandas dataframe with the final global opinion values
         model.finalize_model()
         
-        # Adding episodes to dataframes
-        model.dataset_individual_agent.insert(0, 'Episode', j)
-        model.dataset_groups.insert(0, 'Episode', j)
-        model.dataset_global_opinion.insert(0, 'Episode', j)
+        # # Adding episodes to dataframes
+        # model.dataset_individual_agent.insert(0, 'Episode', j)
+        # model.dataset_groups.insert(0, 'Episode', j)
+        # model.dataset_global_opinion.insert(0, 'Episode', j)
         
         df_individual_agents_dataframes.append(model.dataset_individual_agent)
         df_groups_dataframes.append(model.dataset_groups)
@@ -413,20 +416,37 @@ if __name__ == '__main__':
     print(f'Running Time: {elapsed}')
 
     # For debugging
-    a_iso = iso_agent(df_agents, 729)
-    b_head = df_agents.head(30000)
-    c_varians = calc_var(df_agents)
+    # a_iso = iso_agent(df_agents, 729)
+    # b_head = df_agents.head(30000)
+    # c_varians = calc_var(df_agents)
     
     
 
     # =============================================================================
     # Create excel files
     # =============================================================================
-    writer = pd.ExcelWriter('../Data/echo_chambers.xlsx', engine='openpyxl')
+    writer_start = time.time()
+    writer = pd.ExcelWriter('../Data/testrun_500pop.xlsx', engine='openpyxl')
     # # Convert the dataframe to an XlsxWriter Excel object.
-    df_global.to_excel(writer, sheet_name='global_sc1', index=False)
-    df_groups.to_excel(writer, sheet_name='group_sc1', index=False)
-    df_agents.to_excel(writer, sheet_name='agents_sc1', index=False)
+    df_global.to_excel(writer, sheet_name='global', index=False)
+    print("Global done")
+    df_groups.to_excel(writer, sheet_name='groups', index=False)
+    print("Groups done")
+    df_agents.to_excel(writer, sheet_name='agents', index=False)
     # # Close the Pandas Excel writer and output the Excel file.
+    print("Agents done")
     writer.save()
     writer.close()
+    print("Writer closed")
+    writer_done = time.time()
+    writer_time = writer_done - writer_start
+    print(f'Writer running Time: {writer_time}')
+    print("Finished run")
+    
+    
+# =============================================================================
+# Garbage collection
+# =============================================================================
+
+# import gc
+# gc.collect()
