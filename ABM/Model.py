@@ -107,7 +107,7 @@ class Model():
         self.graph_environment.add_weighted_edges_from(make_agents_connections(self.agents, user_network, influencer_network, f_network_mult_factor, homophily_weight_range))
         
         # Record initial values of all agents before timesteps are executed
-        self.record_data_individual_agent()
+        # self.record_data_individual_agent()
         
         # Record initial global opinion before timesteps are executed
         self.record_data_global_opinion()
@@ -155,7 +155,7 @@ class Model():
                 group.polarize_agents()
         
         # Record Data for every timestep
-        self.record_data_individual_agent()
+        # self.record_data_individual_agent()
         
         # Record data groups
         self.record_data_groups()
@@ -351,8 +351,8 @@ class Model():
 
         """
         
-        self.dataset_global_opinion = pd.DataFrame(self.global_opinion)
-        self.dataset_individual_agent = pd.DataFrame(self.individual_agent)
+        # self.dataset_global_opinion = pd.DataFrame(self.global_opinion)
+        # self.dataset_individual_agent = pd.DataFrame(self.individual_agent)
         self.dataset_groups = pd.DataFrame(self.groups_dataframes)
 
 # ============================================================================= #
@@ -377,8 +377,8 @@ if __name__ == '__main__':
         "f_opinion": (-100, -50), #  range of opinion - fake news influencer (should be more radical for Finfluencer)
         "r_opinion": (50, 100), # range of opinion - real news influencer
         "user_susceptibility": (1, 2), # susceptibility - user - random value between 1 and 2
-        'echo_chamber_entrance_limit': 5, # determine the limit for when a opinion should reflect a potential join of an echo chamber
-        'echo_chamber_homophily_limit': 1.5 # determine the homophily between agents that should be in an echo chamber
+        'echo_chamber_entrance_limit': 40, # determine the limit for when a opinion should reflect a potential join of an echo chamber
+        'echo_chamber_homophily_limit': 1.1 # determine the homophily between agents that should be in an echo chamber
     }
     
     # Episodes
@@ -396,11 +396,6 @@ if __name__ == '__main__':
         
         # Create a pandas dataframe with the final global opinion values
         model.finalize_model()
-        
-        # # Adding episodes to dataframes
-        # model.dataset_individual_agent.insert(0, 'Episode', j)
-        # model.dataset_groups.insert(0, 'Episode', j)
-        # model.dataset_global_opinion.insert(0, 'Episode', j)
         
         df_individual_agents_dataframes.append(model.dataset_individual_agent)
         df_groups_dataframes.append(model.dataset_groups)
@@ -420,28 +415,26 @@ if __name__ == '__main__':
     # b_head = df_agents.head(30000)
     # c_varians = calc_var(df_agents)
     
-    
-
     # =============================================================================
     # Create excel files
     # =============================================================================
-    writer_start = time.time()
-    writer = pd.ExcelWriter('../Data/testrun_500pop.xlsx', engine='openpyxl')
-    # # Convert the dataframe to an XlsxWriter Excel object.
-    df_global.to_excel(writer, sheet_name='global', index=False)
-    print("Global done")
-    df_groups.to_excel(writer, sheet_name='groups', index=False)
-    print("Groups done")
-    df_agents.to_excel(writer, sheet_name='agents', index=False)
-    # # Close the Pandas Excel writer and output the Excel file.
-    print("Agents done")
-    writer.save()
-    writer.close()
-    print("Writer closed")
-    writer_done = time.time()
-    writer_time = writer_done - writer_start
-    print(f'Writer running Time: {writer_time}')
-    print("Finished run")
+    # writer_start = time.time()
+    # writer = pd.ExcelWriter('../Data/testrun_500pop.xlsx', engine='openpyxl')
+    # # # Convert the dataframe to an XlsxWriter Excel object.
+    # df_global.to_excel(writer, sheet_name='global', index=False)
+    # print("Global done")
+    # df_groups.to_excel(writer, sheet_name='groups', index=False)
+    # print("Groups done")
+    # df_agents.to_excel(writer, sheet_name='agents', index=False)
+    # # # Close the Pandas Excel writer and output the Excel file.
+    # print("Agents done")
+    # writer.save()
+    # writer.close()
+    # print("Writer closed")
+    # writer_done = time.time()
+    # writer_time = writer_done - writer_start
+    # print(f'Writer running Time: {writer_time}')
+    # print("Finished run")
     
     
 # =============================================================================
