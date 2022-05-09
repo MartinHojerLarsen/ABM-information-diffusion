@@ -27,31 +27,21 @@ class Group():
     
         """
         opinion_sum = 0
-        num_state = 'zero'
+        
+        if len(self.agent_list) == 0:
+            return
         
         for agent in self.agent_list:
             opinion_sum += agent.opinion
-            
-        if len(self.agent_list) == 0:
-            average = 0
-        else: 
-            average = opinion_sum/len(self.agent_list)
+
+        average = opinion_sum/len(self.agent_list)
                 
-        # Ensure that echo chambers cannot be in the range of -50 <=> 50.
-        if opinion_sum < 0:
-            num_state = 'n'
-        elif opinion_sum == 0:
-            num_state = 'zero'
-        elif opinion_sum > 0:
-            num_state = 'p'
-        
-        if num_state == 'n' and average > self.limit_value:
-            self.avg_opinion = self.limit_value
-        elif num_state == 'p' and average < self.limit_value:
+        # Ensure that echo chambers cannot be in the range of the positive range of the limit value.
+        if -abs(self.limit_value) <= average <= abs(self.limit_value):
             self.avg_opinion = self.limit_value
         else:
             self.avg_opinion = average
-
+        
     def join_group(self, agent):
         """
         Function for an Agent to join the group 
