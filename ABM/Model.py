@@ -107,7 +107,7 @@ class Model():
         self.graph_environment.add_weighted_edges_from(make_agents_connections(self.agents, user_network, influencer_network, f_network_mult_factor, homophily_weight_range))
         
         # Record initial values of all agents before timesteps are executed
-        # self.record_data_individual_agent()
+        self.record_data_individual_agent()
         
         # Record initial global opinion before timesteps are executed
         self.record_data_global_opinion()
@@ -155,7 +155,7 @@ class Model():
                 group.polarize_agents()
         
         # Record Data for every timestep
-        # self.record_data_individual_agent()
+        self.record_data_individual_agent()
         
         # Record data groups
         self.record_data_groups()
@@ -351,8 +351,8 @@ class Model():
 
         """
         
-        # self.dataset_global_opinion = pd.DataFrame(self.global_opinion)
-        # self.dataset_individual_agent = pd.DataFrame(self.individual_agent)
+        self.dataset_global_opinion = pd.DataFrame(self.global_opinion)
+        self.dataset_individual_agent = pd.DataFrame(self.individual_agent)
         self.dataset_groups = pd.DataFrame(self.groups_dataframes)
 
 # ============================================================================= #
@@ -365,8 +365,8 @@ if __name__ == '__main__':
     
     ### Parameters ###
     params = {
-        'timesteps': 1000, # declare amount of timesteps
-        "population": 500, # declare the overall population of the ABM
+        'timesteps': 100, # declare amount of timesteps
+        "population": 30, # declare the overall population of the ABM
         "population_distribution":(80, 10, 10), # percentages: user, fake, real
         "user_network": 4, # how many connections should a typical user have
         "influencer_network": 7, # how many connections should a typical influencer have
@@ -377,7 +377,7 @@ if __name__ == '__main__':
         "f_opinion": (-100, -50), #  range of opinion - fake news influencer (should be more radical for Finfluencer)
         "r_opinion": (50, 100), # range of opinion - real news influencer
         "user_susceptibility": (1, 2), # susceptibility - user - random value between 1 and 2
-        'echo_chamber_entrance_limit': 40, # determine the limit for when a opinion should reflect a potential join of an echo chamber
+        'echo_chamber_entrance_limit': 30, # determine the limit for when a opinion should reflect a potential join of an echo chamber
         'echo_chamber_homophily_limit': 1.1 # determine the homophily between agents that should be in an echo chamber
     }
     
@@ -409,17 +409,17 @@ if __name__ == '__main__':
     done = time.time()
     elapsed = done - start
     print(f'Running Time: {elapsed}')
-
-    # For debugging
-    # a_iso = iso_agent(df_agents, 729)
-    # b_head = df_agents.head(30000)
-    # c_varians = calc_var(df_agents)
     
+    # Draw graph
+    draw_graph_environment(model)
+    
+
+
     # =============================================================================
     # Create excel files
     # =============================================================================
     # writer_start = time.time()
-    # writer = pd.ExcelWriter('../Data/testrun_500pop.xlsx', engine='openpyxl')
+    # writer = pd.ExcelWriter('../Data/SC2_echo_chamber_1_3.xlsx', engine='openpyxl')
     # # # Convert the dataframe to an XlsxWriter Excel object.
     # df_global.to_excel(writer, sheet_name='global', index=False)
     # print("Global done")
@@ -435,11 +435,3 @@ if __name__ == '__main__':
     # writer_time = writer_done - writer_start
     # print(f'Writer running Time: {writer_time}')
     # print("Finished run")
-    
-    
-# =============================================================================
-# Garbage collection
-# =============================================================================
-
-# import gc
-# gc.collect()
