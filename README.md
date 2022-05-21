@@ -50,74 +50,74 @@ Specify the amount of ticks/timesteps that the model should run. Timesteps can b
 
 Given as an arbitrary integer
 
-**Population**
+**Population**\
 Specify how many agents should be in the Model. Be aware of potential performance issues of having a very large population.
 
 Given as an arbitrary integer
 
-**Population Distribution**
+**Population Distribution**\
 Determines the percentage of UserAgents, Finfluencer agents and Rinfluencer agents in the system. This value is given a triple and must equal 100% in all
 
 the format is (percentage of userAgents, percentage of Rinfluencer, percentage of Finfluencer)
 
-Example
-(50,25,25) Valid
-(25,25,50) Valid
+Example\
+(50,25,25) Valid\
+(25,25,50) Valid\
 (10,10,33) Invalid
 
 Given as a triple of integers
 
-**User Network**
+**User Network**\
 Specify the approximate amount of connections a singular UserAgent has. The exact amount of friends can vary due to specific circumstances.
 
 Given as an arbitrary integer.
 
-**Influencer Network**
+**Influencer Network**\
 Specify the network size of the Rinfluencer and Finfluencer
 
 Given as an arbitrary integer.
 
-**Finfluencer network multiplication factor**
+**Finfluencer network multiplication factor**\
 Despite a bad variable name... the following specified factor will increase the Finfluencer network more than the Rinfluencer network.
 
 Given as an arbitrary integer.
 
-**Homophily weight range**
+**Homophily weight range**\
 Specify the range value in which UserAgents can establish a homophily relationship between each other.
 
 Given as a tuple of floats from 1 <=> 2.
 
-**F influence factor**
+**F influence factor**\
 Specify how good Finfluencer are at influencing UserAgents.
 
 Given as a tuple of floats from 1 <=> 2.
 
-**R influence factor**
+**R influence factor**\
 Specify how good Rinfluencer are at influencing UserAgents.
 
 Given as a tuple of floats from 1 <=> 2.
 
-**F opinion**
+**F opinion**\
 Specify the opinion range in which Finfluencers can be initialized. The value are typically in the range of -75 <=> -100.
 
 Given as a tuple of integers
 
-**R opinion**
+**R opinion**\
 Specify the opinion range in which Rinfluencers can be initialized. The value are typically in the range of 75 <=> 100.
 
 Given as a tuple of integers from -100 <=> 100.
 
-**User susceptibility**
+**User susceptibility**\
 Specify a range, determining how susceptibel UserAgents are towards being influenced by Rinfluencers or Finfluencers.
 
 Given as a tuple of floats from 1 <=> 2.
 
-**Echo Chamber Entrance Limit**
+**Echo Chamber Entrance Limit**\
 Specify how similar the agent's opinions should be in order to establish/join an echo chambers. Low value => low probability of establishment, High value => High probability of establishment
 
 given as an arbitrary integer.
 
-**Echo chamber Homophily Limit**
+**Echo chamber Homophily Limit**\
 Specify how good of a relationship UserAgents should have in order to potentially establish/join an echo chambers. Higher value => low probability of establishment, Low value => High probability of establishment.
 
 Given as an float of 1 <=> 2.
