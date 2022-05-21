@@ -1,4 +1,4 @@
-# Import statements
+# Model dependencies
 import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib import cm
@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 import time
 import openpyxl
-
+####################
 
 class Model():
     
@@ -46,13 +46,11 @@ class Model():
         self.groups = {}
         
         # Parameters for make_group() method
-        # Need these fields??
         self.group_opinion_limit_val = group_opinion_limit_val
         self.group_homophily_limit_val  = group_homophily_limit_val
         
         # Keeping track of timesteps
         self.timestep_val = 0
-        
         
         user_dist,r_influencer_dist, f_influencer_dist = distribution
         if user_dist + r_influencer_dist + f_influencer_dist != 100:
@@ -70,7 +68,7 @@ class Model():
         # Generate a list of user opinions based on normal distribution theory
         self.user_norm_dist_opinion = list(normalDistNP(self.user_population))
         
-        # create user agents        
+        # Create user agents        
         for i in range(0,self.user_population):
             agent_id = i
             agent_opinion = self.user_norm_dist_opinion.pop()
@@ -78,7 +76,7 @@ class Model():
 
             self.agents.append(UserAgent(agent_id,agent_opinion,-1,i_susceptibility))
 
-        # create fake news influencer agents
+        # Create fake news influencer agents
         f_min_val, f_max_val = f_influence_factor
         f_min_op, f_max_op = f_opinion
         for i in range(self.user_population,self.pop_init_boundary):
@@ -89,7 +87,7 @@ class Model():
 
             self.agents.append(InfluencerAgent(agent_id,agent_opinion,-1,influencer_type,i_factor))            
         
-        # create real news influencer agents
+        # Create real news influencer agents
         r_min_val, r_max_val = r_influence_factor
         r_min_op, r_max_op = r_opinion
         for i in range(self.pop_init_boundary,self.population):
@@ -117,9 +115,11 @@ class Model():
         The following method loops overs all agents and initiatize their built in influencing method.
         Every single agent influence every single friend agent in their network.
         
-        Moreover, echo chambers are initalized and potentially left for every timestep
+        Moreover, echo chambers are initalized and potentially joiend/left for every timestep
         
         Global opinion is also measured in the following method
+        
+        All behavior/interaction for agents, groups and global opinion are recorded for every timestep.
         
         Returns
         -------
@@ -129,7 +129,7 @@ class Model():
         
         self.timestep_val += 1  
         
-        # individual agent - influence 
+        # Individual agent - influence 
         nodes_arr = list(self.graph_environment._node.keys())
         rd.shuffle(nodes_arr)
         for agent_id in nodes_arr:
@@ -167,6 +167,8 @@ class Model():
         """
         The following method will walk through each agent and potentially create an group/echo chamber
         if opinion and homophily are close enough.
+        
+        If a group already exists, the method will let friends of a given agent join the same echo chamber.
 
         Parameters
         ----------
@@ -266,10 +268,7 @@ class Model():
         
         for agent in self.graph_environment._node.values():
             agent_obj = agent['agent']
-            
-            #network
             network = list(self.graph_environment.neighbors(agent_obj.agent_id))
-            
             network_influencers = [x for x in network if isinstance(self.graph_environment._node[x]['agent'],InfluencerAgent)]
             network_users = [x for x in network if isinstance(self.graph_environment._node[x]['agent'],UserAgent)]
             
@@ -300,6 +299,14 @@ class Model():
                 self.individual_agent.append(timestep_df)
         
     def record_data_groups(self):
+        """
+        This methods gathers all the information related to emerhed echo chambers/groups during a single timestep.
+
+        Returns
+        -------
+        None.
+
+        """
         for group in self.groups.values():
             if group.size != 0:
                 self.groups_dataframes.append({
@@ -311,10 +318,9 @@ class Model():
                     'group_limit_value': group.limit_value
                     })
         
-
     def record_data_global_opinion(self,include_influencer_agent_op = False):
         """
-        This method gathers the global opinion of all agents during every single timestep
+        This method gathers the global opinion of all agents during a single timestep.
 
         Parameters
         ----------
@@ -343,8 +349,7 @@ class Model():
 
     def finalize_model(self):
         """
-        A method to create pandas DataFrame of all the agents in the ABM.
-
+        The method gathers all the information for all the timesteps and inserts it into a pandas DataFrame.
         Returns
         -------
         None.
@@ -356,12 +361,11 @@ class Model():
         self.dataset_groups = pd.DataFrame(self.groups_dataframes)
 
 # ============================================================================= #
-#                            Testing environment                                #
+#                            Model Execution section                            #
 # ============================================================================= #
-
 if __name__ == '__main__':
     # Benchmarking
-    start = time.time()
+    start = time.time() # Used to track performance of the model
     
     ### Parameters ###
     params = {
@@ -377,61 +381,70 @@ if __name__ == '__main__':
         "f_opinion": (-100, -50), #  range of opinion - fake news influencer (should be more radical for Finfluencer)
         "r_opinion": (50, 100), # range of opinion - real news influencer
         "user_susceptibility": (1, 2), # susceptibility - user - random value between 1 and 2
-        'echo_chamber_entrance_limit': 30, # determine the limit for when a opinion should reflect a potential join of an echo chamber
-        'echo_chamber_homophily_limit': 1.1 # determine the homophily between agents that should be in an echo chamber
+        'echo_chamber_entrance_limit': 5, # determine the limit for when a opinion should reflect a potential join of an echo chamber
+        'echo_chamber_homophily_limit': 1.5 # determine the homophily between agents that should be in an echo chamber
     }
     
-    # Episodes
+    ### Settings ###
+    # Specify whether to draw the graph of the model
+    draw_graph = True
+    # Specify whether output the results into excel files
+    create_excel_files = False
+    # Specify how many times the model should run
+    model_iterations = 1
+    ##################
+    
+    # Model iterations
     df_global_dataframes = []
     df_groups_dataframes = []
     df_individual_agents_dataframes = []
-    
-    for j in range(1):
+    for j in range(model_iterations):
         # Create model
         model = Model(params['population'], params['population_distribution'], params['user_network'], params['influencer_network'], params['finfluencer_network_mult_factor'], params['homophily_weight_range'], params['f_influence_factor'], params['r_influence_factor'], params['f_opinion'], params['r_opinion'], params['user_susceptibility'],params['echo_chamber_entrance_limit'],params['echo_chamber_homophily_limit'])
         
-        # run sim (run timesteps)
+        # run simulations for amount of timestep specified in the parameter list
         for i in range(params['timesteps']):
             model.timestep()
         
         # Create a pandas dataframe with the final global opinion values
         model.finalize_model()
         
+        # Append a singular model iteration to a list of dataframe for agents, groups and global opinion
         df_individual_agents_dataframes.append(model.dataset_individual_agent)
         df_groups_dataframes.append(model.dataset_groups)
         df_global_dataframes.append(model.dataset_global_opinion)
     
-    # Gather all episodes into one dataframe for micro, meso and makro level.
+    # Gather all episodes into one dataframe for agents, groups and global opinion.
     df_global = pd.concat(df_global_dataframes,axis=1)
     df_groups = pd.concat(df_groups_dataframes,axis=1)
     df_agents = pd.concat(df_individual_agents_dataframes,axis=1)
     
-    done = time.time()
-    elapsed = done - start
-    print(f'Running Time: {elapsed}')
+    done = time.time() # Used to track performance of the model
+    elapsed = done - start # Used to track performance of the model
+    print(f'Model running time: {elapsed}s')
     
     # Draw graph
-    draw_graph_environment(model)
-    
+    if draw_graph:
+        draw_graph_environment(model)
 
-
-    # =============================================================================
-    # Create excel files
-    # =============================================================================
-    # writer_start = time.time()
-    # writer = pd.ExcelWriter('../Data/SC2_echo_chamber_1_3.xlsx', engine='openpyxl')
-    # # # Convert the dataframe to an XlsxWriter Excel object.
-    # df_global.to_excel(writer, sheet_name='global', index=False)
-    # print("Global done")
-    # df_groups.to_excel(writer, sheet_name='groups', index=False)
-    # print("Groups done")
-    # df_agents.to_excel(writer, sheet_name='agents', index=False)
-    # # # Close the Pandas Excel writer and output the Excel file.
-    # print("Agents done")
-    # writer.save()
-    # writer.close()
-    # print("Writer closed")
-    # writer_done = time.time()
-    # writer_time = writer_done - writer_start
-    # print(f'Writer running Time: {writer_time}')
-    # print("Finished run")
+    if create_excel_files:
+        #=============================================================================
+        # Create excel files
+        #=============================================================================
+        writer_start = time.time()
+        writer = pd.ExcelWriter('../Data/SC2_echo_chamber_1_3.xlsx', engine='openpyxl')
+        # # Convert the dataframe to an XlsxWriter Excel object.
+        df_global.to_excel(writer, sheet_name='global', index=False)
+        print("Global done")
+        df_groups.to_excel(writer, sheet_name='groups', index=False)
+        print("Groups done")
+        df_agents.to_excel(writer, sheet_name='agents', index=False)
+        # # Close the Pandas Excel writer and output the Excel file.
+        print("Agents done")
+        writer.save()
+        writer.close()
+        print("Writer closed")
+        writer_done = time.time()
+        writer_time = writer_done - writer_start
+        print(f'Writer running Time: {writer_time}')
+        print("Finished run")

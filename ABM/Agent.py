@@ -12,7 +12,7 @@ class Agent():
         opinion : int
             The opinion of the agent - range from -100 to 100
         group_id : int
-            unique identifier for current group 
+            unique identifier for current group. Default is -1. 
 
         Returns
         -------
@@ -28,12 +28,13 @@ class Agent():
 class UserAgent(Agent): 
     def __init__(self,agent_id, opinion, group_id, i_susceptibility):
         """
-        subclass for user agent
+        subclass for Agent.
+        Inherits the same attributes as the parent class.
 
         Parameters
         ----------
         i_susceptibility : float
-            how susceptible agent is to be influenced by real news - 1 to 2.
+            how susceptible agent is to be influenced by real news (1 to 2).
 
         Returns
         -------
@@ -51,12 +52,12 @@ class UserAgent(Agent):
         Parameters
         ----------
         graph_env : networkx graph
-            Input a network x graph - nx.Graph()
+            Input a networkx graph - nx.Graph()
         list_of_neighbors : List of integers
             Takes a list of integers represented as unique ids
         SCALE_DOWN_FACTOR : int, optional
             Used to scale down the influencing factor, so the agent opinion will not be to high and unreadable. The default is 60.
-
+        
         Returns
         -------
         Nothing
@@ -105,6 +106,20 @@ class UserAgent(Agent):
                 target_agent.opinion = target_new_opinion
                 
     def global_opinion_reflection(self,global_opinion_val):
+        """
+        A method for an individual userAgent to reflect upon the global opinion provided in the ABM.
+
+        Parameters
+        ----------
+        global_opinion_val : int
+            Takes an integer represented as the current global opinion value at a given timestep.
+
+        Returns
+        -------
+        None.
+
+        """
+        
         # difference in agent opinion and current timesteps global opinion
         go_variance = abs(self.opinion-(global_opinion_val)) 
         if go_variance < 1:
@@ -150,14 +165,15 @@ class UserAgent(Agent):
 class InfluencerAgent(Agent):
     def __init__(self,agent_id, opinion, group_id, agent_type, i_factor):
         """
-        Subclass for influencer agent
+        Subclass for Agent.
+        Inherits the same attributes as the parent class.
 
         Parameters
         ----------
         agent_type : int
             Signifying the type of agent. 0 = Real news, 1 = Fake news
         i_factor : float
-            effectiveness of influence - range from 1 to 2.
+            effectiveness of influence - range from (1 to 2).
 
         Returns
         -------

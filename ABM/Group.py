@@ -13,17 +13,12 @@ class Group():
 
     def calc_avg_opinion(self):
         """
-        return average opinion of all agents in agent_list
-    
-        Parameters
-        ----------
-        agent_list : list<agent>
-            List of agents.
+        Calculate the average opinion of the given group.
     
         Returns
         -------
         average : int
-            Average of all agent opinions in input list.
+            Average of all agent opinions in group list.
     
         """
         opinion_sum = 0
@@ -82,6 +77,15 @@ class Group():
         agent.group_id = -1
         
     def polarize_agents(self):
+        """
+        A method to polarize all agents in a given group closer to the groups average opinion.
+        Simulates the tendencies of an echo chamber.
+
+        Returns
+        -------
+        None.
+
+        """
         for agent in self.agent_list:
             
             if isinstance(agent,UserAgent):
