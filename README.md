@@ -45,7 +45,7 @@ The following parameter list is an example of how to initialize the model.
 ```
 There are various opportunities to alter the values of the parameters in the model. In the following a short description of each parameter will be elaborated.
 
-**Timesteps**
+**Timesteps**\
 Specify the amount of ticks/timesteps that the model should run. Timesteps can be seen as the amount of time that passes inside the model.
 
 Given as an arbitrary integer
