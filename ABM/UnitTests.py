@@ -386,10 +386,12 @@ class AgentTests(unittest.TestCase):
         i1.i_factor = 1.3
         i1_network = list(model.graph_environment.neighbors(25))
         
-        # userAgent 1
-        c1 = model.graph_environment._node[i1_network[0]]['agent']
-        c1.opinion = 50
-        c1.i_susceptibility = 1.5
+        # UserAgent 1
+        # Check that influencerAgent has a network
+        if len(i1_network) != 0:
+            c1 = model.graph_environment._node[i1_network[0]]['agent']
+            c1.opinion = 50
+            c1.i_susceptibility = 1.5
 
         # influence agent 2
         i2 = model.graph_environment._node[26]['agent']
@@ -397,15 +399,19 @@ class AgentTests(unittest.TestCase):
         i2.i_factor = 1.6
         i2_network = list(model.graph_environment.neighbors(26))
         
-        #userAgent 2
-        c2 = model.graph_environment._node[i2_network[0]]['agent']
-        c2.opinion = 50
-        c2.i_susceptibility = 1.5
-        
+        # UserAgent 2
+        # Check that influencerAgent has a network
+        if len(i2_network) != 0:
+            c2 = model.graph_environment._node[i2_network[0]]['agent']
+            c2.opinion = 50
+            c2.i_susceptibility = 1.5
+            
         i1.influence_agent(model.graph_environment,[i1_network[0]])
         i2.influence_agent(model.graph_environment,[i2_network[0]])
         
-        self.assertLess(c2.opinion, c1.opinion)
+        if len(i1_network) != 0 and len(i2_network) != 0:
+            if c1.agent_id != c2.agent_id:
+                self.assertLess(c2.opinion, c1.opinion)
             
     def test_global_opinion_reflection_positive(self):
         fake_global_opinion = 5
