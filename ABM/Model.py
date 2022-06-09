@@ -155,7 +155,8 @@ class Model():
                 group.polarize_agents()
         
         # Record Data for every timestep
-        self.record_data_individual_agent()
+        if self.timestep_val % 10 == 0:
+            self.record_data_individual_agent()
         
         # Record data groups
         self.record_data_groups()
